@@ -1,121 +1,157 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
+import { type FormEvent, useState } from 'react'
+import {
+  signInWithEmailPassword,
+  signOut,
+  signUpWithEmailPassword,
+  useAuthSession,
+} from './lib/auth'
 import './App.css'
 
+type AuthMode = 'sign-in' | 'sign-up'
+
 function App() {
-  const [count, setCount] = useState(0)
+  const { isLoading, user } = useAuthSession()
+  const [authMode, setAuthMode] = useState<AuthMode>('sign-in')
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [feedback, setFeedback] = useState('')
+  const [isSubmitting, setIsSubmitting] = useState(false)
+
+  async function handleAuthSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault()
+    setFeedback('')
+    setIsSubmitting(true)
+
+    try {
+      if (authMode === 'sign-in') {
+        await signInWithEmailPassword(email, password)
+      } else {
+        await signUpWithEmailPassword(email, password)
+        setFeedback('Check your inbox if email confirmation is enabled.')
+      }
+    } catch (error) {
+      setFeedback(error instanceof Error ? error.message : 'Something went wrong.')
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
+
+  async function handleSignOut() {
+    setFeedback('')
+    setIsSubmitting(true)
+
+    try {
+      await signOut()
+    } catch (error) {
+      setFeedback(error instanceof Error ? error.message : 'Unable to sign out.')
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
+
+  if (isLoading) {
+    return (
+      <main className="app-shell">
+        <section className="auth-panel">
+          <p className="eyebrow">Maycation Planner</p>
+          <h1>Loading your planner</h1>
+        </section>
+      </main>
+    )
+  }
+
+  if (user) {
+    return (
+      <main className="app-shell">
+        <section className="dashboard-panel">
+          <div>
+            <p className="eyebrow">Maycation Planner</p>
+            <h1>Dashboard</h1>
+            <p className="muted">You are signed in.</p>
+          </div>
+
+          <div className="account-strip">
+            <div>
+              <span className="label">Signed in as</span>
+              <strong>{user.email}</strong>
+            </div>
+            <button type="button" onClick={handleSignOut} disabled={isSubmitting}>
+              Sign out
+            </button>
+          </div>
+
+          {feedback ? <p className="feedback">{feedback}</p> : null}
+        </section>
+      </main>
+    )
+  }
 
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
+    <main className="app-shell">
+      <section className="auth-panel">
         <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.tsx</code> and save to test <code>HMR</code>
+          <p className="eyebrow">Maycation Planner</p>
+          <h1>Plan the trip together</h1>
+          <p className="muted">
+            Sign in or create an account for the shared family planner.
           </p>
         </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
 
-      <div className="ticks"></div>
-
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
+        <div className="mode-toggle" aria-label="Choose authentication mode">
+          <button
+            type="button"
+            className={authMode === 'sign-in' ? 'active' : ''}
+            onClick={() => setAuthMode('sign-in')}
+          >
+            Sign in
+          </button>
+          <button
+            type="button"
+            className={authMode === 'sign-up' ? 'active' : ''}
+            onClick={() => setAuthMode('sign-up')}
+          >
+            Sign up
+          </button>
         </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
 
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
+        <form className="auth-form" onSubmit={handleAuthSubmit}>
+          <label>
+            Email
+            <input
+              type="email"
+              value={email}
+              onChange={(event) => setEmail(event.target.value)}
+              autoComplete="email"
+              required
+            />
+          </label>
+
+          <label>
+            Password
+            <input
+              type="password"
+              value={password}
+              onChange={(event) => setPassword(event.target.value)}
+              autoComplete={
+                authMode === 'sign-in' ? 'current-password' : 'new-password'
+              }
+              minLength={6}
+              required
+            />
+          </label>
+
+          <button type="submit" disabled={isSubmitting}>
+            {isSubmitting
+              ? 'Working...'
+              : authMode === 'sign-in'
+                ? 'Sign in'
+                : 'Create account'}
+          </button>
+        </form>
+
+        {feedback ? <p className="feedback">{feedback}</p> : null}
+      </section>
+    </main>
   )
 }
 
