@@ -10,6 +10,8 @@ export const travelTypes = [
 
 export type TravelType = (typeof travelTypes)[number]
 
+export type TripMemberRole = 'owner' | 'editor' | 'viewer'
+
 export type Trip = {
   id: string
   name: string

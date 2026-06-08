@@ -41,7 +41,15 @@
   gap: 18px;
 }
 
-.trip-detail-header .secondary-button {
+.trip-detail-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.trip-detail-nav .secondary-button,
+.trip-detail-header > .secondary-button {
   width: fit-content;
   min-height: 40px;
   padding: 0 14px;
@@ -78,7 +86,9 @@
 .state-panel button,
 .form-actions button,
 .day-detail-toolbar button,
-.planner-item-actions button {
+.planner-item-actions button,
+.invite-form button,
+.member-actions button {
   min-height: 44px;
   border: 1px solid transparent;
   border-radius: 6px;
@@ -96,7 +106,8 @@
 .empty-state button,
 .state-panel button,
 .form-actions button:not(.secondary-button),
-.day-detail-toolbar button {
+.day-detail-toolbar button,
+.invite-form button:not(.secondary-button) {
   background: var(--accent);
   color: var(--accent-text);
 }
@@ -115,14 +126,16 @@
 
 .auth-form,
 .trip-form,
-.planner-item-form {
+.planner-item-form,
+.invite-form {
   display: grid;
   gap: 16px;
 }
 
 .auth-form label,
 .trip-form label,
-.planner-item-form label {
+.planner-item-form label,
+.invite-form label {
   display: grid;
   gap: 8px;
   color: var(--text-h);
@@ -136,7 +149,9 @@
 .trip-form select,
 .planner-item-form input,
 .planner-item-form select,
-.planner-item-form textarea {
+.planner-item-form textarea,
+.invite-form input,
+.invite-form select {
   min-height: 44px;
   box-sizing: border-box;
   width: 100%;
@@ -159,6 +174,8 @@
 .planner-item-form input:focus,
 .planner-item-form select:focus,
 .planner-item-form textarea:focus,
+.invite-form input:focus,
+.invite-form select:focus,
 .mode-toggle button:focus-visible,
 .auth-form button:focus-visible,
 .account-strip button:focus-visible,
@@ -169,7 +186,9 @@
 .trip-card:focus-visible,
 .trip-day-card:focus-visible,
 .day-detail-toolbar button:focus-visible,
-.planner-item-actions button:focus-visible {
+.planner-item-actions button:focus-visible,
+.invite-form button:focus-visible,
+.member-actions button:focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
 }
@@ -178,7 +197,9 @@
 .account-strip button:disabled,
 .form-actions button:disabled,
 .dashboard-header button:disabled,
-.planner-item-actions button:disabled {
+.planner-item-actions button:disabled,
+.invite-form button:disabled,
+.member-actions button:disabled {
   cursor: not-allowed;
   opacity: 0.65;
 }
@@ -220,7 +241,8 @@
 
 .create-trip-panel,
 .empty-state,
-.state-panel {
+.state-panel,
+.settings-panel {
   display: grid;
   gap: 18px;
   padding: 20px;
@@ -236,7 +258,8 @@
 
 .empty-state h2,
 .state-panel h2,
-.create-trip-panel h2 {
+.create-trip-panel h2,
+.settings-panel h2 {
   margin: 0 0 6px;
   color: var(--text-h);
   font-size: 1.35rem;
@@ -496,6 +519,61 @@
   border-color: #9b8cff;
 }
 
+.member-list {
+  display: grid;
+  gap: 10px;
+}
+
+.member-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+  padding: 14px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--panel);
+}
+
+.member-card strong {
+  color: var(--text-h);
+}
+
+.role-pill {
+  width: fit-content;
+  padding: 4px 8px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  color: var(--text-h);
+  background: var(--control-bg);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.role-pill.owner {
+  border-color: var(--accent);
+}
+
+.role-pill.editor {
+  border-color: #3483fa;
+}
+
+.role-pill.viewer {
+  border-color: #9b8cff;
+}
+
+.member-actions {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.member-actions button {
+  min-height: 38px;
+  padding: 0 12px;
+}
+
 .modal-backdrop {
   position: fixed;
   inset: 0;
@@ -536,6 +614,7 @@
   }
 
   .dashboard-header,
+  .trip-detail-nav,
   .toolbar,
   .day-detail-toolbar {
     align-items: stretch;
@@ -565,5 +644,15 @@
   .planner-item-actions {
     display: grid;
     grid-template-columns: 1fr 1fr;
+  }
+
+  .member-card {
+    grid-template-columns: 1fr;
+    align-items: stretch;
+  }
+
+  .member-actions {
+    display: grid;
+    grid-template-columns: 1fr;
   }
 }

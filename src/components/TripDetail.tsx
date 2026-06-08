@@ -8,8 +8,11 @@ import {
   type PlannerItem,
   type Trip,
   type TripDay,
+  type TripMemberRole,
 } from '../lib/trips'
+import { loadTripAccess } from '../lib/tripMembers'
 import { DayDetail } from './DayDetail'
+import { TripSettings } from './TripSettings'
 
 type TripDetailProps = {
   trip: Trip
@@ -25,6 +28,8 @@ export function TripDetail({ trip, onBack }: TripDetailProps) {
   const [plannerItems, setPlannerItems] = useState<PlannerItem[]>([])
   const [isLoadingDays, setIsLoadingDays] = useState(true)
   const [activeDayId, setActiveDayId] = useState<string | null>(null)
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false)
+  const [currentRole, setCurrentRole] = useState<TripMemberRole | null>(null)
   const [error, setError] = useState('')
   const travelType = trip.metadata.travel_type ?? 'Other'
 
@@ -37,8 +42,10 @@ export function TripDetail({ trip, onBack }: TripDetailProps) {
         loadTripDays(trip.id),
         loadPlannerItems(trip.id),
       ])
+      const role = await loadTripAccess(trip.id)
       setTripDays(days)
       setPlannerItems(items)
+      setCurrentRole(role)
     } catch (loadError) {
       setError(
         getVisibleErrorMessage(loadError, 'Unable to load trip dashboard.'),
@@ -58,10 +65,23 @@ export function TripDetail({ trip, onBack }: TripDetailProps) {
 
   const activeDayIndex = tripDays.findIndex((day) => day.id === activeDayId)
   const activeDay = activeDayIndex >= 0 ? tripDays[activeDayIndex] : null
+  const canEditPlannerItems =
+    currentRole === 'owner' || currentRole === 'editor'
+
+  if (isSettingsOpen) {
+    return (
+      <TripSettings
+        currentRole={currentRole}
+        onBack={() => setIsSettingsOpen(false)}
+        trip={trip}
+      />
+    )
+  }
 
   if (activeDay) {
     return (
       <DayDetail
+        canEditPlannerItems={canEditPlannerItems}
         day={activeDay}
         dayNumber={activeDayIndex + 1}
         items={getItemsForDay(activeDay.id)}
@@ -76,9 +96,18 @@ export function TripDetail({ trip, onBack }: TripDetailProps) {
     <main className="app-shell dashboard-shell">
       <section className="dashboard-panel trips-panel">
         <header className="trip-detail-header">
-          <button type="button" className="secondary-button" onClick={onBack}>
-            Back
-          </button>
+          <div className="trip-detail-nav">
+            <button type="button" className="secondary-button" onClick={onBack}>
+              Back
+            </button>
+            <button
+              type="button"
+              className="secondary-button"
+              onClick={() => setIsSettingsOpen(true)}
+            >
+              Settings
+            </button>
+          </div>
 
           <div>
             <p className="eyebrow">Trip Dashboard</p>

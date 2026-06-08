@@ -14,6 +14,7 @@ import {
 import { AddPlannerItemForm } from './AddPlannerItemForm'
 
 type DayDetailProps = {
+  canEditPlannerItems: boolean
   day: TripDay
   dayNumber: number
   items: PlannerItem[]
@@ -27,6 +28,7 @@ function getVisibleErrorMessage(error: unknown, fallback: string) {
 }
 
 export function DayDetail({
+  canEditPlannerItems,
   day,
   dayNumber,
   items,
@@ -123,9 +125,13 @@ export function DayDetail({
               {items.length} {items.length === 1 ? 'item' : 'items'}
             </strong>
           </div>
-          <button type="button" onClick={() => setIsAddItemOpen(true)}>
-            Add item
-          </button>
+          {canEditPlannerItems ? (
+            <button type="button" onClick={() => setIsAddItemOpen(true)}>
+              Add item
+            </button>
+          ) : (
+            <span className="role-pill viewer">Viewer</span>
+          )}
         </div>
 
         {items.length > 0 ? (
@@ -147,27 +153,29 @@ export function DayDetail({
                   {item.description ? <p>{item.description}</p> : null}
                 </div>
 
-                <div className="planner-item-actions">
-                  <button
-                    type="button"
-                    className="secondary-button"
-                    onClick={() => {
-                      setItemError('')
-                      setEditingItem(item)
-                    }}
-                    disabled={deletingItemId === item.id}
-                  >
-                    Edit
-                  </button>
-                  <button
-                    type="button"
-                    className="danger-button"
-                    onClick={() => void handleDeleteItem(item)}
-                    disabled={deletingItemId === item.id}
-                  >
-                    {deletingItemId === item.id ? 'Deleting...' : 'Delete'}
-                  </button>
-                </div>
+                {canEditPlannerItems ? (
+                  <div className="planner-item-actions">
+                    <button
+                      type="button"
+                      className="secondary-button"
+                      onClick={() => {
+                        setItemError('')
+                        setEditingItem(item)
+                      }}
+                      disabled={deletingItemId === item.id}
+                    >
+                      Edit
+                    </button>
+                    <button
+                      type="button"
+                      className="danger-button"
+                      onClick={() => void handleDeleteItem(item)}
+                      disabled={deletingItemId === item.id}
+                    >
+                      {deletingItemId === item.id ? 'Deleting...' : 'Delete'}
+                    </button>
+                  </div>
+                ) : null}
               </article>
             ))}
           </section>
@@ -178,7 +186,7 @@ export function DayDetail({
           </section>
         )}
 
-        {isAddItemOpen ? (
+        {isAddItemOpen && canEditPlannerItems ? (
           <AddPlannerItemForm
             day={day}
             error={itemError}
@@ -192,7 +200,7 @@ export function DayDetail({
           />
         ) : null}
 
-        {editingItem ? (
+        {editingItem && canEditPlannerItems ? (
           <AddPlannerItemForm
             ariaLabel="Edit planner item"
             day={day}
