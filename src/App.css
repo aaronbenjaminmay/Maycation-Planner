@@ -77,7 +77,8 @@
 .empty-state button,
 .state-panel button,
 .form-actions button,
-.day-detail-toolbar button {
+.day-detail-toolbar button,
+.planner-item-actions button {
   min-height: 44px;
   border: 1px solid transparent;
   border-radius: 6px;
@@ -98,6 +99,12 @@
 .day-detail-toolbar button {
   background: var(--accent);
   color: var(--accent-text);
+}
+
+.danger-button {
+  border-color: var(--danger-border) !important;
+  color: var(--danger-text) !important;
+  background: var(--danger-bg) !important;
 }
 
 .secondary-button {
@@ -161,7 +168,8 @@
 .form-actions button:focus-visible,
 .trip-card:focus-visible,
 .trip-day-card:focus-visible,
-.day-detail-toolbar button:focus-visible {
+.day-detail-toolbar button:focus-visible,
+.planner-item-actions button:focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
 }
@@ -169,7 +177,8 @@
 .auth-form button:disabled,
 .account-strip button:disabled,
 .form-actions button:disabled,
-.dashboard-header button:disabled {
+.dashboard-header button:disabled,
+.planner-item-actions button:disabled {
   cursor: not-allowed;
   opacity: 0.65;
 }
@@ -427,7 +436,9 @@
 }
 
 .planner-item-card {
-  display: grid;
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
   gap: 6px;
   padding: 14px;
   border: 1px solid var(--border);
@@ -436,9 +447,26 @@
   background: var(--control-bg);
 }
 
+.planner-item-card__content {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+}
+
 .planner-item-card strong {
   color: var(--text-h);
   line-height: 1.2;
+}
+
+.planner-item-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.planner-item-actions button {
+  min-height: 38px;
+  padding: 0 12px;
 }
 
 .planner-item-kind {
@@ -527,5 +555,15 @@
 
   .day-detail-toolbar button {
     width: 100%;
+  }
+
+  .planner-item-card {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .planner-item-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
   }
 }

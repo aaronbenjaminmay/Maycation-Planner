@@ -8,6 +8,9 @@
   --input-bg: #ffffff;
   --accent: #13756d;
   --accent-text: #ffffff;
+  --danger-bg: #fff1f1;
+  --danger-border: #c75f5f;
+  --danger-text: #842323;
   --shadow: 0 18px 50px rgba(16, 24, 40, 0.08);
 
   font: 16px/1.5 system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI',
@@ -32,6 +35,9 @@
     --input-bg: #11161b;
     --accent: #35b8a8;
     --accent-text: #061312;
+    --danger-bg: rgba(168, 75, 75, 0.2);
+    --danger-border: #a84b4b;
+    --danger-text: #ffd7d7;
     --shadow: 0 18px 50px rgba(0, 0, 0, 0.28);
   }
 }

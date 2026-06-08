@@ -1,8 +1,11 @@
 import { useState } from 'react'
 import {
   createPlannerItem,
+  deletePlannerItem,
+  formatPlannerItemTimeInput,
   formatPlannerItemTimeRange,
   formatTripDayDate,
+  updatePlannerItem,
   type CreatePlannerItemInput,
   type PlannerItem,
   type Trip,
@@ -32,8 +35,11 @@ export function DayDetail({
   trip,
 }: DayDetailProps) {
   const [isAddItemOpen, setIsAddItemOpen] = useState(false)
+  const [editingItem, setEditingItem] = useState<PlannerItem | null>(null)
+  const [deletingItemId, setDeletingItemId] = useState<string | null>(null)
   const [isSavingItem, setIsSavingItem] = useState(false)
   const [itemError, setItemError] = useState('')
+  const [deleteError, setDeleteError] = useState('')
 
   async function handleCreateItem(input: CreatePlannerItemInput) {
     setItemError('')
@@ -47,6 +53,50 @@ export function DayDetail({
       setItemError(getVisibleErrorMessage(saveError, 'Unable to save item.'))
     } finally {
       setIsSavingItem(false)
+    }
+  }
+
+  async function handleUpdateItem(input: CreatePlannerItemInput) {
+    if (!editingItem) {
+      return
+    }
+
+    setItemError('')
+    setIsSavingItem(true)
+
+    try {
+      await updatePlannerItem({
+        ...input,
+        itemId: editingItem.id,
+      })
+      setEditingItem(null)
+      await onItemCreated()
+    } catch (saveError) {
+      setItemError(getVisibleErrorMessage(saveError, 'Unable to update item.'))
+    } finally {
+      setIsSavingItem(false)
+    }
+  }
+
+  async function handleDeleteItem(item: PlannerItem) {
+    const confirmed = window.confirm(`Delete "${item.title}"?`)
+
+    if (!confirmed) {
+      return
+    }
+
+    setDeleteError('')
+    setDeletingItemId(item.id)
+
+    try {
+      await deletePlannerItem(trip.id, item.id)
+      await onItemCreated()
+    } catch (deleteFailure) {
+      setDeleteError(
+        getVisibleErrorMessage(deleteFailure, 'Unable to delete item.'),
+      )
+    } finally {
+      setDeletingItemId(null)
     }
   }
 
@@ -80,19 +130,44 @@ export function DayDetail({
 
         {items.length > 0 ? (
           <section className="planner-item-list" aria-label="Planner items">
+            {deleteError ? <p className="feedback">{deleteError}</p> : null}
             {items.map((item) => (
               <article className="planner-item-card" key={item.id}>
-                <span className={`planner-item-kind ${item.kind}`}>
-                  {getKindIcon(item.kind)} {getKindLabel(item.kind)}
-                </span>
-                <strong>{item.title}</strong>
-                {formatPlannerItemTimeRange(item) ? (
-                  <p className="muted">{formatPlannerItemTimeRange(item)}</p>
-                ) : null}
-                {item.location_name ? (
-                  <p className="muted">{item.location_name}</p>
-                ) : null}
-                {item.description ? <p>{item.description}</p> : null}
+                <div className="planner-item-card__content">
+                  <span className={`planner-item-kind ${item.kind}`}>
+                    {getKindIcon(item.kind)} {getKindLabel(item.kind)}
+                  </span>
+                  <strong>{item.title}</strong>
+                  {formatPlannerItemTimeRange(item) ? (
+                    <p className="muted">{formatPlannerItemTimeRange(item)}</p>
+                  ) : null}
+                  {item.location_name ? (
+                    <p className="muted">{item.location_name}</p>
+                  ) : null}
+                  {item.description ? <p>{item.description}</p> : null}
+                </div>
+
+                <div className="planner-item-actions">
+                  <button
+                    type="button"
+                    className="secondary-button"
+                    onClick={() => {
+                      setItemError('')
+                      setEditingItem(item)
+                    }}
+                    disabled={deletingItemId === item.id}
+                  >
+                    Edit
+                  </button>
+                  <button
+                    type="button"
+                    className="danger-button"
+                    onClick={() => void handleDeleteItem(item)}
+                    disabled={deletingItemId === item.id}
+                  >
+                    {deletingItemId === item.id ? 'Deleting...' : 'Delete'}
+                  </button>
+                </div>
               </article>
             ))}
           </section>
@@ -113,6 +188,32 @@ export function DayDetail({
               setIsAddItemOpen(false)
             }}
             onSubmit={handleCreateItem}
+            tripId={trip.id}
+          />
+        ) : null}
+
+        {editingItem ? (
+          <AddPlannerItemForm
+            ariaLabel="Edit planner item"
+            day={day}
+            error={itemError}
+            initialValues={{
+              endTime: formatPlannerItemTimeInput(editingItem.ends_at),
+              kind: editingItem.kind,
+              location: editingItem.location_name ?? '',
+              notes: editingItem.description ?? '',
+              startTime: formatPlannerItemTimeInput(editingItem.starts_at),
+              title: editingItem.title,
+            }}
+            isSubmitting={isSavingItem}
+            onCancel={() => {
+              setItemError('')
+              setEditingItem(null)
+            }}
+            onSubmit={handleUpdateItem}
+            submitLabel="Update Item"
+            submittingLabel="Updating..."
+            title="Edit Item"
             tripId={trip.id}
           />
         ) : null}

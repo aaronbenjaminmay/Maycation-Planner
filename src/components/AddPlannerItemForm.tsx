@@ -7,12 +7,26 @@ import {
 } from '../lib/trips'
 
 type AddPlannerItemFormProps = {
+  ariaLabel?: string
   day: TripDay
   error: string
+  initialValues?: PlannerItemFormValues
   isSubmitting: boolean
   onCancel: () => void
   onSubmit: (input: CreatePlannerItemInput) => Promise<void>
+  submitLabel?: string
+  submittingLabel?: string
+  title?: string
   tripId: string
+}
+
+export type PlannerItemFormValues = {
+  endTime: string
+  kind: PlannerItemKind
+  location: string
+  notes: string
+  startTime: string
+  title: string
 }
 
 const kindLabels: Record<PlannerItemKind, string> = {
@@ -23,19 +37,26 @@ const kindLabels: Record<PlannerItemKind, string> = {
 }
 
 export function AddPlannerItemForm({
+  ariaLabel = 'Add planner item',
   day,
   error,
+  initialValues,
   isSubmitting,
   onCancel,
   onSubmit,
+  submitLabel = 'Save Item',
+  submittingLabel = 'Saving...',
+  title: formTitle = 'Add Item',
   tripId,
 }: AddPlannerItemFormProps) {
-  const [kind, setKind] = useState<PlannerItemKind>('activity')
-  const [title, setTitle] = useState('')
-  const [startTime, setStartTime] = useState('')
-  const [endTime, setEndTime] = useState('')
-  const [location, setLocation] = useState('')
-  const [notes, setNotes] = useState('')
+  const [kind, setKind] = useState<PlannerItemKind>(
+    initialValues?.kind ?? 'activity',
+  )
+  const [title, setTitle] = useState(initialValues?.title ?? '')
+  const [startTime, setStartTime] = useState(initialValues?.startTime ?? '')
+  const [endTime, setEndTime] = useState(initialValues?.endTime ?? '')
+  const [location, setLocation] = useState(initialValues?.location ?? '')
+  const [notes, setNotes] = useState(initialValues?.notes ?? '')
   const [validationMessage, setValidationMessage] = useState('')
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -66,9 +87,9 @@ export function AddPlannerItemForm({
 
   return (
     <div className="modal-backdrop" role="presentation">
-      <section className="modal-panel" aria-label="Add planner item">
+      <section className="modal-panel" aria-label={ariaLabel}>
         <div>
-          <p className="eyebrow">Add Item</p>
+          <p className="eyebrow">{formTitle}</p>
           <h2>{day.label || 'Trip Day'}</h2>
         </div>
 
@@ -150,7 +171,7 @@ export function AddPlannerItemForm({
               Cancel
             </button>
             <button type="submit" disabled={isSubmitting}>
-              {isSubmitting ? 'Saving...' : 'Save Item'}
+              {isSubmitting ? submittingLabel : submitLabel}
             </button>
           </div>
         </form>

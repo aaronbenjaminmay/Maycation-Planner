@@ -71,6 +71,10 @@ export type CreatePlannerItemInput = {
   tripId: string
 }
 
+export type UpdatePlannerItemInput = CreatePlannerItemInput & {
+  itemId: string
+}
+
 type TripRow = {
   id: string
   name: string
@@ -203,6 +207,18 @@ export function formatPlannerItemTimeRange(item: PlannerItem) {
   return formatter.format(new Date(item.starts_at ?? item.ends_at ?? ''))
 }
 
+export function formatPlannerItemTimeInput(value: string | null) {
+  if (!value) {
+    return ''
+  }
+
+  const date = new Date(value)
+  const hours = String(date.getHours()).padStart(2, '0')
+  const minutes = String(date.getMinutes()).padStart(2, '0')
+
+  return `${hours}:${minutes}`
+}
+
 function mapTripRow(row: TripRow): Trip {
   return {
     id: row.id,
@@ -308,6 +324,55 @@ export async function createPlannerItem(input: CreatePlannerItemInput) {
   }
 
   return itemId
+}
+
+export async function updatePlannerItem(input: UpdatePlannerItemInput) {
+  const client = getSupabaseClient()
+  const trimmedTitle = input.title.trim()
+
+  if (!trimmedTitle) {
+    throw new Error('Title is required.')
+  }
+
+  if (input.startTime && input.endTime && input.endTime < input.startTime) {
+    throw new Error('End time must be on or after start time.')
+  }
+
+  const { data: itemId, error } = await client.rpc('update_planner_item', {
+    target_trip_id: input.tripId,
+    target_item_id: input.itemId,
+    item_kind: input.kind,
+    item_title: trimmedTitle,
+    start_time: input.startTime || null,
+    end_time: input.endTime || null,
+    item_location: input.location.trim(),
+    item_notes: input.notes.trim(),
+  })
+
+  if (error) {
+    await logSupabaseError('Failed to update planner item', error)
+    throw new Error(getSupabaseErrorMessage(error))
+  }
+
+  return itemId
+}
+
+export async function deletePlannerItem(tripId: string, itemId: string) {
+  const client = getSupabaseClient()
+  const { data: deletedItemId, error } = await client.rpc(
+    'delete_planner_item',
+    {
+      target_trip_id: tripId,
+      target_item_id: itemId,
+    },
+  )
+
+  if (error) {
+    await logSupabaseError('Failed to delete planner item', error)
+    throw new Error(getSupabaseErrorMessage(error))
+  }
+
+  return deletedItemId
 }
 
 export async function createTrip(input: CreateTripInput) {
