@@ -76,7 +76,8 @@
 .toolbar button,
 .empty-state button,
 .state-panel button,
-.form-actions button {
+.form-actions button,
+.day-detail-toolbar button {
   min-height: 44px;
   border: 1px solid transparent;
   border-radius: 6px;
@@ -93,7 +94,8 @@
 .toolbar button,
 .empty-state button,
 .state-panel button,
-.form-actions button:not(.secondary-button) {
+.form-actions button:not(.secondary-button),
+.day-detail-toolbar button {
   background: var(--accent);
   color: var(--accent-text);
 }
@@ -105,13 +107,15 @@
 }
 
 .auth-form,
-.trip-form {
+.trip-form,
+.planner-item-form {
   display: grid;
   gap: 16px;
 }
 
 .auth-form label,
-.trip-form label {
+.trip-form label,
+.planner-item-form label {
   display: grid;
   gap: 8px;
   color: var(--text-h);
@@ -122,7 +126,10 @@
 
 .auth-form input,
 .trip-form input,
-.trip-form select {
+.trip-form select,
+.planner-item-form input,
+.planner-item-form select,
+.planner-item-form textarea {
   min-height: 44px;
   box-sizing: border-box;
   width: 100%;
@@ -134,9 +141,17 @@
   font: inherit;
 }
 
+.planner-item-form textarea {
+  min-height: 104px;
+  resize: vertical;
+}
+
 .auth-form input:focus,
 .trip-form input:focus,
 .trip-form select:focus,
+.planner-item-form input:focus,
+.planner-item-form select:focus,
+.planner-item-form textarea:focus,
 .mode-toggle button:focus-visible,
 .auth-form button:focus-visible,
 .account-strip button:focus-visible,
@@ -144,7 +159,9 @@
 .empty-state button:focus-visible,
 .state-panel button:focus-visible,
 .form-actions button:focus-visible,
-.trip-card:focus-visible {
+.trip-card:focus-visible,
+.trip-day-card:focus-visible,
+.day-detail-toolbar button:focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
 }
@@ -304,12 +321,27 @@
 
 .trip-day-card {
   display: grid;
-  gap: 8px;
+  gap: 14px;
+  width: 100%;
   padding: 18px;
   border: 1px solid var(--border);
   border-radius: 8px;
+  color: inherit;
   background: var(--control-bg);
+  font: inherit;
   text-align: left;
+  cursor: pointer;
+}
+
+.trip-day-card:hover {
+  border-color: var(--accent);
+}
+
+.trip-day-card__header {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 16px;
 }
 
 .trip-day-card__number {
@@ -329,6 +361,136 @@
   line-height: 1.2;
 }
 
+.trip-day-card__count {
+  flex: 0 0 auto;
+  padding: 4px 8px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  color: var(--text-h);
+  background: var(--panel);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.day-preview-list {
+  display: grid;
+  gap: 8px;
+}
+
+.day-preview-item {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.day-preview-item > span:not(.planner-item-kind):not(.muted) {
+  color: var(--text-h);
+  font-weight: 700;
+}
+
+.day-title {
+  margin-top: 10px;
+  color: var(--text-h);
+  font-size: 1.15rem;
+  font-weight: 800;
+}
+
+.day-detail-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--control-bg);
+}
+
+.day-detail-toolbar div {
+  display: grid;
+  gap: 4px;
+}
+
+.day-detail-toolbar strong {
+  color: var(--text-h);
+}
+
+.day-detail-toolbar button {
+  flex: 0 0 auto;
+  padding: 0 16px;
+}
+
+.planner-item-list {
+  display: grid;
+  gap: 10px;
+}
+
+.planner-item-card {
+  display: grid;
+  gap: 6px;
+  padding: 14px;
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  border-radius: 8px;
+  background: var(--control-bg);
+}
+
+.planner-item-card strong {
+  color: var(--text-h);
+  line-height: 1.2;
+}
+
+.planner-item-kind {
+  width: fit-content;
+  padding: 3px 8px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  color: var(--text-h);
+  background: var(--panel);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.planner-item-kind.travel {
+  border-color: #3483fa;
+}
+
+.planner-item-kind.reservation {
+  border-color: #f2a93b;
+}
+
+.planner-item-kind.activity {
+  border-color: #35b8a8;
+}
+
+.planner-item-kind.note {
+  border-color: #9b8cff;
+}
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: grid;
+  place-items: center;
+  padding: 18px;
+  background: rgba(0, 0, 0, 0.58);
+}
+
+.modal-panel {
+  width: min(100%, 520px);
+  max-height: calc(100svh - 36px);
+  overflow: auto;
+  display: grid;
+  gap: 20px;
+  padding: 24px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--panel);
+  box-shadow: var(--shadow);
+}
+
 @media (max-width: 560px) {
   .app-shell {
     padding: 16px;
@@ -346,7 +508,8 @@
   }
 
   .dashboard-header,
-  .toolbar {
+  .toolbar,
+  .day-detail-toolbar {
     align-items: stretch;
     flex-direction: column;
   }
@@ -355,5 +518,14 @@
   .form-actions,
   .trip-summary {
     grid-template-columns: 1fr;
+  }
+
+  .trip-day-card__header {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .day-detail-toolbar button {
+    width: 100%;
   }
 }

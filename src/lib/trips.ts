@@ -30,12 +30,45 @@ export type TripDay = {
   sort_order: number
 }
 
+export const plannerItemKinds = [
+  'travel',
+  'reservation',
+  'activity',
+  'note',
+] as const
+
+export type PlannerItemKind = (typeof plannerItemKinds)[number]
+
+export type PlannerItem = {
+  id: string
+  trip_id: string
+  trip_day_id: string
+  kind: PlannerItemKind
+  title: string
+  description: string | null
+  starts_at: string | null
+  ends_at: string | null
+  location_name: string | null
+  sort_order: number
+}
+
 export type CreateTripInput = {
   name: string
   destination: string
   startsOn: string
   endsOn: string
   travelType: TravelType
+}
+
+export type CreatePlannerItemInput = {
+  endTime: string
+  kind: PlannerItemKind
+  location: string
+  notes: string
+  startTime: string
+  title: string
+  tripDayId: string
+  tripId: string
 }
 
 type TripRow = {
@@ -52,6 +85,19 @@ type TripDayRow = {
   trip_id: string
   date: string
   label: string | null
+  sort_order: number
+}
+
+type PlannerItemRow = {
+  id: string
+  trip_id: string
+  trip_day_id: string
+  kind: PlannerItemKind
+  title: string
+  description: string | null
+  starts_at: string | null
+  ends_at: string | null
+  location_name: string | null
   sort_order: number
 }
 
@@ -138,6 +184,25 @@ export function formatTripDayDate(date: string) {
   }).format(parseDateInput(date))
 }
 
+export function formatPlannerItemTimeRange(item: PlannerItem) {
+  if (!item.starts_at && !item.ends_at) {
+    return ''
+  }
+
+  const formatter = new Intl.DateTimeFormat(undefined, {
+    hour: 'numeric',
+    minute: '2-digit',
+  })
+
+  if (item.starts_at && item.ends_at) {
+    return `${formatter.format(new Date(item.starts_at))} - ${formatter.format(
+      new Date(item.ends_at),
+    )}`
+  }
+
+  return formatter.format(new Date(item.starts_at ?? item.ends_at ?? ''))
+}
+
 function mapTripRow(row: TripRow): Trip {
   return {
     id: row.id,
@@ -155,6 +220,21 @@ function mapTripDayRow(row: TripDayRow): TripDay {
     trip_id: row.trip_id,
     date: row.date,
     label: row.label,
+    sort_order: row.sort_order,
+  }
+}
+
+function mapPlannerItemRow(row: PlannerItemRow): PlannerItem {
+  return {
+    id: row.id,
+    trip_id: row.trip_id,
+    trip_day_id: row.trip_day_id,
+    kind: row.kind,
+    title: row.title,
+    description: row.description,
+    starts_at: row.starts_at,
+    ends_at: row.ends_at,
+    location_name: row.location_name,
     sort_order: row.sort_order,
   }
 }
@@ -183,6 +263,51 @@ export async function loadTripDays(tripId: string) {
   }
 
   return ((data ?? []) as TripDayRow[]).map(mapTripDayRow)
+}
+
+export async function loadPlannerItems(tripId: string) {
+  const client = getSupabaseClient()
+  const { data, error } = await client.rpc('get_trip_planner_items', {
+    target_trip_id: tripId,
+  })
+
+  if (error) {
+    await logSupabaseError('Failed to load planner items', error)
+    throw new Error(getSupabaseErrorMessage(error))
+  }
+
+  return ((data ?? []) as PlannerItemRow[]).map(mapPlannerItemRow)
+}
+
+export async function createPlannerItem(input: CreatePlannerItemInput) {
+  const client = getSupabaseClient()
+  const trimmedTitle = input.title.trim()
+
+  if (!trimmedTitle) {
+    throw new Error('Title is required.')
+  }
+
+  if (input.startTime && input.endTime && input.endTime < input.startTime) {
+    throw new Error('End time must be on or after start time.')
+  }
+
+  const { data: itemId, error } = await client.rpc('create_planner_item', {
+    target_trip_id: input.tripId,
+    target_trip_day_id: input.tripDayId,
+    item_kind: input.kind,
+    item_title: trimmedTitle,
+    start_time: input.startTime || null,
+    end_time: input.endTime || null,
+    item_location: input.location.trim(),
+    item_notes: input.notes.trim(),
+  })
+
+  if (error) {
+    await logSupabaseError('Failed to create planner item', error)
+    throw new Error(getSupabaseErrorMessage(error))
+  }
+
+  return itemId
 }
 
 export async function createTrip(input: CreateTripInput) {
