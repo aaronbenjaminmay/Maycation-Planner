@@ -62,6 +62,10 @@ export type CreateTripInput = {
   travelType: TravelType
 }
 
+export type UpdateTripInput = CreateTripInput & {
+  tripId: string
+}
+
 export type CreatePlannerItemInput = {
   endTime: string
   kind: PlannerItemKind
@@ -433,4 +437,44 @@ export async function createTrip(input: CreateTripInput) {
   }
 
   return tripId
+}
+
+export async function updateTrip(input: UpdateTripInput) {
+  const client = getSupabaseClient()
+  const trimmedName = input.name.trim()
+  const trimmedDestination = input.destination.trim()
+
+  if (!trimmedName) {
+    throw new Error('Trip name is required.')
+  }
+
+  if (!input.startsOn || !input.endsOn) {
+    throw new Error('Start date and end date are required.')
+  }
+
+  if (parseDateInput(input.endsOn) < parseDateInput(input.startsOn)) {
+    throw new Error('End date must be on or after the start date.')
+  }
+
+  const { data, error } = await client.rpc('update_trip', {
+    target_trip_id: input.tripId,
+    trip_name: trimmedName,
+    location: trimmedDestination,
+    starts_on: input.startsOn,
+    ends_on: input.endsOn,
+    travel_type: input.travelType,
+  })
+
+  if (error) {
+    await logSupabaseError('Failed to update trip', error)
+    throw new Error(getSupabaseErrorMessage(error))
+  }
+
+  const updatedTrip = ((data ?? []) as TripRow[])[0]
+
+  if (!updatedTrip) {
+    throw new Error('Trip could not be updated.')
+  }
+
+  return mapTripRow(updatedTrip)
 }

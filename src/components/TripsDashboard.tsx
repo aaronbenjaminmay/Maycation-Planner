@@ -114,8 +114,23 @@ export function TripsDashboard({ user }: TripsDashboardProps) {
     }
   }
 
+  function handleTripUpdated(updatedTrip: Trip) {
+    setActiveTrip(updatedTrip)
+    setTrips((currentTrips) =>
+      currentTrips.map((trip) =>
+        trip.id === updatedTrip.id ? updatedTrip : trip,
+      ),
+    )
+  }
+
   if (activeTrip) {
-    return <TripDetail trip={activeTrip} onBack={() => setActiveTrip(null)} />
+    return (
+      <TripDetail
+        trip={activeTrip}
+        onBack={() => setActiveTrip(null)}
+        onTripUpdated={handleTripUpdated}
+      />
+    )
   }
 
   return (

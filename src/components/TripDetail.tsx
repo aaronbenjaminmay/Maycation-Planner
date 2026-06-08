@@ -17,13 +17,14 @@ import { TripSettings } from './TripSettings'
 type TripDetailProps = {
   trip: Trip
   onBack: () => void
+  onTripUpdated: (trip: Trip) => void
 }
 
 function getVisibleErrorMessage(error: unknown, fallback: string) {
   return error instanceof Error && error.message ? error.message : fallback
 }
 
-export function TripDetail({ trip, onBack }: TripDetailProps) {
+export function TripDetail({ trip, onBack, onTripUpdated }: TripDetailProps) {
   const [tripDays, setTripDays] = useState<TripDay[]>([])
   const [plannerItems, setPlannerItems] = useState<PlannerItem[]>([])
   const [isLoadingDays, setIsLoadingDays] = useState(true)
@@ -73,6 +74,7 @@ export function TripDetail({ trip, onBack }: TripDetailProps) {
       <TripSettings
         currentRole={currentRole}
         onBack={() => setIsSettingsOpen(false)}
+        onTripUpdated={onTripUpdated}
         trip={trip}
       />
     )

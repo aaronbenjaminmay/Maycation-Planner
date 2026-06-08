@@ -10,11 +10,18 @@ import {
   type TripMember,
 } from '../lib/tripMembers'
 import { getSupabaseClient } from '../lib/supabaseClient'
-import type { Trip, TripMemberRole } from '../lib/trips'
+import {
+  travelTypes,
+  updateTrip,
+  type TravelType,
+  type Trip,
+  type TripMemberRole,
+} from '../lib/trips'
 
 type TripSettingsProps = {
   currentRole: TripMemberRole | null
   onBack: () => void
+  onTripUpdated: (trip: Trip) => void
   trip: Trip
 }
 
@@ -26,20 +33,32 @@ function getVisibleErrorMessage(error: unknown, fallback: string) {
 
 export function TripSettings({
   onBack,
+  onTripUpdated,
   trip,
 }: TripSettingsProps) {
   const [members, setMembers] = useState<TripMember[]>([])
   const [invites, setInvites] = useState<TripInvite[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [isInviting, setIsInviting] = useState(false)
+  const [isEditingTrip, setIsEditingTrip] = useState(false)
+  const [isSavingTrip, setIsSavingTrip] = useState(false)
   const [busyMemberId, setBusyMemberId] = useState<string | null>(null)
   const [email, setEmail] = useState('')
   const [inviteRole, setInviteRole] = useState<InviteRole>('viewer')
+  const [editName, setEditName] = useState(trip.name)
+  const [editDestination, setEditDestination] = useState(trip.destination ?? '')
+  const [editStartsOn, setEditStartsOn] = useState(trip.starts_on)
+  const [editEndsOn, setEditEndsOn] = useState(trip.ends_on)
+  const [editTravelType, setEditTravelType] = useState<TravelType>(
+    trip.metadata.travel_type ?? 'Other',
+  )
   const [error, setError] = useState('')
+  const [tripEditError, setTripEditError] = useState('')
   const [inviteError, setInviteError] = useState('')
   const [memberError, setMemberError] = useState('')
   const [settingsRole, setSettingsRole] = useState<TripMemberRole | null>(null)
   const isOwner = settingsRole === 'owner'
+  const canEditTrip = settingsRole === 'owner' || settingsRole === 'editor'
   const ownerCount = members.filter((member) => member.role === 'owner').length
 
   const loadSettings = useCallback(async () => {
@@ -69,6 +88,14 @@ export function TripSettings({
   useEffect(() => {
     void loadSettings()
   }, [loadSettings])
+
+  useEffect(() => {
+    setEditName(trip.name)
+    setEditDestination(trip.destination ?? '')
+    setEditStartsOn(trip.starts_on)
+    setEditEndsOn(trip.ends_on)
+    setEditTravelType(trip.metadata.travel_type ?? 'Other')
+  }, [trip])
 
   useEffect(() => {
     if (!import.meta.env.DEV) {
@@ -136,6 +163,51 @@ export function TripSettings({
       )
     } finally {
       setIsInviting(false)
+    }
+  }
+
+  async function handleTripUpdate(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault()
+    if (!canEditTrip) {
+      return
+    }
+
+    setTripEditError('')
+
+    if (!editName.trim()) {
+      setTripEditError('Trip name is required.')
+      return
+    }
+
+    if (!editStartsOn || !editEndsOn) {
+      setTripEditError('Start date and end date are required.')
+      return
+    }
+
+    if (editEndsOn < editStartsOn) {
+      setTripEditError('End date must be on or after the start date.')
+      return
+    }
+
+    setIsSavingTrip(true)
+
+    try {
+      const updatedTrip = await updateTrip({
+        tripId: trip.id,
+        name: editName,
+        destination: editDestination,
+        startsOn: editStartsOn,
+        endsOn: editEndsOn,
+        travelType: editTravelType,
+      })
+      onTripUpdated(updatedTrip)
+      setIsEditingTrip(false)
+    } catch (updateFailure) {
+      setTripEditError(
+        getVisibleErrorMessage(updateFailure, 'Unable to update this trip.'),
+      )
+    } finally {
+      setIsSavingTrip(false)
     }
   }
 
@@ -258,6 +330,111 @@ export function TripSettings({
                 {isInviting ? 'Inviting...' : 'Create Invite'}
               </button>
             </form>
+          </section>
+        ) : null}
+
+        {!isLoading && !error && canEditTrip ? (
+          <section className="settings-panel" aria-label="Edit trip">
+            <div>
+              <h2>Edit Trip</h2>
+              <p className="muted">
+                Update the trip basics shared across the dashboard.
+              </p>
+            </div>
+
+            {!isEditingTrip ? (
+              <button
+                type="button"
+                className="secondary-button"
+                onClick={() => setIsEditingTrip(true)}
+              >
+                Edit basics
+              </button>
+            ) : (
+              <form className="trip-form" onSubmit={handleTripUpdate}>
+                <label>
+                  Trip Name
+                  <input
+                    type="text"
+                    value={editName}
+                    onChange={(event) => setEditName(event.target.value)}
+                    required
+                  />
+                </label>
+
+                <label>
+                  Location
+                  <input
+                    type="text"
+                    value={editDestination}
+                    onChange={(event) => setEditDestination(event.target.value)}
+                  />
+                </label>
+
+                <div className="form-grid">
+                  <label>
+                    Start Date
+                    <input
+                      type="date"
+                      value={editStartsOn}
+                      onChange={(event) => setEditStartsOn(event.target.value)}
+                      required
+                    />
+                  </label>
+
+                  <label>
+                    End Date
+                    <input
+                      type="date"
+                      value={editEndsOn}
+                      onChange={(event) => setEditEndsOn(event.target.value)}
+                      required
+                    />
+                  </label>
+                </div>
+
+                <label>
+                  Travel Type
+                  <select
+                    value={editTravelType}
+                    onChange={(event) =>
+                      setEditTravelType(event.target.value as TravelType)
+                    }
+                  >
+                    {travelTypes.map((type) => (
+                      <option key={type} value={type}>
+                        {type}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+
+                <p className="muted">
+                  Changing dates does not update existing trip days yet.
+                </p>
+
+                {tripEditError ? (
+                  <p className="feedback">{tripEditError}</p>
+                ) : null}
+
+                <div className="form-actions">
+                  <button
+                    type="button"
+                    className="secondary-button"
+                    onClick={() => {
+                      setTripEditError('')
+                      setIsEditingTrip(false)
+                    }}
+                    disabled={isSavingTrip}
+                  >
+                    Cancel
+                  </button>
+                  <button type="submit" disabled={isSavingTrip}>
+                    {isSavingTrip ? 'Saving...' : 'Save Trip'}
+                  </button>
+                </div>
+              </form>
+            )}
           </section>
         ) : null}
 
