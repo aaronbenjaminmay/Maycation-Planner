@@ -5,9 +5,11 @@ import {
   formatPlannerItemTimeInput,
   formatPlannerItemTimeRange,
   formatTripDayDate,
+  reorderPlannerItem,
   updatePlannerItem,
   type CreatePlannerItemInput,
   type PlannerItem,
+  type ReorderPlannerItemDirection,
   type Trip,
   type TripDay,
 } from '../lib/trips'
@@ -39,9 +41,11 @@ export function DayDetail({
   const [isAddItemOpen, setIsAddItemOpen] = useState(false)
   const [editingItem, setEditingItem] = useState<PlannerItem | null>(null)
   const [deletingItemId, setDeletingItemId] = useState<string | null>(null)
+  const [reorderingItemId, setReorderingItemId] = useState<string | null>(null)
   const [isSavingItem, setIsSavingItem] = useState(false)
   const [itemError, setItemError] = useState('')
   const [deleteError, setDeleteError] = useState('')
+  const [reorderError, setReorderError] = useState('')
 
   async function handleCreateItem(input: CreatePlannerItemInput) {
     setItemError('')
@@ -102,6 +106,25 @@ export function DayDetail({
     }
   }
 
+  async function handleReorderItem(
+    item: PlannerItem,
+    direction: ReorderPlannerItemDirection,
+  ) {
+    setReorderError('')
+    setReorderingItemId(item.id)
+
+    try {
+      await reorderPlannerItem(trip.id, item.id, direction)
+      await onItemCreated()
+    } catch (reorderFailure) {
+      setReorderError(
+        getVisibleErrorMessage(reorderFailure, 'Unable to reorder item.'),
+      )
+    } finally {
+      setReorderingItemId(null)
+    }
+  }
+
   return (
     <main className="app-shell dashboard-shell">
       <section className="dashboard-panel trips-panel">
@@ -137,7 +160,8 @@ export function DayDetail({
         {items.length > 0 ? (
           <section className="planner-item-list" aria-label="Planner items">
             {deleteError ? <p className="feedback">{deleteError}</p> : null}
-            {items.map((item) => (
+            {reorderError ? <p className="feedback">{reorderError}</p> : null}
+            {items.map((item, index) => (
               <article className="planner-item-card" key={item.id}>
                 <div className="planner-item-card__content">
                   <span className={`planner-item-kind ${item.kind}`}>
@@ -158,11 +182,38 @@ export function DayDetail({
                     <button
                       type="button"
                       className="secondary-button"
+                      onClick={() => void handleReorderItem(item, 'up')}
+                      disabled={
+                        index === 0 ||
+                        deletingItemId === item.id ||
+                        reorderingItemId !== null
+                      }
+                    >
+                      Move up
+                    </button>
+                    <button
+                      type="button"
+                      className="secondary-button"
+                      onClick={() => void handleReorderItem(item, 'down')}
+                      disabled={
+                        index === items.length - 1 ||
+                        deletingItemId === item.id ||
+                        reorderingItemId !== null
+                      }
+                    >
+                      Move down
+                    </button>
+                    <button
+                      type="button"
+                      className="secondary-button"
                       onClick={() => {
                         setItemError('')
                         setEditingItem(item)
                       }}
-                      disabled={deletingItemId === item.id}
+                      disabled={
+                        deletingItemId === item.id ||
+                        reorderingItemId !== null
+                      }
                     >
                       Edit
                     </button>
@@ -170,7 +221,10 @@ export function DayDetail({
                       type="button"
                       className="danger-button"
                       onClick={() => void handleDeleteItem(item)}
-                      disabled={deletingItemId === item.id}
+                      disabled={
+                        deletingItemId === item.id ||
+                        reorderingItemId !== null
+                      }
                     >
                       {deletingItemId === item.id ? 'Deleting...' : 'Delete'}
                     </button>

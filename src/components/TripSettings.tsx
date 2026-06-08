@@ -1,6 +1,7 @@
 import { type FormEvent, useCallback, useEffect, useState } from 'react'
 import {
   createTripInvite,
+  loadTripAccess,
   loadTripInvites,
   loadTripMembers,
   removeTripMember,
@@ -8,6 +9,7 @@ import {
   type TripInvite,
   type TripMember,
 } from '../lib/tripMembers'
+import { getSupabaseClient } from '../lib/supabaseClient'
 import type { Trip, TripMemberRole } from '../lib/trips'
 
 type TripSettingsProps = {
@@ -23,7 +25,6 @@ function getVisibleErrorMessage(error: unknown, fallback: string) {
 }
 
 export function TripSettings({
-  currentRole,
   onBack,
   trip,
 }: TripSettingsProps) {
@@ -37,7 +38,8 @@ export function TripSettings({
   const [error, setError] = useState('')
   const [inviteError, setInviteError] = useState('')
   const [memberError, setMemberError] = useState('')
-  const isOwner = currentRole === 'owner'
+  const [settingsRole, setSettingsRole] = useState<TripMemberRole | null>(null)
+  const isOwner = settingsRole === 'owner'
   const ownerCount = members.filter((member) => member.role === 'owner').length
 
   const loadSettings = useCallback(async () => {
@@ -45,10 +47,12 @@ export function TripSettings({
     setError('')
 
     try {
+      const loadedRole = await loadTripAccess(trip.id)
       const loadedMembers = await loadTripMembers(trip.id)
+      setSettingsRole(loadedRole)
       setMembers(loadedMembers)
 
-      if (isOwner) {
+      if (loadedRole === 'owner') {
         setInvites(await loadTripInvites(trip.id))
       } else {
         setInvites([])
@@ -60,14 +64,64 @@ export function TripSettings({
     } finally {
       setIsLoading(false)
     }
-  }, [isOwner, trip.id])
+  }, [trip.id])
 
   useEffect(() => {
     void loadSettings()
   }, [loadSettings])
 
+  useEffect(() => {
+    if (!import.meta.env.DEV) {
+      return
+    }
+
+    let isMounted = true
+
+    async function logTripSettingsRole() {
+      try {
+        const client = getSupabaseClient()
+        const { data } = await client.auth.getSession()
+
+        if (!isMounted) {
+          return
+        }
+
+        const currentUserId = data.session?.user.id ?? null
+        const currentMember = currentUserId
+          ? members.find((member) => member.user_id === currentUserId) ?? null
+          : null
+
+        console.info('Trip Settings role debug', {
+          authUserEmail: data.session?.user.email ?? null,
+          authUserId: currentUserId,
+          currentMember,
+          isOwner,
+          settingsRole,
+          tripId: trip.id,
+        })
+      } catch (logError) {
+        console.info('Trip Settings role debug unavailable', {
+          isOwner,
+          logError,
+          settingsRole,
+          tripId: trip.id,
+        })
+      }
+    }
+
+    void logTripSettingsRole()
+
+    return () => {
+      isMounted = false
+    }
+  }, [isOwner, members, settingsRole, trip.id])
+
   async function handleInvite(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
+    if (!isOwner) {
+      return
+    }
+
     setInviteError('')
     setIsInviting(true)
 
@@ -86,6 +140,10 @@ export function TripSettings({
   }
 
   async function handleRoleChange(member: TripMember, role: InviteRole) {
+    if (!isOwner) {
+      return
+    }
+
     setMemberError('')
     setBusyMemberId(member.id)
 
@@ -102,6 +160,10 @@ export function TripSettings({
   }
 
   async function handleRemoveMember(member: TripMember) {
+    if (!isOwner) {
+      return
+    }
+
     const confirmed = window.confirm(`Remove ${getMemberName(member)}?`)
 
     if (!confirmed) {

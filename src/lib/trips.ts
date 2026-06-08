@@ -77,6 +77,8 @@ export type UpdatePlannerItemInput = CreatePlannerItemInput & {
   itemId: string
 }
 
+export type ReorderPlannerItemDirection = 'up' | 'down'
+
 type TripRow = {
   id: string
   name: string
@@ -375,6 +377,29 @@ export async function deletePlannerItem(tripId: string, itemId: string) {
   }
 
   return deletedItemId
+}
+
+export async function reorderPlannerItem(
+  tripId: string,
+  itemId: string,
+  direction: ReorderPlannerItemDirection,
+) {
+  const client = getSupabaseClient()
+  const { data: didReorder, error } = await client.rpc(
+    'reorder_planner_item',
+    {
+      target_trip_id: tripId,
+      planner_item_id: itemId,
+      direction,
+    },
+  )
+
+  if (error) {
+    await logSupabaseError('Failed to reorder planner item', error)
+    throw new Error(getSupabaseErrorMessage(error))
+  }
+
+  return Boolean(didReorder)
 }
 
 export async function createTrip(input: CreateTripInput) {
