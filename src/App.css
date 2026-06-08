@@ -107,7 +107,8 @@
 .state-panel button,
 .form-actions button:not(.secondary-button),
 .day-detail-toolbar button,
-.invite-form button:not(.secondary-button) {
+.invite-form button:not(.secondary-button),
+.member-actions button:not(.secondary-button):not(.danger-button) {
   background: var(--accent);
   color: var(--accent-text);
 }
@@ -562,6 +563,42 @@
   border-color: #9b8cff;
 }
 
+.invite-status-group {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.status-pill {
+  width: fit-content;
+  padding: 4px 8px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  color: var(--text-h);
+  background: var(--control-bg);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.status-pill.pending {
+  border-color: var(--accent);
+}
+
+.status-pill.accepted {
+  border-color: #35b8a8;
+}
+
+.status-pill.declined,
+.status-pill.revoked {
+  border-color: var(--danger-border);
+}
+
+.status-pill.expired {
+  border-color: #f2a93b;
+}
+
 .member-actions {
   grid-column: 1 / -1;
   display: flex;
@@ -654,5 +691,9 @@
   .member-actions {
     display: grid;
     grid-template-columns: 1fr;
+  }
+
+  .invite-status-group {
+    justify-content: flex-start;
   }
 }

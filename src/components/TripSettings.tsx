@@ -265,10 +265,10 @@ export function TripSettings({
         ) : null}
 
         {!isLoading && !error && isOwner && invites.length > 0 ? (
-          <section className="settings-panel" aria-label="Pending invites">
+          <section className="settings-panel" aria-label="Trip invites">
             <div>
-              <h2>Pending Invites</h2>
-              <p className="muted">Invites that have not been accepted yet.</p>
+              <h2>Invites</h2>
+              <p className="muted">Invitation history and current status.</p>
             </div>
 
             <div className="member-list">
@@ -280,9 +280,14 @@ export function TripSettings({
                       Expires {formatInviteDate(invite.expires_at)}
                     </p>
                   </div>
-                  <span className={`role-pill ${invite.role}`}>
-                    {getRoleLabel(invite.role)}
-                  </span>
+                  <div className="invite-status-group">
+                    <span className={`role-pill ${invite.role}`}>
+                      {getRoleLabel(invite.role)}
+                    </span>
+                    <span className={`status-pill ${invite.status}`}>
+                      {getInviteStatusLabel(invite.status)}
+                    </span>
+                  </div>
                 </article>
               ))}
             </div>
@@ -317,5 +322,20 @@ function getRoleLabel(role: TripMemberRole) {
       return 'Owner'
     case 'viewer':
       return 'Viewer'
+  }
+}
+
+function getInviteStatusLabel(status: TripInvite['status']) {
+  switch (status) {
+    case 'accepted':
+      return 'Accepted'
+    case 'declined':
+      return 'Declined'
+    case 'expired':
+      return 'Expired'
+    case 'pending':
+      return 'Pending'
+    case 'revoked':
+      return 'Revoked'
   }
 }

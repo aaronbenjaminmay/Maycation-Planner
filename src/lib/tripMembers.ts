@@ -1,6 +1,13 @@
 import { getSupabaseClient } from './supabaseClient'
 import type { TripMemberRole } from './trips'
 
+export type TripInviteStatus =
+  | 'pending'
+  | 'accepted'
+  | 'declined'
+  | 'expired'
+  | 'revoked'
+
 export type TripMember = {
   email: string | null
   display_name: string | null
@@ -16,6 +23,20 @@ export type TripInvite = {
   expires_at: string
   id: string
   role: Exclude<TripMemberRole, 'owner'>
+  status: TripInviteStatus
+}
+
+export type PendingTripInvite = {
+  created_at: string
+  destination: string | null
+  ends_on: string | null
+  expires_at: string
+  id: string
+  role: Exclude<TripMemberRole, 'owner'>
+  status: Extract<TripInviteStatus, 'pending'>
+  starts_on: string | null
+  trip_id: string
+  trip_name: string
 }
 
 type SupabaseErrorLike = {
@@ -86,6 +107,35 @@ export async function loadTripInvites(tripId: string) {
   return (data ?? []) as TripInvite[]
 }
 
+export async function loadMyPendingInvites() {
+  const client = getSupabaseClient()
+  const { data: sessionData } = await client.auth.getSession()
+  const { data, error } = await client.rpc('get_my_pending_invites')
+
+  if (import.meta.env.DEV) {
+    console.info('Loading pending invites', {
+      resultCount: data?.length ?? 0,
+      signedInEmail: sessionData.session?.user.email ?? null,
+    })
+  }
+
+  if (error) {
+    if (import.meta.env.DEV) {
+      console.error('Failed to load pending invites', {
+        code: error.code,
+        details: error.details,
+        hint: error.hint,
+        message: error.message,
+        signedInEmail: sessionData.session?.user.email ?? null,
+      })
+    }
+
+    throw new Error(getSupabaseErrorMessage(error))
+  }
+
+  return (data ?? []) as PendingTripInvite[]
+}
+
 export async function createTripInvite(
   tripId: string,
   email: string,
@@ -110,6 +160,37 @@ export async function createTripInvite(
   }
 
   return inviteId
+}
+
+export async function acceptTripInvite(inviteId: string) {
+  const client = getSupabaseClient()
+  const { data: tripId, error } = await client.rpc('accept_trip_invite', {
+    invite_id: inviteId,
+  })
+
+  if (error) {
+    await logSupabaseError('Failed to accept trip invite', error)
+    throw new Error(getSupabaseErrorMessage(error))
+  }
+
+  return tripId
+}
+
+export async function declineTripInvite(inviteId: string) {
+  const client = getSupabaseClient()
+  const { data: declinedInviteId, error } = await client.rpc(
+    'decline_trip_invite',
+    {
+      invite_id: inviteId,
+    },
+  )
+
+  if (error) {
+    await logSupabaseError('Failed to decline trip invite', error)
+    throw new Error(getSupabaseErrorMessage(error))
+  }
+
+  return declinedInviteId
 }
 
 export async function updateTripMemberRole(
