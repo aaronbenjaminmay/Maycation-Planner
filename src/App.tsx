@@ -1,10 +1,11 @@
 import { type FormEvent, useState } from 'react'
 import {
   signInWithEmailPassword,
-  signOut,
   signUpWithEmailPassword,
   useAuthSession,
 } from './lib/auth'
+import { CardSurface } from './components/DesignSystem'
+import { TripsDashboard } from './components/TripsDashboard'
 import './App.css'
 
 type AuthMode = 'sign-in' | 'sign-up'
@@ -36,59 +37,24 @@ function App() {
     }
   }
 
-  async function handleSignOut() {
-    setFeedback('')
-    setIsSubmitting(true)
-
-    try {
-      await signOut()
-    } catch (error) {
-      setFeedback(error instanceof Error ? error.message : 'Unable to sign out.')
-    } finally {
-      setIsSubmitting(false)
-    }
-  }
-
   if (isLoading) {
     return (
       <main className="app-shell">
-        <section className="auth-panel">
+        <CardSurface className="auth-panel">
           <p className="eyebrow">Maycation Planner</p>
           <h1>Loading your planner</h1>
-        </section>
+        </CardSurface>
       </main>
     )
   }
 
   if (user) {
-    return (
-      <main className="app-shell">
-        <section className="dashboard-panel">
-          <div>
-            <p className="eyebrow">Maycation Planner</p>
-            <h1>Dashboard</h1>
-            <p className="muted">You are signed in.</p>
-          </div>
-
-          <div className="account-strip">
-            <div>
-              <span className="label">Signed in as</span>
-              <strong>{user.email}</strong>
-            </div>
-            <button type="button" onClick={handleSignOut} disabled={isSubmitting}>
-              Sign out
-            </button>
-          </div>
-
-          {feedback ? <p className="feedback">{feedback}</p> : null}
-        </section>
-      </main>
-    )
+    return <TripsDashboard user={user} />
   }
 
   return (
     <main className="app-shell">
-      <section className="auth-panel">
+      <CardSurface className="auth-panel">
         <div>
           <p className="eyebrow">Maycation Planner</p>
           <h1>Plan the trip together</h1>
@@ -150,7 +116,7 @@ function App() {
         </form>
 
         {feedback ? <p className="feedback">{feedback}</p> : null}
-      </section>
+      </CardSurface>
     </main>
   )
 }
