@@ -52,6 +52,10 @@ export type PlannerItem = {
   ends_at: string | null
   location_name: string | null
   sort_order: number
+  metadata: {
+    completed?: boolean
+    [key: string]: unknown
+  }
 }
 
 export type CreateTripInput = {
@@ -111,6 +115,7 @@ type PlannerItemRow = {
   ends_at: string | null
   location_name: string | null
   sort_order: number
+  metadata: Record<string, unknown> | null
 }
 
 type SupabaseErrorLike = {
@@ -260,6 +265,7 @@ function mapPlannerItemRow(row: PlannerItemRow): PlannerItem {
     ends_at: row.ends_at,
     location_name: row.location_name,
     sort_order: row.sort_order,
+    metadata: row.metadata ?? {},
   }
 }
 
@@ -404,6 +410,29 @@ export async function reorderPlannerItem(
   }
 
   return Boolean(didReorder)
+}
+
+export async function togglePlannerItemCompletion(
+  tripId: string,
+  itemId: string,
+  isCompleted: boolean,
+) {
+  const client = getSupabaseClient()
+  const { data: updatedItemId, error } = await client.rpc(
+    'toggle_planner_item_completion',
+    {
+      target_trip_id: tripId,
+      planner_item_id: itemId,
+      is_completed: isCompleted,
+    },
+  )
+
+  if (error) {
+    await logSupabaseError('Failed to update planner item completion', error)
+    throw new Error(getSupabaseErrorMessage(error))
+  }
+
+  return updatedItemId
 }
 
 export async function createTrip(input: CreateTripInput) {

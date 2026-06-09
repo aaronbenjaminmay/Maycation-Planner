@@ -9,6 +9,13 @@ import {
   type PendingTripInvite,
 } from '../lib/tripMembers'
 import { CreateTripForm } from './CreateTripForm'
+import {
+  CardSurface,
+  EmptyState,
+  IconButton,
+  ModalSheet,
+  ScreenHeader,
+} from './DesignSystem'
 import { TripDetail } from './TripDetail'
 import { TripCard } from './TripCard'
 
@@ -135,31 +142,39 @@ export function TripsDashboard({ user }: TripsDashboardProps) {
 
   return (
     <main className="app-shell dashboard-shell">
-      <section className="dashboard-panel trips-panel">
-        <header className="dashboard-header">
-          <div>
-            <p className="eyebrow">Maycation Planner</p>
-            <h1>My Trips</h1>
-            <p className="muted">Signed in as {user.email}</p>
-          </div>
-          <button
-            type="button"
-            className="secondary-button"
-            onClick={handleSignOut}
-            disabled={isSigningOut}
-          >
-            Sign out
-          </button>
-        </header>
+      <section className="page-shell trips-panel">
+        <ScreenHeader
+          actions={
+            <>
+              <IconButton
+                icon="add"
+                label="Create Trip"
+                onClick={() => setIsCreateOpen(true)}
+                variant="primary"
+              />
+              <IconButton
+                icon="sign-out"
+                label="Sign out"
+                onClick={handleSignOut}
+                disabled={isSigningOut}
+              />
+            </>
+          }
+          eyebrow="Maycation Planner"
+          title="My Trips"
+          meta={<p className="muted">Signed in as {user.email}</p>}
+        />
 
         {isCreateOpen ? (
-          <section className="create-trip-panel" aria-label="Create trip">
-            <div>
-              <h2>Create Trip</h2>
-              <p className="muted">
-                Set the basics now. Days will be generated automatically.
-              </p>
-            </div>
+          <ModalSheet
+            ariaLabel="Create trip"
+            eyebrow="Maycation Planner"
+            onClose={() => {
+              setCreateError('')
+              setIsCreateOpen(false)
+            }}
+            title="Create Trip"
+          >
             <CreateTripForm
               error={createError}
               isSubmitting={isCreatingTrip}
@@ -169,36 +184,28 @@ export function TripsDashboard({ user }: TripsDashboardProps) {
               }}
               onSubmit={handleCreateTrip}
             />
-          </section>
-        ) : null}
-
-        {!isCreateOpen ? (
-          <div className="toolbar">
-            <button type="button" onClick={() => setIsCreateOpen(true)}>
-              Create Trip
-            </button>
-          </div>
+          </ModalSheet>
         ) : null}
 
         {isLoadingTrips ? (
-          <section className="state-panel">
-            <h2>Loading trips</h2>
+          <EmptyState title="Loading trips">
             <p className="muted">Gathering your family travel plans.</p>
-          </section>
+          </EmptyState>
         ) : null}
 
         {!isLoadingTrips && error ? (
-          <section className="state-panel">
-            <h2>Could not load trips</h2>
+          <EmptyState
+            title="Could not load trips"
+            action={
+              <IconButton icon="refresh" label="Try again" onClick={() => void loadTrips()} />
+            }
+          >
             <p className="muted">{error}</p>
-            <button type="button" onClick={() => void loadTrips()}>
-              Try again
-            </button>
-          </section>
+          </EmptyState>
         ) : null}
 
         {!isLoadingTrips && !error && pendingInvites.length > 0 ? (
-          <section
+          <CardSurface
             className="settings-panel"
             aria-label="Pending invitations"
           >
@@ -211,7 +218,7 @@ export function TripsDashboard({ user }: TripsDashboardProps) {
 
             <div className="member-list">
               {pendingInvites.map((invite) => (
-                <article className="member-card" key={invite.id}>
+                <div className="member-row" key={invite.id}>
                   <div>
                     <strong>{invite.trip_name}</strong>
                     <p className="muted">
@@ -240,10 +247,10 @@ export function TripsDashboard({ user }: TripsDashboardProps) {
                       Decline
                     </button>
                   </div>
-                </article>
+                </div>
               ))}
             </div>
-          </section>
+          </CardSurface>
         ) : null}
 
         {!isLoadingTrips &&
@@ -251,16 +258,22 @@ export function TripsDashboard({ user }: TripsDashboardProps) {
         trips.length === 0 &&
         pendingInvites.length === 0 &&
         !isCreateOpen ? (
-          <section className="empty-state">
-            <h2>No trips yet</h2>
+          <EmptyState
+            title="No trips yet"
+            action={
+              <IconButton
+                icon="add"
+                label="Create Trip"
+                onClick={() => setIsCreateOpen(true)}
+                variant="primary"
+              />
+            }
+          >
             <p className="muted">
               Create your first family trip and Maycation Planner will build the
               day-by-day foundation for you.
             </p>
-            <button type="button" onClick={() => setIsCreateOpen(true)}>
-              Create Trip
-            </button>
-          </section>
+          </EmptyState>
         ) : null}
 
         {!isLoadingTrips && !error && trips.length > 0 ? (

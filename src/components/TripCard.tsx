@@ -3,6 +3,7 @@ import {
   getTripDayCount,
   type Trip,
 } from '../lib/trips'
+import { DashboardCard, ProgressPill } from './DesignSystem'
 
 type TripCardProps = {
   onSelect: (trip: Trip) => void
@@ -14,18 +15,20 @@ export function TripCard({ onSelect, trip }: TripCardProps) {
   const travelType = trip.metadata.travel_type ?? 'Other'
 
   return (
-    <button type="button" className="trip-card" onClick={() => onSelect(trip)}>
-      <span className="trip-card__type">{travelType}</span>
-      <span className="trip-card__name">{trip.name}</span>
-      <span className="trip-card__meta">
-        {trip.destination || 'Location not set'}
-      </span>
-      <span className="trip-card__meta">
-        {formatTripDateRange(trip.starts_on, trip.ends_on)}
-      </span>
-      <span className="trip-card__count">
-        {dayCount} {dayCount === 1 ? 'day' : 'days'}
-      </span>
-    </button>
+    <DashboardCard
+      className="trip-card"
+      eyebrow={travelType}
+      onClick={() => onSelect(trip)}
+      subtitle={trip.destination || 'Location not set'}
+      title={trip.name}
+      meta={
+        <>
+          <ProgressPill>{formatTripDateRange(trip.starts_on, trip.ends_on)}</ProgressPill>
+          <ProgressPill>
+            {dayCount} {dayCount === 1 ? 'day' : 'days'}
+          </ProgressPill>
+        </>
+      }
+    />
   )
 }

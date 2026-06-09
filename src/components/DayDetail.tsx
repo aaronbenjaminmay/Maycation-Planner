@@ -2,18 +2,27 @@ import { useState } from 'react'
 import {
   createPlannerItem,
   deletePlannerItem,
-  formatPlannerItemTimeInput,
   formatPlannerItemTimeRange,
+  formatPlannerItemTimeInput,
   formatTripDayDate,
-  reorderPlannerItem,
+  togglePlannerItemCompletion,
   updatePlannerItem,
   type CreatePlannerItemInput,
   type PlannerItem,
-  type ReorderPlannerItemDirection,
   type Trip,
   type TripDay,
 } from '../lib/trips'
-import { AddPlannerItemForm } from './AddPlannerItemForm'
+import {
+  AddPlannerItemForm,
+  type PlannerItemFormValues,
+} from './AddPlannerItemForm'
+import {
+  CardSurface,
+  DetailHeader,
+  EmptyState,
+  IconButton,
+  StatusButton,
+} from './DesignSystem'
 
 type DayDetailProps = {
   canEditPlannerItems: boolean
@@ -38,274 +47,252 @@ export function DayDetail({
   onItemCreated,
   trip,
 }: DayDetailProps) {
-  const [isAddItemOpen, setIsAddItemOpen] = useState(false)
+  const [isItemFormOpen, setIsItemFormOpen] = useState(false)
   const [editingItem, setEditingItem] = useState<PlannerItem | null>(null)
+  const [isSubmittingItem, setIsSubmittingItem] = useState(false)
+  const [itemFormError, setItemFormError] = useState('')
   const [deletingItemId, setDeletingItemId] = useState<string | null>(null)
-  const [reorderingItemId, setReorderingItemId] = useState<string | null>(null)
-  const [isSavingItem, setIsSavingItem] = useState(false)
-  const [itemError, setItemError] = useState('')
-  const [deleteError, setDeleteError] = useState('')
-  const [reorderError, setReorderError] = useState('')
+  const [pendingCompletionItemId, setPendingCompletionItemId] = useState<
+    string | null
+  >(null)
+  const [completionOverrides, setCompletionOverrides] = useState<
+    Record<string, boolean>
+  >({})
+  const [completionError, setCompletionError] = useState('')
 
-  async function handleCreateItem(input: CreatePlannerItemInput) {
-    setItemError('')
-    setIsSavingItem(true)
-
-    try {
-      await createPlannerItem(input)
-      setIsAddItemOpen(false)
-      await onItemCreated()
-    } catch (saveError) {
-      setItemError(getVisibleErrorMessage(saveError, 'Unable to save item.'))
-    } finally {
-      setIsSavingItem(false)
-    }
+  function closeItemForm() {
+    setIsItemFormOpen(false)
+    setEditingItem(null)
+    setItemFormError('')
   }
 
-  async function handleUpdateItem(input: CreatePlannerItemInput) {
-    if (!editingItem) {
-      return
-    }
-
-    setItemError('')
-    setIsSavingItem(true)
+  async function handleItemSubmit(input: CreatePlannerItemInput) {
+    setItemFormError('')
+    setIsSubmittingItem(true)
 
     try {
-      await updatePlannerItem({
-        ...input,
-        itemId: editingItem.id,
-      })
-      setEditingItem(null)
+      if (editingItem) {
+        await updatePlannerItem({
+          ...input,
+          itemId: editingItem.id,
+        })
+      } else {
+        await createPlannerItem(input)
+      }
+
+      closeItemForm()
       await onItemCreated()
-    } catch (saveError) {
-      setItemError(getVisibleErrorMessage(saveError, 'Unable to update item.'))
+    } catch (itemFailure) {
+      setItemFormError(
+        getVisibleErrorMessage(itemFailure, 'Unable to save planner item.'),
+      )
     } finally {
-      setIsSavingItem(false)
+      setIsSubmittingItem(false)
     }
   }
 
   async function handleDeleteItem(item: PlannerItem) {
-    const confirmed = window.confirm(`Delete "${item.title}"?`)
+    const confirmed = window.confirm(`Delete ${item.title}?`)
 
     if (!confirmed) {
-      return
+      return false
     }
 
-    setDeleteError('')
+    setCompletionError('')
     setDeletingItemId(item.id)
 
     try {
       await deletePlannerItem(trip.id, item.id)
       await onItemCreated()
+      return true
     } catch (deleteFailure) {
-      setDeleteError(
-        getVisibleErrorMessage(deleteFailure, 'Unable to delete item.'),
+      setCompletionError(
+        getVisibleErrorMessage(deleteFailure, 'Unable to delete planner item.'),
       )
+      return false
     } finally {
       setDeletingItemId(null)
     }
   }
 
-  async function handleReorderItem(
-    item: PlannerItem,
-    direction: ReorderPlannerItemDirection,
-  ) {
-    setReorderError('')
-    setReorderingItemId(item.id)
+  async function handleToggleCompletion(item: PlannerItem) {
+    setCompletionError('')
+    setPendingCompletionItemId(item.id)
+
+    const currentValue = getPlannerItemCompletedValue(item)
+    const nextValue = !currentValue
+    setCompletionOverrides((currentOverrides) => ({
+      ...currentOverrides,
+      [item.id]: nextValue,
+    }))
 
     try {
-      await reorderPlannerItem(trip.id, item.id, direction)
+      await togglePlannerItemCompletion(trip.id, item.id, nextValue)
       await onItemCreated()
-    } catch (reorderFailure) {
-      setReorderError(
-        getVisibleErrorMessage(reorderFailure, 'Unable to reorder item.'),
+      setCompletionOverrides((currentOverrides) => {
+        const nextOverrides = { ...currentOverrides }
+        delete nextOverrides[item.id]
+        return nextOverrides
+      })
+    } catch (completionFailure) {
+      setCompletionOverrides((currentOverrides) => ({
+        ...currentOverrides,
+        [item.id]: currentValue,
+      }))
+      setCompletionError(
+        getVisibleErrorMessage(
+          completionFailure,
+          'Unable to update item completion.',
+        ),
       )
     } finally {
-      setReorderingItemId(null)
+      setPendingCompletionItemId(null)
     }
   }
 
+  function getPlannerItemCompletedValue(item: PlannerItem) {
+    return completionOverrides[item.id] ?? isPlannerItemCompleted(item)
+  }
+
   return (
-    <main className="app-shell dashboard-shell">
-      <section className="dashboard-panel trips-panel">
-        <header className="trip-detail-header">
-          <button type="button" className="secondary-button" onClick={onBack}>
-            Back
-          </button>
+    <main className="app-shell dashboard-shell day-detail-screen">
+      <section className="page-shell trips-panel">
+        <DetailHeader
+          eyebrow={trip.name}
+          meta={
+            <>
+              <p className="muted">{formatTripDayDate(day.date)}</p>
+              {day.label ? <p className="day-title">{day.label}</p> : null}
+            </>
+          }
+          onBack={onBack}
+          action={
+            canEditPlannerItems ? (
+              <IconButton
+                icon="add"
+                label="Add item"
+                onClick={() => {
+                  setEditingItem(null)
+                  setItemFormError('')
+                  setIsItemFormOpen(true)
+                }}
+                variant="primary"
+              />
+            ) : null
+          }
+          title={`Day ${dayNumber}`}
+        />
 
-          <div>
-            <p className="eyebrow">{trip.name}</p>
-            <h1>Day {dayNumber}</h1>
-            <p className="muted">{formatTripDayDate(day.date)}</p>
-            {day.label ? <p className="day-title">{day.label}</p> : null}
-          </div>
-        </header>
+        {isItemFormOpen ? (
+          <AddPlannerItemForm
+            ariaLabel={editingItem ? 'Edit planner item' : 'Add planner item'}
+            day={day}
+            error={itemFormError}
+            initialValues={
+              editingItem ? getPlannerItemFormValues(editingItem) : undefined
+            }
+            isSubmitting={isSubmittingItem}
+            isDeleting={editingItem ? deletingItemId === editingItem.id : false}
+            onCancel={closeItemForm}
+            onDelete={
+              editingItem
+                ? async () => {
+                    const didDelete = await handleDeleteItem(editingItem)
 
-        <div className="day-detail-toolbar">
-          <div>
-            <span className="label">Planner Items</span>
-            <strong>
-              {items.length} {items.length === 1 ? 'item' : 'items'}
-            </strong>
-          </div>
-          {canEditPlannerItems ? (
-            <button type="button" onClick={() => setIsAddItemOpen(true)}>
-              Add item
-            </button>
-          ) : (
-            <span className="role-pill viewer">Viewer</span>
-          )}
-        </div>
+                    if (didDelete) {
+                      closeItemForm()
+                    }
+                  }
+                : undefined
+            }
+            onSubmit={handleItemSubmit}
+            submitLabel={editingItem ? 'Save Item' : 'Save Item'}
+            submittingLabel="Saving..."
+            title={editingItem ? 'Edit Item' : 'Add Item'}
+            tripId={trip.id}
+          />
+        ) : null}
 
         {items.length > 0 ? (
           <section className="planner-item-list" aria-label="Planner items">
-            {deleteError ? <p className="feedback">{deleteError}</p> : null}
-            {reorderError ? <p className="feedback">{reorderError}</p> : null}
-            {items.map((item, index) => (
-              <article className="planner-item-card" key={item.id}>
-                <div className="planner-item-card__content">
-                  <span className={`planner-item-kind ${item.kind}`}>
-                    {getKindIcon(item.kind)} {getKindLabel(item.kind)}
-                  </span>
-                  <strong>{item.title}</strong>
-                  {formatPlannerItemTimeRange(item) ? (
-                    <p className="muted">{formatPlannerItemTimeRange(item)}</p>
-                  ) : null}
-                  {item.location_name ? (
-                    <p className="muted">{item.location_name}</p>
-                  ) : null}
-                  {item.description ? <p>{item.description}</p> : null}
-                </div>
+            {completionError ? (
+              <p className="feedback">{completionError}</p>
+            ) : null}
+            {items.map((item) => {
+              const isCompleted = getPlannerItemCompletedValue(item)
 
-                {canEditPlannerItems ? (
-                  <div className="planner-item-actions">
-                    <button
-                      type="button"
-                      className="secondary-button"
-                      onClick={() => void handleReorderItem(item, 'up')}
-                      disabled={
-                        index === 0 ||
-                        deletingItemId === item.id ||
-                        reorderingItemId !== null
-                      }
-                    >
-                      Move up
-                    </button>
-                    <button
-                      type="button"
-                      className="secondary-button"
-                      onClick={() => void handleReorderItem(item, 'down')}
-                      disabled={
-                        index === items.length - 1 ||
-                        deletingItemId === item.id ||
-                        reorderingItemId !== null
-                      }
-                    >
-                      Move down
-                    </button>
-                    <button
-                      type="button"
-                      className="secondary-button"
-                      onClick={() => {
-                        setItemError('')
-                        setEditingItem(item)
-                      }}
-                      disabled={
-                        deletingItemId === item.id ||
-                        reorderingItemId !== null
-                      }
-                    >
-                      Edit
-                    </button>
-                    <button
-                      type="button"
-                      className="danger-button"
-                      onClick={() => void handleDeleteItem(item)}
-                      disabled={
-                        deletingItemId === item.id ||
-                        reorderingItemId !== null
-                      }
-                    >
-                      {deletingItemId === item.id ? 'Deleting...' : 'Delete'}
-                    </button>
+              return (
+                <CardSurface
+                  className={`planner-item-card ${
+                    isCompleted ? 'completed' : ''
+                  }`}
+                  key={item.id}
+                >
+                  <div className="planner-item-card__content">
+                    {formatPlannerItemTimeRange(item) ? (
+                      <p className="planner-item-time">
+                        {formatPlannerItemTimeRange(item)}
+                      </p>
+                    ) : null}
+                    <strong>{item.title}</strong>
+                    {item.location_name ? (
+                      <p className="muted">{item.location_name}</p>
+                    ) : null}
+                    {item.description ? <p>{item.description}</p> : null}
                   </div>
-                ) : null}
-              </article>
-            ))}
+
+                  <div className="planner-item-card__controls">
+                    <StatusButton
+                      disabled={pendingCompletionItemId === item.id}
+                      isComplete={isCompleted}
+                      label={item.title}
+                      onToggle={
+                        canEditPlannerItems
+                          ? () => void handleToggleCompletion(item)
+                          : undefined
+                      }
+                      readOnly={!canEditPlannerItems}
+                    />
+
+                    {canEditPlannerItems ? (
+                    <div className="planner-item-card__actions">
+                      <IconButton
+                        icon="edit"
+                        label={`Edit ${item.title}`}
+                        onClick={() => {
+                          setEditingItem(item)
+                          setItemFormError('')
+                          setIsItemFormOpen(true)
+                        }}
+                      />
+                    </div>
+                    ) : null}
+                  </div>
+                </CardSurface>
+              )
+            })}
           </section>
         ) : (
-          <section className="state-panel planner-item-empty">
-            <h2>No plans yet</h2>
+          <EmptyState title="No plans yet">
             <p className="muted">Add the first item for this trip day.</p>
-          </section>
+          </EmptyState>
         )}
-
-        {isAddItemOpen && canEditPlannerItems ? (
-          <AddPlannerItemForm
-            day={day}
-            error={itemError}
-            isSubmitting={isSavingItem}
-            onCancel={() => {
-              setItemError('')
-              setIsAddItemOpen(false)
-            }}
-            onSubmit={handleCreateItem}
-            tripId={trip.id}
-          />
-        ) : null}
-
-        {editingItem && canEditPlannerItems ? (
-          <AddPlannerItemForm
-            ariaLabel="Edit planner item"
-            day={day}
-            error={itemError}
-            initialValues={{
-              endTime: formatPlannerItemTimeInput(editingItem.ends_at),
-              kind: editingItem.kind,
-              location: editingItem.location_name ?? '',
-              notes: editingItem.description ?? '',
-              startTime: formatPlannerItemTimeInput(editingItem.starts_at),
-              title: editingItem.title,
-            }}
-            isSubmitting={isSavingItem}
-            onCancel={() => {
-              setItemError('')
-              setEditingItem(null)
-            }}
-            onSubmit={handleUpdateItem}
-            submitLabel="Update Item"
-            submittingLabel="Updating..."
-            title="Edit Item"
-            tripId={trip.id}
-          />
-        ) : null}
       </section>
     </main>
   )
 }
 
-function getKindIcon(kind: PlannerItem['kind']) {
-  switch (kind) {
-    case 'activity':
-      return 'A'
-    case 'note':
-      return 'N'
-    case 'reservation':
-      return 'R'
-    case 'travel':
-      return 'T'
-  }
+function isPlannerItemCompleted(item: PlannerItem) {
+  return item.metadata.completed === true
 }
 
-function getKindLabel(kind: PlannerItem['kind']) {
-  switch (kind) {
-    case 'activity':
-      return 'Activity'
-    case 'note':
-      return 'Note'
-    case 'reservation':
-      return 'Reservation'
-    case 'travel':
-      return 'Travel'
+function getPlannerItemFormValues(item: PlannerItem): PlannerItemFormValues {
+  return {
+    endTime: formatPlannerItemTimeInput(item.ends_at),
+    kind: item.kind,
+    location: item.location_name ?? '',
+    notes: item.description ?? '',
+    startTime: formatPlannerItemTimeInput(item.starts_at),
+    title: item.title,
   }
 }

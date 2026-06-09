@@ -17,6 +17,7 @@ import {
   type Trip,
   type TripMemberRole,
 } from '../lib/trips'
+import { CardSurface, DetailHeader, EmptyState, IconButton } from './DesignSystem'
 
 type TripSettingsProps = {
   currentRole: TripMemberRole | null
@@ -259,42 +260,41 @@ export function TripSettings({
 
   return (
     <main className="app-shell dashboard-shell">
-      <section className="dashboard-panel trips-panel">
-        <header className="trip-detail-header">
-          <button type="button" className="secondary-button" onClick={onBack}>
-            Back
-          </button>
-
-          <div>
-            <p className="eyebrow">Trip Settings</p>
-            <h1>{trip.name}</h1>
+      <section className="page-shell trips-panel">
+        <DetailHeader
+          eyebrow="Trip Settings"
+          meta={
             <p className="muted">
               {isOwner
                 ? 'Manage invitations and member roles.'
                 : 'View trip membership.'}
             </p>
-          </div>
-        </header>
+          }
+          onBack={onBack}
+          title={trip.name}
+        />
 
         {isLoading ? (
-          <section className="state-panel">
-            <h2>Loading settings</h2>
+          <EmptyState title="Loading settings">
             <p className="muted">Gathering trip members.</p>
-          </section>
+          </EmptyState>
         ) : null}
 
         {!isLoading && error ? (
-          <section className="state-panel">
-            <h2>Could not load settings</h2>
+          <EmptyState
+            title="Could not load settings"
+            action={
+              <button type="button" onClick={() => void loadSettings()}>
+                Try again
+              </button>
+            }
+          >
             <p className="muted">{error}</p>
-            <button type="button" onClick={() => void loadSettings()}>
-              Try again
-            </button>
-          </section>
+          </EmptyState>
         ) : null}
 
         {!isLoading && !error && isOwner ? (
-          <section className="settings-panel" aria-label="Invite user">
+          <CardSurface className="settings-panel" aria-label="Invite user">
             <div>
               <h2>Invite User</h2>
               <p className="muted">Invite a family member by email.</p>
@@ -326,15 +326,19 @@ export function TripSettings({
 
               {inviteError ? <p className="feedback">{inviteError}</p> : null}
 
-              <button type="submit" disabled={isInviting}>
-                {isInviting ? 'Inviting...' : 'Create Invite'}
-              </button>
+              <IconButton
+                disabled={isInviting}
+                icon="user-plus"
+                label={isInviting ? 'Creating invite' : 'Create Invite'}
+                type="submit"
+                variant="primary"
+              />
             </form>
-          </section>
+          </CardSurface>
         ) : null}
 
         {!isLoading && !error && canEditTrip ? (
-          <section className="settings-panel" aria-label="Edit trip">
+          <CardSurface className="settings-panel" aria-label="Edit trip">
             <div>
               <h2>Edit Trip</h2>
               <p className="muted">
@@ -343,13 +347,11 @@ export function TripSettings({
             </div>
 
             {!isEditingTrip ? (
-              <button
-                type="button"
-                className="secondary-button"
+              <IconButton
+                icon="edit"
+                label="Edit trip basics"
                 onClick={() => setIsEditingTrip(true)}
-              >
-                Edit basics
-              </button>
+              />
             ) : (
               <form className="trip-form" onSubmit={handleTripUpdate}>
                 <label>
@@ -435,11 +437,11 @@ export function TripSettings({
                 </div>
               </form>
             )}
-          </section>
+          </CardSurface>
         ) : null}
 
         {!isLoading && !error ? (
-          <section className="settings-panel" aria-label="Trip members">
+          <CardSurface className="settings-panel" aria-label="Trip members">
             <div>
               <h2>Members</h2>
               <p className="muted">
@@ -451,7 +453,7 @@ export function TripSettings({
 
             <div className="member-list">
               {members.map((member) => (
-                <article className="member-card" key={member.id}>
+                <div className="member-row" key={member.id}>
                   <div>
                     <strong>{getMemberName(member)}</strong>
                     <p className="muted">{member.email || 'Email not set'}</p>
@@ -486,25 +488,28 @@ export function TripSettings({
                       ) : null}
 
                       {canRemoveMember(member, ownerCount) ? (
-                        <button
-                          type="button"
-                          className="danger-button"
+                        <IconButton
+                          icon="delete"
+                          label={
+                            busyMemberId === member.id
+                              ? 'Removing member'
+                              : 'Remove member'
+                          }
+                          variant="destructive"
                           onClick={() => void handleRemoveMember(member)}
                           disabled={busyMemberId === member.id}
-                        >
-                          {busyMemberId === member.id ? 'Removing...' : 'Remove'}
-                        </button>
+                        />
                       ) : null}
                     </div>
                   ) : null}
-                </article>
+                </div>
               ))}
             </div>
-          </section>
+          </CardSurface>
         ) : null}
 
         {!isLoading && !error && isOwner && invites.length > 0 ? (
-          <section className="settings-panel" aria-label="Trip invites">
+          <CardSurface className="settings-panel" aria-label="Trip invites">
             <div>
               <h2>Invites</h2>
               <p className="muted">Invitation history and current status.</p>
@@ -512,7 +517,7 @@ export function TripSettings({
 
             <div className="member-list">
               {invites.map((invite) => (
-                <article className="member-card" key={invite.id}>
+                <div className="member-row" key={invite.id}>
                   <div>
                     <strong>{invite.email}</strong>
                     <p className="muted">
@@ -527,10 +532,10 @@ export function TripSettings({
                       {getInviteStatusLabel(invite.status)}
                     </span>
                   </div>
-                </article>
+                </div>
               ))}
             </div>
-          </section>
+          </CardSurface>
         ) : null}
       </section>
     </main>

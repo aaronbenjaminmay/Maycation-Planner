@@ -4,6 +4,7 @@ import {
   signUpWithEmailPassword,
   useAuthSession,
 } from './lib/auth'
+import { CardSurface } from './components/DesignSystem'
 import { TripsDashboard } from './components/TripsDashboard'
 import './App.css'
 
@@ -39,10 +40,10 @@ function App() {
   if (isLoading) {
     return (
       <main className="app-shell">
-        <section className="auth-panel">
+        <CardSurface className="auth-panel">
           <p className="eyebrow">Maycation Planner</p>
           <h1>Loading your planner</h1>
-        </section>
+        </CardSurface>
       </main>
     )
   }
@@ -53,7 +54,7 @@ function App() {
 
   return (
     <main className="app-shell">
-      <section className="auth-panel">
+      <CardSurface className="auth-panel">
         <div>
           <p className="eyebrow">Maycation Planner</p>
           <h1>Plan the trip together</h1>
@@ -115,7 +116,7 @@ function App() {
         </form>
 
         {feedback ? <p className="feedback">{feedback}</p> : null}
-      </section>
+      </CardSurface>
     </main>
   )
 }

@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useState } from 'react'
 import {
-  formatPlannerItemTimeRange,
   formatTripDateRange,
   formatTripDayDate,
+  getTripDayCount,
   loadPlannerItems,
   loadTripDays,
   type PlannerItem,
@@ -11,6 +11,13 @@ import {
   type TripMemberRole,
 } from '../lib/trips'
 import { loadTripAccess } from '../lib/tripMembers'
+import {
+  CardSurface,
+  DayTile,
+  DetailHeader,
+  EmptyState,
+  IconButton,
+} from './DesignSystem'
 import { DayDetail } from './DayDetail'
 import { TripSettings } from './TripSettings'
 
@@ -24,6 +31,87 @@ function getVisibleErrorMessage(error: unknown, fallback: string) {
   return error instanceof Error && error.message ? error.message : fallback
 }
 
+function isPlannerItemCompleted(item: PlannerItem) {
+  return item.metadata.completed === true
+}
+
+function parseDateInput(value: string) {
+  const [year, month, day] = value.split('-').map(Number)
+  return new Date(year, month - 1, day)
+}
+
+function getTodayStart() {
+  const today = new Date()
+  return new Date(today.getFullYear(), today.getMonth(), today.getDate())
+}
+
+function formatDateKey(date: Date) {
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0')
+
+  return `${year}-${month}-${day}`
+}
+
+function formatDashboardDate(date: string) {
+  return new Intl.DateTimeFormat(undefined, {
+    weekday: 'short',
+    month: 'short',
+    day: 'numeric',
+  }).format(parseDateInput(date))
+}
+
+function getTripPhase(trip: Trip) {
+  const start = parseDateInput(trip.starts_on)
+  const today = getTodayStart()
+  const end = parseDateInput(trip.ends_on)
+
+  if (today < start) {
+    return 'before'
+  }
+
+  if (today > end) {
+    return 'after'
+  }
+
+  return 'during'
+}
+
+function getPreTripCountdown(startsOn: string) {
+  const start = parseDateInput(startsOn)
+  const today = getTodayStart()
+
+  if (start <= today) {
+    return null
+  }
+
+  const millisecondsPerDay = 24 * 60 * 60 * 1000
+  const days = Math.ceil((start.getTime() - today.getTime()) / millisecondsPerDay)
+
+  return {
+    days,
+    label: days === 1 ? 'Starts tomorrow' : `Starts in ${days} days`,
+  }
+}
+
+function sortItemsByPlanOrder(items: PlannerItem[]) {
+  return [...items].sort((left, right) => {
+    if (left.starts_at && right.starts_at) {
+      return new Date(left.starts_at).getTime() - new Date(right.starts_at).getTime()
+    }
+
+    if (left.starts_at) {
+      return -1
+    }
+
+    if (right.starts_at) {
+      return 1
+    }
+
+    return left.sort_order - right.sort_order
+  })
+}
+
 export function TripDetail({ trip, onBack, onTripUpdated }: TripDetailProps) {
   const [tripDays, setTripDays] = useState<TripDay[]>([])
   const [plannerItems, setPlannerItems] = useState<PlannerItem[]>([])
@@ -32,7 +120,6 @@ export function TripDetail({ trip, onBack, onTripUpdated }: TripDetailProps) {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false)
   const [currentRole, setCurrentRole] = useState<TripMemberRole | null>(null)
   const [error, setError] = useState('')
-  const travelType = trip.metadata.travel_type ?? 'Other'
 
   const loadDays = useCallback(async () => {
     setIsLoadingDays(true)
@@ -68,6 +155,32 @@ export function TripDetail({ trip, onBack, onTripUpdated }: TripDetailProps) {
   const activeDay = activeDayIndex >= 0 ? tripDays[activeDayIndex] : null
   const canEditPlannerItems =
     currentRole === 'owner' || currentRole === 'editor'
+  const completedItemCount = plannerItems.filter(isPlannerItemCompleted).length
+  const tripPhase = getTripPhase(trip)
+  const todayKey = formatDateKey(getTodayStart())
+  const currentTripDay = tripDays.find((day) => day.date === todayKey) ?? null
+  const currentTripDayIndex = currentTripDay
+    ? tripDays.findIndex((day) => day.id === currentTripDay.id)
+    : -1
+  const firstTripDay = tripDays[0] ?? null
+  const todayItems = currentTripDay ? getItemsForDay(currentTripDay.id) : []
+  const nextTodayItem =
+    sortItemsByPlanOrder(todayItems).find((item) => !isPlannerItemCompleted(item)) ??
+    null
+  const reservationItems = sortItemsByPlanOrder(
+    plannerItems.filter((item) => item.kind === 'reservation'),
+  )
+  const nextReservation =
+    reservationItems.find((item) => {
+      if (!item.starts_at) {
+        return false
+      }
+
+      return new Date(item.starts_at) >= getTodayStart()
+    }) ?? reservationItems[0] ?? null
+  const tripDayCount =
+    tripDays.length > 0 ? tripDays.length : getTripDayCount(trip.starts_on, trip.ends_on)
+  const countdown = getPreTripCountdown(trip.starts_on)
 
   if (isSettingsOpen) {
     return (
@@ -95,136 +208,173 @@ export function TripDetail({ trip, onBack, onTripUpdated }: TripDetailProps) {
   }
 
   return (
-    <main className="app-shell dashboard-shell">
-      <section className="dashboard-panel trips-panel">
-        <header className="trip-detail-header">
-          <div className="trip-detail-nav">
-            <button type="button" className="secondary-button" onClick={onBack}>
-              Back
-            </button>
-            <button
-              type="button"
-              className="secondary-button"
+    <main className="app-shell dashboard-shell trip-dashboard-screen">
+      <section className="page-shell trip-dashboard">
+        <DetailHeader
+          action={
+            <IconButton
+              icon="settings"
+              label="Trip Settings"
               onClick={() => setIsSettingsOpen(true)}
-            >
-              Settings
-            </button>
-          </div>
-
-          <div>
-            <p className="eyebrow">Trip Dashboard</p>
-            <h1>{trip.name}</h1>
-            <p className="muted">{trip.destination || 'Location not set'}</p>
-          </div>
-        </header>
-
-        <section className="trip-summary" aria-label="Trip summary">
-          <div>
-            <span className="label">Dates</span>
-            <strong>{formatTripDateRange(trip.starts_on, trip.ends_on)}</strong>
-          </div>
-          <div>
-            <span className="label">Travel Type</span>
-            <strong>{travelType}</strong>
-          </div>
-        </section>
+            />
+          }
+          eyebrow="Trip Dashboard"
+          meta={
+            <>
+              <p className="muted">{trip.destination || 'Location not set'}</p>
+              <p className="trip-dashboard-date-range">
+                {formatTripDateRange(trip.starts_on, trip.ends_on)}
+              </p>
+            </>
+          }
+          onBack={onBack}
+          title={trip.name}
+        />
 
         {isLoadingDays ? (
-          <section className="state-panel">
-            <h2>Loading trip dashboard</h2>
+          <EmptyState title="Loading trip dashboard">
             <p className="muted">Building your day-by-day dashboard.</p>
-          </section>
+          </EmptyState>
         ) : null}
 
         {!isLoadingDays && error ? (
-          <section className="state-panel">
-            <h2>Could not load trip dashboard</h2>
+          <EmptyState
+            title="Could not load trip dashboard"
+            action={
+              <button type="button" onClick={() => void loadDays()}>
+                Try again
+              </button>
+            }
+          >
             <p className="muted">{error}</p>
-            <button type="button" onClick={() => void loadDays()}>
-              Try again
-            </button>
-          </section>
+          </EmptyState>
+        ) : null}
+
+        {!isLoadingDays && !error ? (
+          <CardSurface className="trip-intel-card">
+            {tripPhase === 'before' && countdown ? (
+              <>
+                <div className="trip-intel-card__header">
+                  <div>
+                    <span>Trip starts in</span>
+                    <strong>
+                      {countdown.days} {countdown.days === 1 ? 'day' : 'days'}
+                    </strong>
+                  </div>
+                </div>
+                <dl>
+                  <div>
+                    <dt>Next</dt>
+                    <dd>
+                      {firstTripDay
+                        ? `Day 1 / ${firstTripDay.label || formatTripDayDate(firstTripDay.date)}`
+                        : 'Day 1'}
+                    </dd>
+                  </div>
+                </dl>
+              </>
+            ) : null}
+
+            {tripPhase === 'during' ? (
+              <>
+                <div className="trip-intel-card__header">
+                  <div>
+                    <span>Today</span>
+                    <strong>
+                      {currentTripDay
+                        ? `Day ${currentTripDayIndex + 1}`
+                        : 'No trip day found'}
+                    </strong>
+                  </div>
+                </div>
+                <dl>
+                  <div>
+                    <dt>Date</dt>
+                    <dd>
+                      {currentTripDay
+                        ? currentTripDay.label || formatTripDayDate(currentTripDay.date)
+                        : 'No matching day'}
+                    </dd>
+                  </div>
+                  <div>
+                    <dt>Next</dt>
+                    <dd>{nextTodayItem ? nextTodayItem.title : 'No incomplete items'}</dd>
+                  </div>
+                </dl>
+              </>
+            ) : null}
+
+            {tripPhase === 'after' ? (
+              <>
+                <div className="trip-intel-card__header">
+                  <div>
+                    <span>Today Intel</span>
+                    <strong>Trip complete</strong>
+                  </div>
+                </div>
+                <dl>
+                  <div>
+                    <dt>Days</dt>
+                    <dd>{tripDayCount}</dd>
+                  </div>
+                  <div>
+                    <dt>Complete</dt>
+                    <dd>
+                      {completedItemCount} / {plannerItems.length || 0}
+                    </dd>
+                  </div>
+                  <div>
+                    <dt>Reservations</dt>
+                    <dd>{reservationItems.length || '-'}</dd>
+                  </div>
+                </dl>
+              </>
+            ) : null}
+          </CardSurface>
         ) : null}
 
         {!isLoadingDays && !error && tripDays.length === 0 ? (
-          <section className="state-panel">
-            <h2>No days found</h2>
+          <EmptyState title="No days found">
             <p className="muted">This trip does not have generated days yet.</p>
-          </section>
+          </EmptyState>
         ) : null}
 
         {!isLoadingDays && !error && tripDays.length > 0 ? (
-          <section className="trip-day-list" aria-label="Trip days">
+          <section className="trip-destination-grid" aria-label="Trip days">
             {tripDays.map((day, index) => {
               const dayItems = getItemsForDay(day.id)
-              const previewItems = dayItems.slice(0, 2)
+              const completedCount = dayItems.filter(isPlannerItemCompleted).length
 
               return (
-                <button
-                  type="button"
-                  className="trip-day-card"
+                <DayTile
+                  completedCount={completedCount}
+                  date={formatDashboardDate(day.date)}
+                  dayNumber={index + 1}
+                  itemCount={dayItems.length}
                   key={day.id}
-                  onClick={() => setActiveDayId(day.id)}
-                >
-                  <div className="trip-day-card__header">
-                    <div>
-                      <span className="trip-day-card__number">
-                        Day {index + 1}
-                      </span>
-                      <h2>{day.label || formatTripDayDate(day.date)}</h2>
-                      {day.label ? (
-                        <p className="muted">{formatTripDayDate(day.date)}</p>
-                      ) : null}
-                    </div>
-                    <span className="trip-day-card__count">
-                      {dayItems.length}{' '}
-                      {dayItems.length === 1 ? 'item' : 'items'}
-                    </span>
-                  </div>
-
-                  {previewItems.length > 0 ? (
-                    <div className="day-preview-list">
-                      {previewItems.map((item) => (
-                        <span className="day-preview-item" key={item.id}>
-                          <span className={`planner-item-kind ${item.kind}`}>
-                            {getKindLabel(item.kind)}
-                          </span>
-                          <span>{item.title}</span>
-                          {formatPlannerItemTimeRange(item) ? (
-                            <span className="muted">
-                              {formatPlannerItemTimeRange(item)}
-                            </span>
-                          ) : null}
-                        </span>
-                      ))}
-                      {dayItems.length > previewItems.length ? (
-                        <span className="muted">
-                          +{dayItems.length - previewItems.length} more
-                        </span>
-                      ) : null}
-                    </div>
-                  ) : (
-                    <p className="muted">No plans yet</p>
-                  )}
-                </button>
+                  onOpen={() => setActiveDayId(day.id)}
+                  subtitle={day.label || `Day ${index + 1}`}
+                  title={day.label || `Day ${index + 1}`}
+                />
               )
             })}
+
+            <DayTile
+              completedCount={0}
+              dayNumber={tripDays.length + 1}
+              itemCount={reservationItems.length}
+              onOpen={() => {
+                if (nextReservation?.trip_day_id) {
+                  setActiveDayId(nextReservation.trip_day_id)
+                }
+              }}
+              subtitle={nextReservation ? nextReservation.title : 'Dining and fixed plans'}
+              title="Reservations"
+            />
           </section>
         ) : null}
+
       </section>
     </main>
   )
-}
-
-function getKindLabel(kind: PlannerItem['kind']) {
-  switch (kind) {
-    case 'activity':
-      return 'Activity'
-    case 'note':
-      return 'Note'
-    case 'reservation':
-      return 'Reservation'
-    case 'travel':
-      return 'Travel'
-  }
 }
