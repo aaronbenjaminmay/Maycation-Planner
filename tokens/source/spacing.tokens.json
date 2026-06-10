@@ -1,0 +1,39 @@
+{
+  "spacing": {
+    "2xs": {
+      "$type": "dimension",
+      "$value": "4px",
+      "$description": "Tightest spacing; account-strip inner gap"
+    },
+    "xs": {
+      "$type": "dimension",
+      "$value": "8px",
+      "$description": "Small gap; tag clusters, pill groups, screen-header actions gap"
+    },
+    "sm": {
+      "$type": "dimension",
+      "$value": "12px",
+      "$description": "Form grid gap, list item gap (trips, members, planner items)"
+    },
+    "md": {
+      "$type": "dimension",
+      "$value": "16px",
+      "$description": "Standard layout gap; dashboard-header, modal-sheet header, detail-header"
+    },
+    "lg": {
+      "$type": "dimension",
+      "$value": "18px",
+      "$description": "Dominant spacing value in Maycation. Card padding, page-shell gap, dashboard grid gap, modal-sheet gap, day-tile gap. Intentionally 18px — preserves established visual rhythm, not normalized to 20px"
+    },
+    "xl": {
+      "$type": "dimension",
+      "$value": "24px",
+      "$description": "App-shell horizontal padding, panel padding (dashboard-panel, auth-panel)"
+    },
+    "2xl": {
+      "$type": "dimension",
+      "$value": "32px",
+      "$description": "Reserved for future large-spacing needs; no current prominent usage in canonical CSS"
+    }
+  }
+}

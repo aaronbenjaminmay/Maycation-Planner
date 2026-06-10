@@ -1,0 +1,248 @@
+{
+  "color": {
+    "primitive": {
+      "black": {
+        "$type": "color",
+        "$value": "#000000",
+        "$description": "Pure black; app-level page background"
+      },
+      "teal-500": {
+        "$type": "color",
+        "$value": "#35b8a8",
+        "$description": "Maycation brand teal; primary accent in dark mode"
+      },
+      "teal-on": {
+        "$type": "color",
+        "$value": "#061312",
+        "$description": "Near-black used as text on teal accent backgrounds"
+      },
+      "blue-500": {
+        "$type": "color",
+        "$value": "#3483fa",
+        "$description": "Blue; used for travel kind badge and editor role pill"
+      },
+      "amber-500": {
+        "$type": "color",
+        "$value": "#f2a93b",
+        "$description": "Amber; used for reservation kind badge, attention state, and expired invite"
+      },
+      "purple-500": {
+        "$type": "color",
+        "$value": "#9b8cff",
+        "$description": "Lavender-purple; used for note kind badge and viewer role pill"
+      },
+      "red-500": {
+        "$type": "color",
+        "$value": "#a84b4b",
+        "$description": "Muted red; used for danger state borders"
+      },
+      "neutral-100": {
+        "$type": "color",
+        "$value": "#f5f7fb",
+        "$description": "Near-white; primary text, headings, strong labels. Maps to CSS --text-h in dark mode"
+      },
+      "neutral-200": {
+        "$type": "color",
+        "$value": "#b6bfcc",
+        "$description": "Blue-gray; secondary body text. Maps to CSS --text in dark mode"
+      },
+      "neutral-300": {
+        "$type": "color",
+        "$value": "#a1a1a6",
+        "$description": "Mid-gray; muted metadata text. Hardcoded in Visual System consolidation pass for .muted, .day-tile__summary"
+      },
+      "neutral-700": {
+        "$type": "color",
+        "$value": "#2b2d32",
+        "$description": "Dark border; opaque border for non-glass components. Maps to CSS --border in dark mode"
+      },
+      "neutral-800": {
+        "$type": "color",
+        "$value": "#1c1c1e",
+        "$description": "Near-black; base color for glass morphism surfaces before opacity is applied"
+      },
+      "neutral-850": {
+        "$type": "color",
+        "$value": "#1a1c20",
+        "$description": "Control surface background in dark mode. Maps to CSS --control-bg"
+      },
+      "neutral-900": {
+        "$type": "color",
+        "$value": "#121316",
+        "$description": "Deep panel background. Maps to CSS --panel"
+      },
+      "neutral-950": {
+        "$type": "color",
+        "$value": "#0d0f12",
+        "$description": "Deepest background; input field fill. Maps to CSS --input-bg"
+      },
+      "danger-bg": {
+        "$type": "color",
+        "$value": "rgba(168, 75, 75, 0.2)",
+        "$description": "Translucent red; danger state surface fill"
+      },
+      "danger-text": {
+        "$type": "color",
+        "$value": "#ffd7d7",
+        "$description": "Soft pink; readable danger message text on dark backgrounds"
+      },
+      "glass-surface": {
+        "$type": "color",
+        "$value": "rgba(28, 28, 30, 0.74)",
+        "$description": "Glass morphism background for cards, panels, modals. Neutral-800 at 74% opacity"
+      },
+      "glass-border": {
+        "$type": "color",
+        "$value": "rgba(255, 255, 255, 0.08)",
+        "$description": "Subtle white edge for glass surfaces"
+      },
+      "overlay": {
+        "$type": "color",
+        "$value": "rgba(0, 0, 0, 0.78)",
+        "$description": "Modal backdrop overlay"
+      }
+    },
+
+    "background": {
+      "default": {
+        "$type": "color",
+        "$value": "{color.primitive.black}",
+        "$description": "App-level page background"
+      }
+    },
+
+    "surface": {
+      "default": {
+        "$type": "color",
+        "$value": "{color.primitive.neutral-900}",
+        "$description": "Fallback panel background; used before glass morphism is applied"
+      },
+      "elevated": {
+        "$type": "color",
+        "$value": "{color.primitive.neutral-850}",
+        "$description": "Elevated control surfaces; mode-toggle, account-strip"
+      },
+      "input": {
+        "$type": "color",
+        "$value": "{color.primitive.neutral-950}",
+        "$description": "Input field background; the darkest surface in the system"
+      },
+      "glass": {
+        "$type": "color",
+        "$value": "{color.primitive.glass-surface}",
+        "$description": "Primary surface for cards, panels, and modals with backdrop blur"
+      }
+    },
+
+    "border": {
+      "default": {
+        "$type": "color",
+        "$value": "{color.primitive.neutral-700}",
+        "$description": "Opaque border for non-glass contexts"
+      },
+      "glass": {
+        "$type": "color",
+        "$value": "{color.primitive.glass-border}",
+        "$description": "Translucent white border for glass surfaces"
+      }
+    },
+
+    "text": {
+      "primary": {
+        "$type": "color",
+        "$value": "{color.primitive.neutral-100}",
+        "$description": "Headings, strong text, labels on dark backgrounds"
+      },
+      "secondary": {
+        "$type": "color",
+        "$value": "{color.primitive.neutral-200}",
+        "$description": "Body text; maps to CSS --text variable"
+      },
+      "muted": {
+        "$type": "color",
+        "$value": "{color.primitive.neutral-300}",
+        "$description": "Metadata, summaries, day-tile subheadings; differs from text.secondary — see unresolved note in token inventory"
+      }
+    },
+
+    "accent": {
+      "default": {
+        "$type": "color",
+        "$value": "{color.primitive.teal-500}",
+        "$description": "Brand accent; used on eyebrows, interactive focus rings, hover borders"
+      },
+      "text": {
+        "$type": "color",
+        "$value": "{color.primitive.teal-on}",
+        "$description": "Text color for use on accent-colored backgrounds"
+      }
+    },
+
+    "danger": {
+      "surface": {
+        "$type": "color",
+        "$value": "{color.primitive.danger-bg}",
+        "$description": "Danger action background fill"
+      },
+      "border": {
+        "$type": "color",
+        "$value": "{color.primitive.red-500}",
+        "$description": "Danger action border"
+      },
+      "text": {
+        "$type": "color",
+        "$value": "{color.primitive.danger-text}",
+        "$description": "Danger state text; readable on dark surfaces"
+      }
+    },
+
+    "kind": {
+      "activity": {
+        "$type": "color",
+        "$value": "{color.accent.default}",
+        "$description": "Activity planner item kind badge border; shares the brand accent color"
+      },
+      "travel": {
+        "$type": "color",
+        "$value": "{color.primitive.blue-500}",
+        "$description": "Travel planner item kind badge border"
+      },
+      "reservation": {
+        "$type": "color",
+        "$value": "{color.primitive.amber-500}",
+        "$description": "Reservation planner item kind badge border"
+      },
+      "note": {
+        "$type": "color",
+        "$value": "{color.primitive.purple-500}",
+        "$description": "Note planner item kind badge border"
+      }
+    },
+
+    "role": {
+      "owner": {
+        "$type": "color",
+        "$value": "{color.accent.default}",
+        "$description": "Owner role pill border; shares the brand accent color"
+      },
+      "editor": {
+        "$type": "color",
+        "$value": "{color.primitive.blue-500}",
+        "$description": "Editor role pill border"
+      },
+      "viewer": {
+        "$type": "color",
+        "$value": "{color.primitive.purple-500}",
+        "$description": "Viewer role pill border"
+      }
+    },
+
+    "overlay": {
+      "default": {
+        "$type": "color",
+        "$value": "{color.primitive.overlay}",
+        "$description": "Modal backdrop; applied to the full-screen dim layer"
+      }
+    }
+  }
+}

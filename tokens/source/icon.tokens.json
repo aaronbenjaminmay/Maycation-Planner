@@ -1,0 +1,19 @@
+{
+  "icon": {
+    "sm": {
+      "$type": "dimension",
+      "$value": "16px",
+      "$description": "Small icon; maps to Icon size='small' in the Icon component"
+    },
+    "md": {
+      "$type": "dimension",
+      "$value": "18px",
+      "$description": "Default icon size; maps to Icon size='default'. Used in most UI contexts"
+    },
+    "lg": {
+      "$type": "dimension",
+      "$value": "20px",
+      "$description": "Large icon; maps to Icon size='large'. Used in primary action buttons and selected states"
+    }
+  }
+}

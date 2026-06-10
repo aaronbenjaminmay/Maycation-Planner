@@ -1,0 +1,37 @@
+{
+  "shadow": {
+    "sm": {
+      "$type": "shadow",
+      "$value": {
+        "offsetX": "0",
+        "offsetY": "10px",
+        "blur": "28px",
+        "spread": "0",
+        "color": "rgba(0, 0, 0, 0.34)"
+      },
+      "$description": "Component card shadow; used on dashboard-card, trip-card, day-tile, planner-item-card. From Visual System consolidation pass"
+    },
+    "md": {
+      "$type": "shadow",
+      "$value": {
+        "offsetX": "0",
+        "offsetY": "12px",
+        "blur": "34px",
+        "spread": "0",
+        "color": "rgba(0, 0, 0, 0.36)"
+      },
+      "$description": "Panel surface shadow; used on card-surface, auth-panel, dashboard-panel, modal-sheet. From Visual System consolidation pass"
+    },
+    "lg": {
+      "$type": "shadow",
+      "$value": {
+        "offsetX": "0",
+        "offsetY": "18px",
+        "blur": "50px",
+        "spread": "0",
+        "color": "rgba(0, 0, 0, 0.28)"
+      },
+      "$description": "Large ambient shadow; matches the CSS --shadow variable value from index.css"
+    }
+  }
+}

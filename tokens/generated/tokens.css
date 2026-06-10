@@ -1,0 +1,74 @@
+/**
+ * Do not edit directly, this file was auto-generated.
+ * Run `npm run build:tokens` to regenerate.
+ */
+
+:root {
+  --color-background-default: #000000; /** App-level page background */
+  --color-surface-default: #121316; /** Fallback panel background; used before glass morphism is applied */
+  --color-surface-elevated: #1a1c20; /** Elevated control surfaces; mode-toggle, account-strip */
+  --color-surface-input: #0d0f12; /** Input field background; the darkest surface in the system */
+  --color-surface-glass: rgba(28, 28, 30, 0.74); /** Primary surface for cards, panels, and modals with backdrop blur */
+  --color-border-default: #2b2d32; /** Opaque border for non-glass contexts */
+  --color-border-glass: rgba(255, 255, 255, 0.08); /** Translucent white border for glass surfaces */
+  --color-text-primary: #f5f7fb; /** Headings, strong text, labels on dark backgrounds */
+  --color-text-secondary: #b6bfcc; /** Body text; maps to CSS --text variable */
+  --color-text-muted: #a1a1a6; /** Metadata, summaries, day-tile subheadings; differs from text.secondary — see unresolved note in token inventory */
+  --color-accent-default: #35b8a8; /** Brand accent; used on eyebrows, interactive focus rings, hover borders */
+  --color-accent-text: #061312; /** Text color for use on accent-colored backgrounds */
+  --color-danger-surface: rgba(168, 75, 75, 0.2); /** Danger action background fill */
+  --color-danger-border: #a84b4b; /** Danger action border */
+  --color-danger-text: #ffd7d7; /** Danger state text; readable on dark surfaces */
+  --color-kind-activity: #35b8a8; /** Activity planner item kind badge border; shares the brand accent color */
+  --color-kind-travel: #3483fa; /** Travel planner item kind badge border */
+  --color-kind-reservation: #f2a93b; /** Reservation planner item kind badge border */
+  --color-kind-note: #9b8cff; /** Note planner item kind badge border */
+  --color-role-owner: #35b8a8; /** Owner role pill border; shares the brand accent color */
+  --color-role-editor: #3483fa; /** Editor role pill border */
+  --color-role-viewer: #9b8cff; /** Viewer role pill border */
+  --color-overlay-default: rgba(0, 0, 0, 0.78); /** Modal backdrop; applied to the full-screen dim layer */
+  --icon-sm: 16px; /** Small icon; maps to Icon size='small' in the Icon component */
+  --icon-md: 18px; /** Default icon size; maps to Icon size='default'. Used in most UI contexts */
+  --icon-lg: 20px; /** Large icon; maps to Icon size='large'. Used in primary action buttons and selected states */
+  --radius-sm: 8px; /** Small surface radius; account-strip */
+  --radius-md: 14px; /** Input fields and feedback messages */
+  --radius-lg: 20px; /** Dominant radius for all card and panel surfaces; card-surface, dashboard-card, trip-card, day-tile, planner-item-card, modal-sheet */
+  --radius-full: 999px; /** Pills and circular elements; progress-pill, role-pill, status-pill, icon-button, form buttons */
+  --radius-card: 20px; /** Semantic alias for the main card surface radius. References radius.lg so card radius can change independently of the ordinal scale */
+  --radius-input: 14px; /** Semantic alias for input field radius. References radius.md */
+  --shadow-sm: 0 10px 28px 0 rgba(0, 0, 0, 0.34); /** Component card shadow; used on dashboard-card, trip-card, day-tile, planner-item-card. From Visual System consolidation pass */
+  --shadow-md: 0 12px 34px 0 rgba(0, 0, 0, 0.36); /** Panel surface shadow; used on card-surface, auth-panel, dashboard-panel, modal-sheet. From Visual System consolidation pass */
+  --shadow-lg: 0 18px 50px 0 rgba(0, 0, 0, 0.28); /** Large ambient shadow; matches the CSS --shadow variable value from index.css */
+  --spacing-2xs: 4px; /** Tightest spacing; account-strip inner gap */
+  --spacing-xs: 8px; /** Small gap; tag clusters, pill groups, screen-header actions gap */
+  --spacing-sm: 12px; /** Form grid gap, list item gap (trips, members, planner items) */
+  --spacing-md: 16px; /** Standard layout gap; dashboard-header, modal-sheet header, detail-header */
+  --spacing-lg: 18px; /** Dominant spacing value in Maycation. Card padding, page-shell gap, dashboard grid gap, modal-sheet gap, day-tile gap. Intentionally 18px — preserves established visual rhythm, not normalized to 20px */
+  --spacing-xl: 24px; /** App-shell horizontal padding, panel padding (dashboard-panel, auth-panel) */
+  --spacing-2xl: 32px; /** Reserved for future large-spacing needs; no current prominent usage in canonical CSS */
+  --typography-eyebrow-font-size: 11px;
+  --typography-eyebrow-font-weight: 900;
+  --typography-eyebrow-letter-spacing: 0.18em;
+  --typography-eyebrow-line-height: 1.15;
+  --typography-eyebrow-text-transform: uppercase;
+  --typography-label-font-size: 12px;
+  --typography-label-font-weight: 900;
+  --typography-label-letter-spacing: 0.08em;
+  --typography-label-line-height: 1.2;
+  --typography-label-text-transform: uppercase;
+  --typography-caption-font-size: 13px;
+  --typography-caption-font-weight: 700;
+  --typography-caption-line-height: 1.35;
+  --typography-action-font-size: 14px;
+  --typography-action-font-weight: 900;
+  --typography-action-line-height: 1.5;
+  --typography-heading-font-size: 1rem;
+  --typography-heading-font-weight: 900;
+  --typography-heading-line-height: 1.15;
+  --typography-section-font-size: 1.35rem;
+  --typography-section-font-weight: 900;
+  --typography-section-line-height: 1.05;
+  --typography-title-font-size: clamp(1.8rem, 6vw, 2.55rem); /** Fluid type scale. $type is string to prevent Style Dictionary from applying dimension transforms to the clamp() function */
+  --typography-title-font-weight: 900;
+  --typography-title-line-height: 0.98;
+}

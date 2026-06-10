@@ -1,0 +1,34 @@
+{
+  "radius": {
+    "sm": {
+      "$type": "dimension",
+      "$value": "8px",
+      "$description": "Small surface radius; account-strip"
+    },
+    "md": {
+      "$type": "dimension",
+      "$value": "14px",
+      "$description": "Input fields and feedback messages"
+    },
+    "lg": {
+      "$type": "dimension",
+      "$value": "20px",
+      "$description": "Dominant radius for all card and panel surfaces; card-surface, dashboard-card, trip-card, day-tile, planner-item-card, modal-sheet"
+    },
+    "full": {
+      "$type": "dimension",
+      "$value": "999px",
+      "$description": "Pills and circular elements; progress-pill, role-pill, status-pill, icon-button, form buttons"
+    },
+    "card": {
+      "$type": "dimension",
+      "$value": "{radius.lg}",
+      "$description": "Semantic alias for the main card surface radius. References radius.lg so card radius can change independently of the ordinal scale"
+    },
+    "input": {
+      "$type": "dimension",
+      "$value": "{radius.md}",
+      "$description": "Semantic alias for input field radius. References radius.md"
+    }
+  }
+}
