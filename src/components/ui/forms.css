@@ -52,6 +52,22 @@
   resize: vertical;
 }
 
+/* ─── FormGrid ───────────────────────────────────────────────────────────── */
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+/* ─── FormActions ────────────────────────────────────────────────────────── */
+
+.form-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
 /* ─── FormActions leading-slot variant ───────────────────────────────────── */
 
 .form-actions--has-leading {
@@ -68,4 +84,37 @@
   display: flex;
   align-items: center;
   gap: 10px;
+}
+
+/* ─── FormActions planner-item-form variant ──────────────────────────────── */
+
+.planner-item-form .form-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.planner-item-form .form-actions--has-leading {
+  justify-content: space-between;
+}
+
+.planner-item-form .form-actions__main button {
+  min-width: 112px;
+}
+
+@media (max-width: 440px) {
+  .planner-item-form .form-actions {
+    align-items: stretch;
+    flex-direction: column-reverse;
+  }
+
+  .form-actions__main {
+    justify-content: flex-end;
+  }
+
+  .planner-item-form .form-actions__main {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
 }

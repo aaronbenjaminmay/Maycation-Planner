@@ -154,18 +154,6 @@
   line-height: 1.15;
 }
 
-.form-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-}
-
-.form-actions {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-}
-
 .trip-list {
   display: grid;
   gap: 14px;
@@ -1714,42 +1702,6 @@ button.dashboard-card {
 .day-detail-screen .planner-item-card.completed .planner-item-card__content {
   opacity: 1;
 }
-.planner-item-form .form-actions {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 12px;
-}
-
-.planner-item-form .form-actions--has-leading {
-  justify-content: space-between;
-}
-
-.form-actions__main {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.planner-item-form .form-actions__main button {
-  min-width: 112px;
-}
-@media (max-width: 440px) {
-  .planner-item-form .form-actions {
-    align-items: stretch;
-    flex-direction: column-reverse;
-  }
-
-  .form-actions__main {
-    justify-content: flex-end;
-  }
-
-  .planner-item-form .form-actions__main {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-  }
-}
-
 .day-detail-screen .planner-item-time {
   margin: 0;
   color: var(--accent);
