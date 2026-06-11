@@ -1107,21 +1107,6 @@ button.dashboard-card {
   background: rgba(28, 28, 30, 0.76);
 }
 
-.day-detail-screen .planner-item-card.completed,
-.planner-item-card.completed {
-  border-color: rgba(10, 132, 255, 0.28);
-  background: rgba(28, 28, 30, 0.62);
-}
-
-.day-detail-screen .planner-item-card__content,
-.planner-item-card__content {
-  order: 1;
-  gap: 5px;
-}
-.day-detail-screen .planner-item-card.completed .planner-item-card__content {
-  opacity: 0.56;
-}
-
 .day-detail-screen .planner-item-card strong {
   font-size: 1.05rem;
 }
@@ -1503,11 +1488,6 @@ button.dashboard-card {
   background: rgba(28, 28, 30, 0.76);
 }
 
-.day-detail-screen .planner-item-card.completed {
-  border-color: rgba(255, 255, 255, 0.08);
-  background: rgba(28, 28, 30, 0.76);
-}
-
 .day-detail-screen .planner-item-card__content {
   display: grid;
   gap: 5px;
@@ -1516,9 +1496,6 @@ button.dashboard-card {
   opacity: 1;
 }
 
-.day-detail-screen .planner-item-card.completed .planner-item-card__content {
-  opacity: 1;
-}
 .day-detail-screen .planner-item-time {
   margin: 0;
   color: var(--accent);
