@@ -6,26 +6,46 @@ Maycation helps families organize travel days, reservations, activities, transpo
 
 ## Current Status
 
-Maycation is actively under development and includes:
+Maycation is actively under development.
+
+### Architecture
+
+Complete
 
 * Multi-user trip collaboration
 * Supabase-backed data storage
 * Shared family access and permissions
-* Day-by-day itinerary management
+* Trips, days, and planner items
 * Reservations and fixed plans
 * Travel and transportation tracking
+* Planner item completion
 * Mobile-friendly responsive layouts
+
+### Design System Foundation
+
+Complete
+
+* DTCG token structure
+* Style Dictionary token pipeline
+* Semantic token ownership
+* Generated CSS and TypeScript token outputs
+* Shared component primitives
+* Lucide icon standardization
 * Dark-mode-first interface
-* Design-system-driven UI architecture
+
+### Current Focus
+
+Disney Mayhem visual parity and UX refinement.
 
 ## Design Philosophy
 
 Maycation is heavily inspired by the clarity and consistency established in the Disney Mayhem project.
 
-The goal is a highly structured interface built from reusable design system primitives rather than individually styled screens.
+The application is built around reusable design system primitives rather than individually styled screens.
 
 Core principles:
 
+* Prefer subtraction over addition
 * Consistent page structure
 * Shared component primitives
 * Single source of truth for styling
@@ -40,77 +60,70 @@ Core principles:
 * Vite
 * Supabase
 * Lucide React
+* Style Dictionary
 
-## Design System Direction
+## Design System
 
-The application is currently evolving toward a fully componentized design system architecture.
+### Tokens
 
-Planned system layers:
-
-### Foundations
-
-* Color tokens
-* Typography tokens
-* Spacing scale
-* Radius scale
-* Elevation system
+* Color
+* Typography
+* Spacing
+* Radius
+* Shadow
 * Icon sizing
 
 ### Primitives
 
-* Button
+* CardSurface
+* DashboardCard
+* DayTile
+* ActionBar
+* Badge
+* ProgressPill
 * IconButton
+* ModalSheet
+* ScreenHeader
+* DetailHeader
+* FeedbackMessage
+
+### Forms
+
 * TextInput
 * SelectInput
 * TextArea
-* Toggle
-* Badge
+* FormRow
+* FormGrid
+* FormActions
 
-### Surfaces
+## Roadmap
 
-* PageShell
-* PageHeader
-* CardSurface
-* Modal
+### v1.0.0 — Design System Foundation
 
-### Compositions
+Complete
 
-* DayTile
-* ItemCard
-* ReservationCard
-* MemberRow
-* InviteRow
+* Design token pipeline
+* Shared component primitives
+* CSS consolidation
+* GitHub Pages deployment
+* Design system ownership model
 
-## Future Roadmap
+### v1.1.0 — Disney Mayhem Visual Parity
 
-### Design System
+In Progress
 
-* Complete design token implementation
-* Shared component architecture audit
-* Eliminate one-off visual implementations
-* Improve component documentation
+* Visual refinement
+* Interaction polish
+* Shared card system
+* Shared typography system
+* Shared modal system
 
-### Storybook
+### Future
 
-Future Storybook integration will document:
-
-* Foundations
-* Components
-* Variants
-* Usage guidelines
-* Accessibility requirements
-
-### Figma MCP
-
-The long-term goal is a 1:1 relationship between:
-
-* Design tokens
-* Figma variables
-* Figma components
-* React components
 * Storybook documentation
-
-This will allow design and development systems to remain synchronized while supporting AI-assisted workflows.
+* Figma MCP parity
+* Expanded trip planning workflows
+* Additional collaboration features
 
 ## Development
 
@@ -138,13 +151,19 @@ Preview production build:
 npm run preview
 ```
 
+Deploy:
+
+```bash
+npm run deploy
+```
+
 ## Repository Workflow
 
-Primary development occurs on feature branches and is merged into `main` through pull requests.
+Primary development occurs on feature branches and is merged into main.
 
-Current focus:
+Current development focus:
 
-* Design system consolidation
-* Shared component primitives
-* UI consistency
+* Disney Mayhem visual parity
+* Design system refinement
+* Shared component ownership
 * Collaborative trip planning workflows
