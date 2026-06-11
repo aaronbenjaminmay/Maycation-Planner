@@ -6,10 +6,11 @@
 export const colorBackgroundDefault = "#000000"; // App-level page background
 export const colorSurfaceDefault = "#121316"; // Fallback panel background; used before glass morphism is applied
 export const colorSurfaceElevated = "#1a1c20"; // Elevated control surfaces; mode-toggle, account-strip
-export const colorSurfaceInput = "#0d0f12"; // Input field background; the darkest surface in the system
+export const colorSurfaceInput = "rgba(0, 0, 0, 0.28)"; // Form input background; transparent overlay that composites over glass surfaces. Canonical value from Visual System consolidation block
 export const colorSurfaceGlass = "rgba(28, 28, 30, 0.74)"; // Primary surface for cards, panels, and modals with backdrop blur
 export const colorBorderDefault = "#2b2d32"; // Opaque border for non-glass contexts
 export const colorBorderGlass = "rgba(255, 255, 255, 0.08)"; // Translucent white border for glass surfaces
+export const colorBorderControl = "rgba(255, 255, 255, 0.1)"; // Border for interactive control elements; form inputs, select, textarea, role/status/progress pills, secondary buttons. Intentionally brighter than border.glass to signal interactivity
 export const colorTextPrimary = "#f5f7fb"; // Headings, strong text, labels on dark backgrounds
 export const colorTextSecondary = "#b6bfcc"; // Body text; maps to CSS --text variable
 export const colorTextMuted = "#a1a1a6"; // Metadata, summaries, day-tile subheadings; differs from text.secondary — see unresolved note in token inventory

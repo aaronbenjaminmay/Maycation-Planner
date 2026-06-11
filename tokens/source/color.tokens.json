@@ -74,7 +74,12 @@
       "neutral-950": {
         "$type": "color",
         "$value": "#0d0f12",
-        "$description": "Deepest background; input field fill. Maps to CSS --input-bg"
+        "$description": "Deepest background; maps to legacy CSS --input-bg. Superseded as the canonical input surface by black-a28 (rgba(0,0,0,0.28)) in the glass morphism system; retained as a primitive"
+      },
+      "black-a28": {
+        "$type": "color",
+        "$value": "rgba(0, 0, 0, 0.28)",
+        "$description": "Black at 28% opacity; canonical form input background in the glass morphism system. Composites over glass surfaces. Canonical value from Visual System consolidation block"
       },
       "danger-bg": {
         "$type": "color",
@@ -95,6 +100,11 @@
         "$type": "color",
         "$value": "rgba(255, 255, 255, 0.08)",
         "$description": "Subtle white edge for glass surfaces"
+      },
+      "white-a10": {
+        "$type": "color",
+        "$value": "rgba(255, 255, 255, 0.1)",
+        "$description": "White at 10% opacity; slightly brighter than glass-border; used for interactive control element borders (form inputs, pills, secondary buttons)"
       },
       "overlay": {
         "$type": "color",
@@ -124,8 +134,8 @@
       },
       "input": {
         "$type": "color",
-        "$value": "{color.primitive.neutral-950}",
-        "$description": "Input field background; the darkest surface in the system"
+        "$value": "{color.primitive.black-a28}",
+        "$description": "Form input background; transparent overlay that composites over glass surfaces. Canonical value from Visual System consolidation block"
       },
       "glass": {
         "$type": "color",
@@ -144,6 +154,11 @@
         "$type": "color",
         "$value": "{color.primitive.glass-border}",
         "$description": "Translucent white border for glass surfaces"
+      },
+      "control": {
+        "$type": "color",
+        "$value": "{color.primitive.white-a10}",
+        "$description": "Border for interactive control elements; form inputs, select, textarea, role/status/progress pills, secondary buttons. Intentionally brighter than border.glass to signal interactivity"
       }
     },
 

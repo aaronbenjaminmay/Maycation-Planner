@@ -1,0 +1,71 @@
+/* ─── FormRow ────────────────────────────────────────────────────────────── */
+
+.form-row {
+  display: grid;
+  gap: 7px;
+  text-align: left;
+}
+
+.form-row__label {
+  color: var(--color-text-primary);
+  font-size: var(--typography-label-font-size);
+  font-weight: var(--typography-label-font-weight);
+  letter-spacing: var(--typography-label-letter-spacing);
+  line-height: var(--typography-label-line-height);
+  text-transform: var(--typography-label-text-transform);
+}
+
+.form-row__hint {
+  color: var(--color-text-muted);
+  font-size: var(--typography-caption-font-size);
+  line-height: var(--typography-caption-line-height);
+}
+
+/* ─── Form controls (shared by TextInput, SelectInput, TextArea) ─────────── */
+
+.form-control {
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 46px;
+  padding: 10px var(--spacing-sm);
+  border: 1px solid var(--color-border-control);
+  border-radius: var(--radius-input);
+  color: var(--color-text-primary);
+  background: var(--color-surface-input);
+  font: inherit;
+}
+
+.form-control:focus {
+  outline: 2px solid var(--color-accent-default);
+  outline-offset: 2px;
+}
+
+.form-control:disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
+}
+
+/* ─── Textarea variant ───────────────────────────────────────────────────── */
+
+.form-control--textarea {
+  min-height: 104px;
+  resize: vertical;
+}
+
+/* ─── FormActions leading-slot variant ───────────────────────────────────── */
+
+.form-actions--has-leading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.form-actions__leading {
+  flex: 0 0 auto;
+}
+
+.form-actions__main {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
