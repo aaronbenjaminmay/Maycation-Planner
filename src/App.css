@@ -264,7 +264,7 @@
 .screen-header__meta {
   display: grid;
   gap: 8px;
-  margin-top: var(--spacing-sm);
+  margin-top: var(--spacing-md);
   color: var(--text);
 }
 
