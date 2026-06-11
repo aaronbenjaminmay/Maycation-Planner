@@ -241,7 +241,7 @@
   display: grid;
   place-items: center;
   padding: 18px;
-  background: rgba(0, 0, 0, 0.58);
+  background: rgba(0, 0, 0, 0.78);
 }
 
 .card-surface {
@@ -448,9 +448,11 @@ button.dashboard-card {
 
 .modal-sheet__header {
   display: flex;
-  align-items: start;
+  align-items: center;
   justify-content: space-between;
   gap: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .dashboard-card:focus-visible,
@@ -986,10 +988,6 @@ button.dashboard-card {
   padding: 18px 20px;
 }
 
-.modal-backdrop {
-  background: rgba(0, 0, 0, 0.74);
-}
-
 .modal-sheet {
   width: min(100%, 560px);
   gap: 18px;
@@ -1177,22 +1175,11 @@ button.dashboard-card {
   min-height: 44px;
   background: var(--accent);
 }
-.modal-backdrop {
-  padding: 18px;
-  background: rgba(0, 0, 0, 0.78);
-}
-
 .modal-sheet {
   width: min(100%, 560px);
   max-height: calc(100svh - 36px);
   gap: 18px;
   padding: 22px;
-}
-
-.modal-sheet__header {
-  align-items: center;
-  padding-bottom: 16px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .form-actions {
@@ -1468,30 +1455,11 @@ button.dashboard-card {
   gap: 16px;
 }
 
-.modal-backdrop {
-  padding: 18px;
-  background: rgba(0, 0, 0, 0.78);
-}
-
 .modal-sheet {
   width: min(100%, 560px);
   max-height: calc(100svh - 36px);
   gap: 18px;
   padding: 22px;
-}
-
-.modal-sheet__header {
-  align-items: center;
-  padding-bottom: 16px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-}
-
-.modal-sheet__header h2 {
-  margin: 0;
-  color: var(--text-h);
-  font-size: 1.35rem;
-  font-weight: 900;
-  line-height: 1.05;
 }
 
 .auth-form,
