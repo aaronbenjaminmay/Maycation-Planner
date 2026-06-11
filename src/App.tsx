@@ -49,7 +49,7 @@ function App() {
   }
 
   if (user) {
-    return <TripsDashboard user={user} />
+    return <TripsDashboard />
   }
 
   return (

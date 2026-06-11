@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useState } from 'react'
-import type { User } from '@supabase/supabase-js'
 import { signOut } from '../lib/auth'
 import { createTrip, loadTripsForUser, type CreateTripInput, type Trip } from '../lib/trips'
 import {
@@ -21,9 +20,6 @@ import {
 import { TripDetail } from './TripDetail'
 import { TripCard } from './TripCard'
 
-type TripsDashboardProps = {
-  user: User
-}
 
 const roleTones: Record<PendingTripInvite['role'], BadgeTone> = {
   editor: 'info',
@@ -34,7 +30,7 @@ function getVisibleErrorMessage(error: unknown, fallback: string) {
   return error instanceof Error && error.message ? error.message : fallback
 }
 
-export function TripsDashboard({ user }: TripsDashboardProps) {
+export function TripsDashboard() {
   const [trips, setTrips] = useState<Trip[]>([])
   const [pendingInvites, setPendingInvites] = useState<PendingTripInvite[]>([])
   const [isLoadingTrips, setIsLoadingTrips] = useState(true)
@@ -167,9 +163,7 @@ export function TripsDashboard({ user }: TripsDashboardProps) {
               />
             </>
           }
-          eyebrow="Maycation Planner"
           title="My Trips"
-          meta={<p className="muted">Signed in as {user.email}</p>}
         />
 
         {isCreateOpen ? (
@@ -218,7 +212,6 @@ export function TripsDashboard({ user }: TripsDashboardProps) {
           >
             <div>
               <h2>Pending Invitations</h2>
-              <p className="muted">Trips shared with {user.email}</p>
             </div>
 
             {inviteError ? <p className="feedback">{inviteError}</p> : null}

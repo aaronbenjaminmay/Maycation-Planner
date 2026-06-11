@@ -4,7 +4,7 @@ import { ScreenHeader } from './ScreenHeader'
 
 type DetailHeaderProps = {
   action?: ReactNode
-  eyebrow: string
+  eyebrow?: string
   meta?: ReactNode
   onBack: () => void
   title: string

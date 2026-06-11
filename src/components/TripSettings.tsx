@@ -289,16 +289,8 @@ export function TripSettings({
     <main className="app-shell dashboard-shell">
       <section className="page-shell trips-panel">
         <DetailHeader
-          eyebrow="Trip Settings"
-          meta={
-            <p className="muted">
-              {isOwner
-                ? 'Manage invitations and member roles.'
-                : 'View trip membership.'}
-            </p>
-          }
           onBack={onBack}
-          title={trip.name}
+          title="Settings"
         />
 
         {isLoading ? (

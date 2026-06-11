@@ -158,7 +158,6 @@ export function DayDetail({
     <main className="app-shell dashboard-shell day-detail-screen">
       <section className="page-shell trips-panel">
         <DetailHeader
-          eyebrow={trip.name}
           meta={
             <>
               <p className="muted">{formatTripDayDate(day.date)}</p>

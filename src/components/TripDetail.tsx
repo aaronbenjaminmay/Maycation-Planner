@@ -162,7 +162,6 @@ export function TripDetail({ trip, onBack, onTripUpdated }: TripDetailProps) {
   const currentTripDayIndex = currentTripDay
     ? tripDays.findIndex((day) => day.id === currentTripDay.id)
     : -1
-  const firstTripDay = tripDays[0] ?? null
   const todayItems = currentTripDay ? getItemsForDay(currentTripDay.id) : []
   const nextTodayItem =
     sortItemsByPlanOrder(todayItems).find((item) => !isPlannerItemCompleted(item)) ??
@@ -218,14 +217,12 @@ export function TripDetail({ trip, onBack, onTripUpdated }: TripDetailProps) {
               onClick={() => setIsSettingsOpen(true)}
             />
           }
-          eyebrow="Trip Dashboard"
           meta={
-            <>
-              <p className="muted">{trip.destination || 'Location not set'}</p>
-              <p className="trip-dashboard-date-range">
-                {formatTripDateRange(trip.starts_on, trip.ends_on)}
-              </p>
-            </>
+            <p className="muted">
+              {[formatTripDateRange(trip.starts_on, trip.ends_on), trip.destination]
+                .filter(Boolean)
+                .join(' • ')}
+            </p>
           }
           onBack={onBack}
           title={trip.name}
@@ -253,26 +250,14 @@ export function TripDetail({ trip, onBack, onTripUpdated }: TripDetailProps) {
         {!isLoadingDays && !error ? (
           <CardSurface className="trip-intel-card">
             {tripPhase === 'before' && countdown ? (
-              <>
-                <div className="trip-intel-card__header">
-                  <div>
-                    <span>Trip starts in</span>
-                    <strong>
-                      {countdown.days} {countdown.days === 1 ? 'day' : 'days'}
-                    </strong>
-                  </div>
+              <div className="trip-intel-card__header">
+                <div>
+                  <span>Trip starts in</span>
+                  <strong>
+                    {countdown.days} {countdown.days === 1 ? 'day' : 'days'}
+                  </strong>
                 </div>
-                <dl>
-                  <div>
-                    <dt>Next</dt>
-                    <dd>
-                      {firstTripDay
-                        ? `Day 1 / ${firstTripDay.label || formatTripDayDate(firstTripDay.date)}`
-                        : 'Day 1'}
-                    </dd>
-                  </div>
-                </dl>
-              </>
+              </div>
             ) : null}
 
             {tripPhase === 'during' ? (
