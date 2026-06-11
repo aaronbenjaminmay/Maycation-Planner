@@ -93,7 +93,7 @@ Use Disney Mayhem as the visual benchmark.
 
 The objective is not visual imitation.
 
-The objective is consistency, clarity, and simplicity.
+The objective is consistency, clarity, simplicity, and restraint.
 
 Prefer:
 
@@ -112,6 +112,218 @@ Avoid:
 * Feature creep
 
 Prefer subtraction over addition.
+
+---
+
+## Information Architecture Principles
+
+Maycation should prioritize clarity through restraint.
+
+The system should know more than it shows.
+
+Avoid exposing information simply because the data exists.
+
+The goal is not to maximize visible information.
+
+The goal is to maximize understanding.
+
+Prefer subtraction over addition.
+
+---
+
+### Primary Question Rule
+
+Every screen should answer a single primary question.
+
+Examples:
+
+#### My Trips
+
+Question:
+
+Which trip do I want?
+
+#### Trip Detail
+
+Question:
+
+Which day do I need?
+
+#### Day Detail
+
+Question:
+
+What do I need to do today?
+
+#### Settings
+
+Question:
+
+What am I changing?
+
+Any information that does not support the primary question should be:
+
+* Removed
+* Combined
+* Demoted
+* Moved closer to where it is needed
+
+---
+
+### Context Retention Rule
+
+Assume the user remembers actions they just performed.
+
+Do not repeatedly reintroduce information established one navigation level earlier.
+
+Examples:
+
+If a user selects a trip:
+
+* Do not repeatedly display the trip name on every subsequent screen.
+* Do not restate information already established through navigation.
+
+If a user selects a day:
+
+* Do not reintroduce the trip.
+* Do not repeat metadata already visible elsewhere.
+
+Avoid narrating navigation.
+
+Trust the user.
+
+---
+
+### Header Content Rules
+
+Headers should be concise.
+
+A header may contain:
+
+* Title
+* Optional supporting detail
+
+Avoid stacking multiple layers of hierarchy unless each layer provides unique value.
+
+Before adding content to a header ask:
+
+Does this help the user understand where they are or what they should do next?
+
+If not, remove it.
+
+Examples:
+
+Avoid:
+
+* Application branding
+* Screen category labels
+* Repeated parent context
+* Signed-in account information
+
+Prefer:
+
+* One clear title
+* One supporting detail when necessary
+
+---
+
+### Authenticated Screen Rules
+
+Authenticated screens should not repeatedly display application branding.
+
+Avoid:
+
+* MAYCATION PLANNER
+* Signed-in email addresses
+* TRIP DASHBOARD
+* Other labels that merely describe the current screen
+
+The interface already communicates this through structure and navigation.
+
+Examples:
+
+Avoid:
+
+My Trips
+
+Signed in as [user@example.com](mailto:user@example.com)
+
+Prefer:
+
+My Trips
+
+---
+
+Avoid:
+
+TRIP DASHBOARD
+
+Beach Maycation
+
+Orange Beach
+
+Jun 7–12
+
+Prefer:
+
+Beach Maycation
+
+Jun 7–12 • Orange Beach
+
+---
+
+Avoid:
+
+BEACH MAYCATION
+
+Day 1
+
+Sunday, Jun 7
+
+Prefer:
+
+Day 1
+
+Sunday, Jun 7
+
+---
+
+### Information Density Review
+
+Every UI review should evaluate:
+
+1. What is the primary information?
+2. What is the primary action?
+3. What information is duplicated?
+4. What information can be removed?
+5. What information can be combined?
+
+Success is measured by clarity, not by the amount of information displayed.
+
+---
+
+### Disney Mayhem Principle
+
+Disney Mayhem succeeded because it reduced cognitive load.
+
+It assumed user context.
+
+It avoided administrative interfaces.
+
+It avoided explaining itself.
+
+Maycation should follow the same principle.
+
+The system should feel:
+
+* Calm
+* Focused
+* Confident
+* Predictable
+
+The interface should know more than it shows.
+
+Users should spend their attention on trip content, not interface chrome.
 
 ---
 
@@ -152,6 +364,8 @@ Screens own:
 * Event handlers
 
 Screens should not own visual styling.
+
+Screens should not own information hierarchy that can be standardized by the system.
 
 ---
 
@@ -334,11 +548,16 @@ Authenticated screens should share a common page header pattern.
 Structure:
 
 * Back action when appropriate
-* Eyebrow label
 * Page title
-* Optional metadata
+* Optional supporting detail
 * Divider
 * Header actions
+
+Use eyebrow labels only when they provide unique context.
+
+Do not use eyebrow labels simply to describe the current screen.
+
+If the title already communicates the context, omit the eyebrow.
 
 Screens should not create their own header systems.
 
@@ -399,6 +618,7 @@ Ask:
 * Should this change happen in a token?
 * Will this change cascade correctly?
 * Am I creating a one-off implementation?
+* Am I showing information because it is useful or because it exists?
 
 If the change creates a one-off implementation, stop and refactor through the shared system.
 
