@@ -435,7 +435,7 @@ button.dashboard-card {
 
 .modal-sheet {
   width: min(100%, 560px);
-  max-height: 92svh;
+  max-height: calc(100svh - 36px);
   overflow-y: auto;
   display: grid;
   gap: 18px;
@@ -988,12 +988,6 @@ button.dashboard-card {
   padding: 18px 20px;
 }
 
-.modal-sheet {
-  width: min(100%, 560px);
-  gap: 18px;
-  padding: 22px;
-}
-
 .modal-sheet__header h2 {
   margin: 0;
   color: var(--text-h);
@@ -1174,12 +1168,6 @@ button.dashboard-card {
   height: 44px;
   min-height: 44px;
   background: var(--accent);
-}
-.modal-sheet {
-  width: min(100%, 560px);
-  max-height: calc(100svh - 36px);
-  gap: 18px;
-  padding: 22px;
 }
 
 .form-actions {
@@ -1453,13 +1441,6 @@ button.dashboard-card {
 
 .settings-panel {
   gap: 16px;
-}
-
-.modal-sheet {
-  width: min(100%, 560px);
-  max-height: calc(100svh - 36px);
-  gap: 18px;
-  padding: 22px;
 }
 
 .auth-form,
