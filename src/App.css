@@ -2147,6 +2147,10 @@ button.dashboard-card {
   gap: 12px;
 }
 
+.planner-item-form .form-actions--has-leading {
+  justify-content: space-between;
+}
+
 .form-actions__main {
   display: flex;
   align-items: center;
