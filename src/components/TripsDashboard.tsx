@@ -10,17 +10,24 @@ import {
 } from '../lib/tripMembers'
 import { CreateTripForm } from './CreateTripForm'
 import {
+  Badge,
   CardSurface,
   EmptyState,
   IconButton,
   ModalSheet,
   ScreenHeader,
+  type BadgeTone,
 } from './DesignSystem'
 import { TripDetail } from './TripDetail'
 import { TripCard } from './TripCard'
 
 type TripsDashboardProps = {
   user: User
+}
+
+const roleTones: Record<PendingTripInvite['role'], BadgeTone> = {
+  editor: 'info',
+  viewer: 'secondary',
 }
 
 function getVisibleErrorMessage(error: unknown, fallback: string) {
@@ -226,9 +233,9 @@ export function TripsDashboard({ user }: TripsDashboardProps) {
                     </p>
                   </div>
 
-                  <span className={`role-pill ${invite.role}`}>
+                  <Badge tone={roleTones[invite.role]}>
                     {getRoleLabel(invite.role)}
-                  </span>
+                  </Badge>
 
                   <div className="member-actions">
                     <button

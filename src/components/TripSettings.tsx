@@ -7,6 +7,7 @@ import {
   removeTripMember,
   updateTripMemberRole,
   type TripInvite,
+  type TripInviteStatus,
   type TripMember,
 } from '../lib/tripMembers'
 import { getSupabaseClient } from '../lib/supabaseClient'
@@ -18,6 +19,7 @@ import {
   type TripMemberRole,
 } from '../lib/trips'
 import {
+  Badge,
   CardSurface,
   DetailHeader,
   EmptyState,
@@ -27,6 +29,7 @@ import {
   IconButton,
   SelectInput,
   TextInput,
+  type BadgeTone,
 } from './DesignSystem'
 
 type TripSettingsProps = {
@@ -37,6 +40,20 @@ type TripSettingsProps = {
 }
 
 type InviteRole = Exclude<TripMemberRole, 'owner'>
+
+const roleTones: Record<TripMemberRole, BadgeTone> = {
+  owner: 'accent',
+  editor: 'info',
+  viewer: 'secondary',
+}
+
+const statusTones: Record<TripInviteStatus, BadgeTone> = {
+  pending: 'warning',
+  accepted: 'accent',
+  declined: 'danger',
+  expired: 'danger',
+  revoked: 'danger',
+}
 
 function getVisibleErrorMessage(error: unknown, fallback: string) {
   return error instanceof Error && error.message ? error.message : fallback
@@ -446,9 +463,9 @@ export function TripSettings({
                     <p className="muted">{member.email || 'Email not set'}</p>
                   </div>
 
-                  <span className={`role-pill ${member.role}`}>
+                  <Badge tone={roleTones[member.role]}>
                     {getRoleLabel(member.role)}
-                  </span>
+                  </Badge>
 
                   {isOwner ? (
                     <div className="member-actions">
@@ -512,12 +529,12 @@ export function TripSettings({
                     </p>
                   </div>
                   <div className="invite-status-group">
-                    <span className={`role-pill ${invite.role}`}>
+                    <Badge tone={roleTones[invite.role]}>
                       {getRoleLabel(invite.role)}
-                    </span>
-                    <span className={`status-pill ${invite.status}`}>
+                    </Badge>
+                    <Badge tone={statusTones[invite.status]}>
                       {getInviteStatusLabel(invite.status)}
-                    </span>
+                    </Badge>
                   </div>
                 </div>
               ))}

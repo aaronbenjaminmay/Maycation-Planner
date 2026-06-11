@@ -1,3 +1,5 @@
+export { Badge } from './Badge'
+export type { BadgeTone } from './Badge'
 export { Icon } from './Icon'
 export type { IconName } from './Icon'
 export { IconButton } from './IconButton'

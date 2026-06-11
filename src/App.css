@@ -197,6 +197,12 @@
   background: var(--control-bg);
 }
 
+.feedback--error {
+  border-color: var(--color-danger-border);
+  background: var(--color-danger-surface);
+  color: var(--color-danger-text);
+}
+
 .toolbar {
   display: flex;
   justify-content: flex-end;
@@ -265,22 +271,6 @@
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-}
-
-.trip-dashboard-hero__meta span,
-.progress-pill {
-  width: fit-content;
-  padding: 5px 9px;
-  border: 1px solid var(--border);
-  border-radius: 999px;
-  color: var(--text-h);
-  background: color-mix(in srgb, var(--panel) 76%, transparent);
-  font-size: 12px;
-  font-weight: 800;
-}
-
-.progress-pill--complete {
-  border-color: #35b8a8;
 }
 
 .trip-card {
@@ -498,63 +488,12 @@
   color: var(--text-h);
 }
 
-.role-pill {
-  width: fit-content;
-  padding: 4px 8px;
-  border: 1px solid var(--border);
-  border-radius: 999px;
-  color: var(--text-h);
-  background: var(--control-bg);
-  font-size: 12px;
-  font-weight: 800;
-}
-
-.role-pill.owner {
-  border-color: var(--accent);
-}
-
-.role-pill.editor {
-  border-color: #3483fa;
-}
-
-.role-pill.viewer {
-  border-color: #9b8cff;
-}
-
 .invite-status-group {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
   gap: 8px;
   justify-content: flex-end;
-}
-
-.status-pill {
-  width: fit-content;
-  padding: 4px 8px;
-  border: 1px solid var(--border);
-  border-radius: 999px;
-  color: var(--text-h);
-  background: var(--control-bg);
-  font-size: 12px;
-  font-weight: 800;
-}
-
-.status-pill.pending {
-  border-color: var(--accent);
-}
-
-.status-pill.accepted {
-  border-color: #35b8a8;
-}
-
-.status-pill.declined,
-.status-pill.revoked {
-  border-color: var(--danger-border);
-}
-
-.status-pill.expired {
-  border-color: #f2a93b;
 }
 
 .member-actions {
@@ -775,14 +714,6 @@ button.dashboard-card {
   flex-wrap: wrap;
   justify-content: flex-end;
   gap: 8px;
-}
-
-.progress-pill--default {
-  border-color: var(--border);
-}
-
-.progress-pill--attention {
-  border-color: #f2a93b;
 }
 
 .empty-state__body {
@@ -1367,6 +1298,11 @@ button.dashboard-card {
   font-weight: 700;
 }
 
+.feedback--error {
+  border-color: var(--color-danger-border);
+  background: var(--color-danger-surface);
+}
+
 .system-icon {
   display: block;
   flex: 0 0 auto;
@@ -1444,22 +1380,8 @@ button.dashboard-card {
   padding: 18px 20px;
 }
 
-.trip-card .progress-pill {
-  font-size: 11px;
-}
-
 .member-card {
   padding: 14px;
-}
-
-.role-pill,
-.status-pill,
-.progress-pill {
-  border-color: rgba(255, 255, 255, 0.1);
-  border-radius: 999px;
-  background: rgba(0, 0, 0, 0.18);
-  font-size: 11px;
-  font-weight: 900;
 }
 
 .modal-backdrop {
@@ -1989,16 +1911,6 @@ button.dashboard-card {
 
 .member-card {
   padding: 14px 16px;
-}
-
-.role-pill,
-.status-pill,
-.progress-pill {
-  border-color: rgba(255, 255, 255, 0.1);
-  border-radius: 999px;
-  background: rgba(0, 0, 0, 0.22);
-  font-size: 11px;
-  font-weight: 900;
 }
 
 .modal-backdrop {
