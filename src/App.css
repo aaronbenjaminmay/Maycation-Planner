@@ -54,12 +54,8 @@
 
 .mode-toggle button,
 .auth-form button,
-.account-strip button,
-.toolbar button,
 .empty-state button:not(.icon-button),
 .form-actions button:not(.icon-button),
-.planner-item-actions button,
-.completion-toggle,
 .member-actions button:not(.icon-button) {
   min-height: 44px;
   border: 1px solid transparent;
@@ -73,8 +69,6 @@
 
 .mode-toggle button.active,
 .auth-form button,
-.account-strip button,
-.toolbar button,
 .empty-state button:not(.icon-button),
 .form-actions button:not(.secondary-button):not(.icon-button),
 .member-actions button:not(.secondary-button):not(.danger-button):not(.icon-button) {
@@ -104,25 +98,16 @@
 
 .mode-toggle button:focus-visible,
 .auth-form button:focus-visible,
-.account-strip button:focus-visible,
-.toolbar button:focus-visible,
 .empty-state button:not(.icon-button):focus-visible,
 .form-actions button:not(.icon-button):focus-visible,
 .trip-card:focus-visible,
-.dashboard-tile--button:focus-visible,
-.planner-item-actions button:focus-visible,
-.completion-toggle:focus-visible,
 .member-actions button:not(.icon-button):focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
 }
 
 .auth-form button:disabled,
-.account-strip button:disabled,
 .form-actions button:not(.icon-button):disabled,
-.dashboard-header button:disabled,
-.planner-item-actions button:disabled,
-.completion-toggle:disabled,
 .member-actions button:not(.icon-button):disabled {
   cursor: not-allowed;
   opacity: 0.65;
@@ -535,10 +520,7 @@ button.dashboard-card {
     flex-direction: column;
   }
 
-.dashboard-header,
-.screen-header,
-.trip-detail-nav,
-.toolbar {
+.screen-header {
     align-items: stretch;
     flex-direction: column;
   }
@@ -554,8 +536,7 @@ button.dashboard-card {
     flex-direction: column;
   }
 
-  .day-tile__stats,
-  .trip-dashboard-hero__meta {
+  .day-tile__stats {
     justify-content: flex-start;
   }
 
