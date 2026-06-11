@@ -4,7 +4,7 @@ import {
   signUpWithEmailPassword,
   useAuthSession,
 } from './lib/auth'
-import { CardSurface } from './components/DesignSystem'
+import { CardSurface, FeedbackMessage, TextInput } from './components/DesignSystem'
 import { TripsDashboard } from './components/TripsDashboard'
 import './App.css'
 
@@ -81,30 +81,26 @@ function App() {
         </div>
 
         <form className="auth-form" onSubmit={handleAuthSubmit}>
-          <label>
-            Email
-            <input
-              type="email"
-              value={email}
-              onChange={(event) => setEmail(event.target.value)}
-              autoComplete="email"
-              required
-            />
-          </label>
+          <TextInput
+            label="Email"
+            type="email"
+            value={email}
+            onChange={setEmail}
+            autoComplete="email"
+            required
+          />
 
-          <label>
-            Password
-            <input
-              type="password"
-              value={password}
-              onChange={(event) => setPassword(event.target.value)}
-              autoComplete={
-                authMode === 'sign-in' ? 'current-password' : 'new-password'
-              }
-              minLength={6}
-              required
-            />
-          </label>
+          <TextInput
+            label="Password"
+            type="password"
+            value={password}
+            onChange={setPassword}
+            autoComplete={
+              authMode === 'sign-in' ? 'current-password' : 'new-password'
+            }
+            minLength={6}
+            required
+          />
 
           <button type="submit" disabled={isSubmitting}>
             {isSubmitting
@@ -115,7 +111,7 @@ function App() {
           </button>
         </form>
 
-        {feedback ? <p className="feedback">{feedback}</p> : null}
+        {feedback ? <FeedbackMessage>{feedback}</FeedbackMessage> : null}
       </CardSurface>
     </main>
   )
