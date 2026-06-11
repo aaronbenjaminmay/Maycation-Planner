@@ -128,14 +128,6 @@
   justify-items: start;
 }
 
-.empty-state h2,
-.settings-panel h2 {
-  margin: 0 0 6px;
-  color: var(--text-h);
-  font-size: 1.35rem;
-  line-height: 1.15;
-}
-
 .trip-list {
   display: grid;
   gap: 14px;
@@ -903,19 +895,6 @@ button.dashboard-card {
   line-height: 0.98;
 }
 
-.dashboard-card strong,
-.settings-panel h2,
-.empty-state h2,
-.member-card strong,
-.planner-item-card strong,
-.trip-dashboard .day-tile h2 {
-  color: var(--text-h);
-  font-size: 1rem;
-  font-weight: 900;
-  letter-spacing: 0;
-  line-height: 1.15;
-}
-
 .feedback {
   border-color: rgba(255, 255, 255, 0.08);
   border-radius: 14px;
@@ -977,11 +956,6 @@ button.dashboard-card {
 .member-card {
   border-radius: 18px;
   background: rgba(28, 28, 30, 0.72);
-}
-
-.settings-panel,
-.empty-state {
-  padding: 18px;
 }
 
 .trip-card {
@@ -1049,17 +1023,6 @@ button.dashboard-card {
   font-size: clamp(1.85rem, 6vw, 2.65rem);
   font-weight: 900;
   line-height: 0.98;
-}
-
-.dashboard-card strong,
-.settings-panel h2,
-.empty-state h2,
-.member-card strong,
-.planner-item-card strong,
-.trip-dashboard .day-tile h2 {
-  font-size: 1rem;
-  font-weight: 900;
-  line-height: 1.15;
 }
 
 .dashboard-card,
