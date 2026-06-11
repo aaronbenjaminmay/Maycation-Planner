@@ -5,7 +5,16 @@ import {
   type PlannerItemKind,
   type TripDay,
 } from '../lib/trips'
-import { IconButton, ModalSheet } from './DesignSystem'
+import {
+  FeedbackMessage,
+  FormActions,
+  FormGrid,
+  IconButton,
+  ModalSheet,
+  SelectInput,
+  TextArea,
+  TextInput,
+} from './DesignSystem'
 
 type AddPlannerItemFormProps = {
   ariaLabel?: string
@@ -98,93 +107,74 @@ export function AddPlannerItemForm({
       title={day.label || 'Trip Day'}
     >
       <form className="planner-item-form" onSubmit={handleSubmit}>
-        <label>
-          Kind
-          <select
-            value={kind}
-            onChange={(event) => setKind(event.target.value as PlannerItemKind)}
-          >
-            {plannerItemKinds.map((itemKind) => (
-              <option key={itemKind} value={itemKind}>
-                {kindLabels[itemKind]}
-              </option>
-            ))}
-          </select>
-        </label>
+        <SelectInput
+          label="Kind"
+          value={kind}
+          onChange={(v) => setKind(v as PlannerItemKind)}
+          options={plannerItemKinds.map((k) => ({ value: k, label: kindLabels[k] }))}
+        />
 
-        <label>
-          Title
-          <input
-            type="text"
-            value={title}
-            onChange={(event) => setTitle(event.target.value)}
-            required
+        <TextInput
+          label="Title"
+          value={title}
+          onChange={setTitle}
+          required
+        />
+
+        <FormGrid>
+          <TextInput
+            label="Start time"
+            type="time"
+            value={startTime}
+            onChange={setStartTime}
           />
-        </label>
-
-        <div className="form-grid">
-          <label>
-            Start time
-            <input
-              type="time"
-              value={startTime}
-              onChange={(event) => setStartTime(event.target.value)}
-            />
-          </label>
-
-          <label>
-            End time
-            <input
-              type="time"
-              value={endTime}
-              onChange={(event) => setEndTime(event.target.value)}
-            />
-          </label>
-        </div>
-
-        <label>
-          Location
-          <input
-            type="text"
-            value={location}
-            onChange={(event) => setLocation(event.target.value)}
+          <TextInput
+            label="End time"
+            type="time"
+            value={endTime}
+            onChange={setEndTime}
           />
-        </label>
+        </FormGrid>
 
-        <label>
-          Notes
-          <textarea
-            value={notes}
-            onChange={(event) => setNotes(event.target.value)}
-            rows={4}
-          />
-        </label>
+        <TextInput
+          label="Location"
+          value={location}
+          onChange={setLocation}
+        />
+
+        <TextArea
+          label="Notes"
+          value={notes}
+          onChange={setNotes}
+          rows={4}
+        />
 
         {validationMessage || error ? (
-          <p className="feedback">{validationMessage || error}</p>
+          <FeedbackMessage tone="error">{validationMessage || error}</FeedbackMessage>
         ) : null}
 
-        <div className={`form-actions${onDelete ? ' form-actions--with-delete' : ''}`}>
-          {onDelete ? (
-            <div className="form-actions__danger">
-              <IconButton
-                disabled={isDeleting || isSubmitting}
-                icon="delete"
-                label={isDeleting ? 'Deleting item' : 'Delete item'}
-                onClick={() => void onDelete()}
-                variant="destructive"
-              />
-            </div>
-          ) : null}
-          <div className="form-actions__main">
-            <button type="button" className="secondary-button" onClick={onCancel}>
-              Cancel
-            </button>
-            <button type="submit" disabled={isSubmitting}>
-              {isSubmitting ? submittingLabel : submitLabel}
-            </button>
-          </div>
-        </div>
+        <FormActions
+          leading={
+            onDelete
+              ? (
+                  <IconButton
+                    disabled={isDeleting || isSubmitting}
+                    icon="delete"
+                    label={isDeleting ? 'Deleting item' : 'Delete item'}
+                    onClick={() => void onDelete()}
+                    variant="destructive"
+                  />
+                )
+              : undefined
+          }
+        >
+          <button type="button" className="secondary-button" onClick={onCancel}>
+            Cancel
+          </button>
+          <button type="submit" disabled={isSubmitting}>
+            {isSubmitting ? submittingLabel : submitLabel}
+          </button>
+        </FormActions>
       </form>
     </ModalSheet>
   )

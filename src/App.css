@@ -174,11 +174,6 @@
   font: inherit;
 }
 
-.planner-item-form textarea {
-  min-height: 104px;
-  resize: vertical;
-}
-
 .auth-form input:focus,
 .trip-form input:focus,
 .trip-form select:focus,
@@ -2262,11 +2257,6 @@ button.dashboard-card {
   gap: 12px;
 }
 
-.planner-item-form .form-actions--with-delete {
-  justify-content: space-between;
-}
-
-.form-actions__danger,
 .form-actions__main {
   display: flex;
   align-items: center;
@@ -2277,13 +2267,11 @@ button.dashboard-card {
   min-width: 112px;
 }
 @media (max-width: 440px) {
-  .planner-item-form .form-actions,
-  .planner-item-form .form-actions--with-delete {
+  .planner-item-form .form-actions {
     align-items: stretch;
     flex-direction: column-reverse;
   }
 
-  .form-actions__danger,
   .form-actions__main {
     justify-content: flex-end;
   }
