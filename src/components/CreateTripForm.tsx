@@ -4,6 +4,13 @@ import {
   type CreateTripInput,
   type TravelType,
 } from '../lib/trips'
+import {
+  FeedbackMessage,
+  FormActions,
+  FormGrid,
+  SelectInput,
+  TextInput,
+} from './DesignSystem'
 
 type CreateTripFormProps = {
   error: string
@@ -57,73 +64,50 @@ export function CreateTripForm({
 
   return (
     <form className="trip-form" onSubmit={handleSubmit}>
-      <label>
-        Trip Name
-        <input
-          type="text"
-          value={name}
-          onChange={(event) => setName(event.target.value)}
+      <TextInput label="Trip Name" value={name} onChange={setName} required />
+
+      <TextInput
+        label="Location"
+        value={destination}
+        onChange={setDestination}
+      />
+
+      <FormGrid>
+        <TextInput
+          label="Start Date"
+          type="date"
+          value={startsOn}
+          onChange={setStartsOn}
           required
         />
-      </label>
-
-      <label>
-        Location
-        <input
-          type="text"
-          value={destination}
-          onChange={(event) => setDestination(event.target.value)}
+        <TextInput
+          label="End Date"
+          type="date"
+          value={endsOn}
+          onChange={setEndsOn}
+          required
         />
-      </label>
+      </FormGrid>
 
-      <div className="form-grid">
-        <label>
-          Start Date
-          <input
-            type="date"
-            value={startsOn}
-            onChange={(event) => setStartsOn(event.target.value)}
-            required
-          />
-        </label>
-
-        <label>
-          End Date
-          <input
-            type="date"
-            value={endsOn}
-            onChange={(event) => setEndsOn(event.target.value)}
-            required
-          />
-        </label>
-      </div>
-
-      <label>
-        Travel Type
-        <select
-          value={travelType}
-          onChange={(event) => setTravelType(event.target.value as TravelType)}
-        >
-          {travelTypes.map((type) => (
-            <option key={type} value={type}>
-              {type}
-            </option>
-          ))}
-        </select>
-      </label>
+      <SelectInput
+        label="Travel Type"
+        value={travelType}
+        onChange={(v) => setTravelType(v as TravelType)}
+        options={travelTypes.map((type) => ({ value: type, label: type }))}
+      />
 
       {validationMessage || error ? (
-        <p className="feedback">{validationMessage || error}</p>
+        <FeedbackMessage tone="error">{validationMessage || error}</FeedbackMessage>
       ) : null}
 
-      <div className="form-actions">
+      <FormActions>
         <button type="button" className="secondary-button" onClick={onCancel}>
           Cancel
         </button>
         <button type="submit" disabled={isSubmitting}>
           {isSubmitting ? 'Creating...' : 'Create Trip'}
         </button>
-      </div>
+      </FormActions>
     </form>
   )
 }

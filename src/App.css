@@ -99,7 +99,6 @@
 .form-actions button:not(.icon-button),
 .planner-item-actions button,
 .completion-toggle,
-.invite-form button:not(.icon-button),
 .member-actions button:not(.icon-button) {
   min-height: 44px;
   border: 1px solid transparent;
@@ -117,7 +116,6 @@
 .toolbar button,
 .empty-state button:not(.icon-button),
 .form-actions button:not(.secondary-button):not(.icon-button),
-.invite-form button:not(.secondary-button):not(.icon-button),
 .member-actions button:not(.secondary-button):not(.danger-button):not(.icon-button) {
   background: var(--accent);
   color: var(--accent-text);
@@ -143,10 +141,7 @@
   gap: 16px;
 }
 
-.auth-form label,
-.trip-form label,
-.planner-item-form label,
-.invite-form label {
+.auth-form label {
   display: grid;
   gap: 8px;
   color: var(--text-h);
@@ -155,14 +150,7 @@
   text-align: left;
 }
 
-.auth-form input,
-.trip-form input,
-.trip-form select,
-.planner-item-form input,
-.planner-item-form select,
-.planner-item-form textarea,
-.invite-form input,
-.invite-form select {
+.auth-form input {
   min-height: 44px;
   box-sizing: border-box;
   width: 100%;
@@ -175,13 +163,6 @@
 }
 
 .auth-form input:focus,
-.trip-form input:focus,
-.trip-form select:focus,
-.planner-item-form input:focus,
-.planner-item-form select:focus,
-.planner-item-form textarea:focus,
-.invite-form input:focus,
-.invite-form select:focus,
 .mode-toggle button:focus-visible,
 .auth-form button:focus-visible,
 .account-strip button:focus-visible,
@@ -192,7 +173,6 @@
 .dashboard-tile--button:focus-visible,
 .planner-item-actions button:focus-visible,
 .completion-toggle:focus-visible,
-.invite-form button:not(.icon-button):focus-visible,
 .member-actions button:not(.icon-button):focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
@@ -204,7 +184,6 @@
 .dashboard-header button:disabled,
 .planner-item-actions button:disabled,
 .completion-toggle:disabled,
-.invite-form button:not(.icon-button):disabled,
 .member-actions button:not(.icon-button):disabled {
   cursor: not-allowed;
   opacity: 0.65;
@@ -1417,7 +1396,6 @@ button.dashboard-card {
 .mode-toggle button,
 .auth-form button,
 .form-actions button:not(.icon-button),
-.invite-form button:not(.icon-button),
 .member-actions button:not(.icon-button),
 .empty-state button:not(.icon-button) {
   min-height: 44px;
@@ -1435,14 +1413,7 @@ button.dashboard-card {
   border-radius: 999px;
 }
 
-.auth-form input,
-.trip-form input,
-.trip-form select,
-.planner-item-form input,
-.planner-item-form select,
-.planner-item-form textarea,
-.invite-form input,
-.invite-form select {
+.auth-form input {
   min-height: 46px;
   border-color: rgba(255, 255, 255, 0.1);
   border-radius: 14px;
@@ -1761,10 +1732,7 @@ button.dashboard-card {
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-.auth-form label,
-.trip-form label,
-.planner-item-form label,
-.invite-form label {
+.auth-form label {
   gap: 7px;
   font-size: 12px;
   font-weight: 900;
@@ -1772,14 +1740,7 @@ button.dashboard-card {
   text-transform: uppercase;
 }
 
-.auth-form input,
-.trip-form input,
-.trip-form select,
-.planner-item-form input,
-.planner-item-form select,
-.planner-item-form textarea,
-.invite-form input,
-.invite-form select {
+.auth-form input {
   min-height: 46px;
   border-radius: 14px;
   background: rgba(0, 0, 0, 0.28);
@@ -1791,7 +1752,6 @@ button.dashboard-card {
 
 .form-actions button:not(.icon-button),
 .auth-form button,
-.invite-form button:not(.icon-button),
 .member-actions button:not(.icon-button) {
   border-radius: 999px;
 }
@@ -2117,10 +2077,7 @@ button.dashboard-card {
   gap: 14px;
 }
 
-.auth-form label,
-.trip-form label,
-.planner-item-form label,
-.invite-form label {
+.auth-form label {
   gap: 7px;
   color: var(--text-h);
   font-size: 12px;
@@ -2129,14 +2086,7 @@ button.dashboard-card {
   text-transform: uppercase;
 }
 
-.auth-form input,
-.trip-form input,
-.trip-form select,
-.planner-item-form input,
-.planner-item-form select,
-.planner-item-form textarea,
-.invite-form input,
-.invite-form select {
+.auth-form input {
   min-height: 46px;
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 14px;
@@ -2149,7 +2099,6 @@ button.dashboard-card {
 
 .form-actions button:not(.icon-button),
 .auth-form button,
-.invite-form button:not(.icon-button),
 .member-actions button:not(.icon-button),
 .mode-toggle button {
   min-height: 44px;

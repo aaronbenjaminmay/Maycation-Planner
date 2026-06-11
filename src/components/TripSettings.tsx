@@ -17,7 +17,17 @@ import {
   type Trip,
   type TripMemberRole,
 } from '../lib/trips'
-import { CardSurface, DetailHeader, EmptyState, IconButton } from './DesignSystem'
+import {
+  CardSurface,
+  DetailHeader,
+  EmptyState,
+  FeedbackMessage,
+  FormActions,
+  FormGrid,
+  IconButton,
+  SelectInput,
+  TextInput,
+} from './DesignSystem'
 
 type TripSettingsProps = {
   currentRole: TripMemberRole | null
@@ -301,30 +311,27 @@ export function TripSettings({
             </div>
 
             <form className="invite-form" onSubmit={handleInvite}>
-              <label>
-                Email
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(event) => setEmail(event.target.value)}
-                  required
-                />
-              </label>
+              <TextInput
+                label="Email"
+                type="email"
+                value={email}
+                onChange={setEmail}
+                required
+              />
 
-              <label>
-                Role
-                <select
-                  value={inviteRole}
-                  onChange={(event) =>
-                    setInviteRole(event.target.value as InviteRole)
-                  }
-                >
-                  <option value="viewer">Viewer</option>
-                  <option value="editor">Editor</option>
-                </select>
-              </label>
+              <SelectInput
+                label="Role"
+                value={inviteRole}
+                onChange={(v) => setInviteRole(v as InviteRole)}
+                options={[
+                  { value: 'viewer', label: 'Viewer' },
+                  { value: 'editor', label: 'Editor' },
+                ]}
+              />
 
-              {inviteError ? <p className="feedback">{inviteError}</p> : null}
+              {inviteError ? (
+                <FeedbackMessage tone="error">{inviteError}</FeedbackMessage>
+              ) : null}
 
               <IconButton
                 disabled={isInviting}
@@ -354,72 +361,52 @@ export function TripSettings({
               />
             ) : (
               <form className="trip-form" onSubmit={handleTripUpdate}>
-                <label>
-                  Trip Name
-                  <input
-                    type="text"
-                    value={editName}
-                    onChange={(event) => setEditName(event.target.value)}
+                <TextInput
+                  label="Trip Name"
+                  value={editName}
+                  onChange={setEditName}
+                  required
+                />
+
+                <TextInput
+                  label="Location"
+                  value={editDestination}
+                  onChange={setEditDestination}
+                />
+
+                <FormGrid>
+                  <TextInput
+                    label="Start Date"
+                    type="date"
+                    value={editStartsOn}
+                    onChange={setEditStartsOn}
                     required
                   />
-                </label>
-
-                <label>
-                  Location
-                  <input
-                    type="text"
-                    value={editDestination}
-                    onChange={(event) => setEditDestination(event.target.value)}
+                  <TextInput
+                    label="End Date"
+                    type="date"
+                    value={editEndsOn}
+                    onChange={setEditEndsOn}
+                    required
                   />
-                </label>
+                </FormGrid>
 
-                <div className="form-grid">
-                  <label>
-                    Start Date
-                    <input
-                      type="date"
-                      value={editStartsOn}
-                      onChange={(event) => setEditStartsOn(event.target.value)}
-                      required
-                    />
-                  </label>
-
-                  <label>
-                    End Date
-                    <input
-                      type="date"
-                      value={editEndsOn}
-                      onChange={(event) => setEditEndsOn(event.target.value)}
-                      required
-                    />
-                  </label>
-                </div>
-
-                <label>
-                  Travel Type
-                  <select
-                    value={editTravelType}
-                    onChange={(event) =>
-                      setEditTravelType(event.target.value as TravelType)
-                    }
-                  >
-                    {travelTypes.map((type) => (
-                      <option key={type} value={type}>
-                        {type}
-                      </option>
-                    ))}
-                  </select>
-                </label>
+                <SelectInput
+                  label="Travel Type"
+                  value={editTravelType}
+                  onChange={(v) => setEditTravelType(v as TravelType)}
+                  options={travelTypes.map((type) => ({ value: type, label: type }))}
+                />
 
                 <p className="muted">
                   Changing dates does not update existing trip days yet.
                 </p>
 
                 {tripEditError ? (
-                  <p className="feedback">{tripEditError}</p>
+                  <FeedbackMessage tone="error">{tripEditError}</FeedbackMessage>
                 ) : null}
 
-                <div className="form-actions">
+                <FormActions>
                   <button
                     type="button"
                     className="secondary-button"
@@ -434,7 +421,7 @@ export function TripSettings({
                   <button type="submit" disabled={isSavingTrip}>
                     {isSavingTrip ? 'Saving...' : 'Save Trip'}
                   </button>
-                </div>
+                </FormActions>
               </form>
             )}
           </CardSurface>
