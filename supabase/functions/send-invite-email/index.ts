@@ -51,6 +51,7 @@ Deno.serve(async (req) => {
 
     const { data: { user }, error: authError } = await userClient.auth.getUser()
     if (authError || !user) {
+      console.error('send-invite-email: auth failed', { authError })
       return new Response(JSON.stringify({ error: 'Unauthorized' }), {
         status: 401,
         headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
@@ -59,6 +60,7 @@ Deno.serve(async (req) => {
 
     const { inviteId } = await req.json() as { inviteId: string }
     if (!inviteId) {
+      console.error('send-invite-email: missing inviteId', { userId: user.id })
       return new Response(JSON.stringify({ error: 'inviteId is required' }), {
         status: 400,
         headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
@@ -87,6 +89,7 @@ Deno.serve(async (req) => {
       .single<InviteRow>()
 
     if (inviteError || !invite) {
+      console.error('send-invite-email: invite not found', { inviteId, userId: user.id, inviteError })
       return new Response(JSON.stringify({ error: 'Invite not found' }), {
         status: 404,
         headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
@@ -94,17 +97,22 @@ Deno.serve(async (req) => {
     }
 
     if (invite.invited_by !== user.id) {
+      console.error('send-invite-email: forbidden', { inviteId, invitedBy: invite.invited_by, userId: user.id })
       return new Response(JSON.stringify({ error: 'Forbidden' }), {
         status: 403,
         headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
       })
     }
 
-    const { data: inviterProfile } = await serviceClient
+    const { data: inviterProfile, error: profileError } = await serviceClient
       .from('profiles')
       .select('display_name, email')
       .eq('user_id', invite.invited_by)
       .single<InviterProfile>()
+
+    if (profileError) {
+      console.error('send-invite-email: profile lookup failed', { userId: invite.invited_by, profileError })
+    }
 
     const inviterName = inviterProfile?.display_name || inviterProfile?.email || 'A trip owner'
     const trip = invite.trips

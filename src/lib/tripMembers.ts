@@ -164,11 +164,12 @@ export async function createTripInvite(
 
 export async function sendInviteEmail(inviteId: string) {
   const client = getSupabaseClient()
-  const { error } = await client.functions.invoke('send-invite-email', {
+  const { data, error } = await client.functions.invoke('send-invite-email', {
     body: { inviteId },
   })
 
   if (error) {
+    console.error('sendInviteEmail failed', { inviteId, error, data })
     throw new Error('Unable to send invite email.')
   }
 }
