@@ -10,10 +10,12 @@ import {
 import { CreateTripForm } from './CreateTripForm'
 import {
   Badge,
+  Button,
   CardSurface,
   EmptyState,
   IconButton,
   ModalSheet,
+  PageControls,
   ScreenHeader,
   type BadgeTone,
 } from './DesignSystem'
@@ -152,24 +154,26 @@ export function TripsDashboard() {
   return (
     <main className="app-shell dashboard-shell">
       <section className="page-shell trips-panel">
-        <ScreenHeader
-          actions={
-            <>
-              <IconButton
-                icon="add"
-                label="Create Trip"
-                onClick={() => setIsCreateOpen(true)}
-              />
-              <IconButton
-                icon="sign-out"
-                label="Sign out"
-                onClick={handleSignOut}
-                disabled={isSigningOut}
-              />
-            </>
+        <PageControls
+          leading={
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={() => void handleSignOut()}
+              disabled={isSigningOut}
+            >
+              {isSigningOut ? 'Signing out…' : 'Sign out'}
+            </Button>
           }
-          title="My Trips"
+          trailing={
+            <IconButton
+              icon="add"
+              label="Create Trip"
+              onClick={() => setIsCreateOpen(true)}
+            />
+          }
         />
+        <ScreenHeader title="My Trips" />
 
         {isCreateOpen ? (
           <ModalSheet

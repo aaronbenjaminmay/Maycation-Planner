@@ -1544,6 +1544,72 @@ button.dashboard-card {
   }
 }
 
+/* Shared button system */
+.button {
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 40px;
+  padding: 0 14px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 999px;
+  color: var(--text-h);
+  background: rgba(28, 28, 30, 0.84);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    background 140ms ease,
+    border-color 140ms ease,
+    transform 140ms ease;
+}
+
+.button:hover:not(:disabled) {
+  border-color: rgba(255, 255, 255, 0.22);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.button:active:not(:disabled) {
+  transform: scale(0.96);
+}
+
+.button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.button:disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
+}
+
+.button--primary {
+  color: #fff;
+  border-color: var(--accent);
+  background: var(--accent);
+}
+
+.button--primary:hover:not(:disabled) {
+  color: #fff;
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 86%, white 14%);
+}
+
+.button--destructive {
+  color: var(--danger-text);
+  border-color: var(--danger-border);
+  background: rgba(255, 69, 58, 0.08);
+}
+
+.button--destructive:hover:not(:disabled) {
+  color: var(--danger-text);
+  border-color: var(--danger-text);
+  background: rgba(255, 69, 58, 0.14);
+}
+
 /* Shared icon button system */
 .icon-button {
   box-sizing: border-box;
