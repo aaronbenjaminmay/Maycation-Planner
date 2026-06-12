@@ -1635,3 +1635,23 @@ button.dashboard-card {
   border-color: var(--accent);
   background: var(--accent);
 }
+
+/* Trip background image */
+.dashboard-shell.has-trip-bg {
+  background-size: cover;
+  background-position: center top;
+  background-repeat: no-repeat;
+}
+
+@media (min-width: 721px) {
+  .dashboard-shell.has-trip-bg {
+    background-position: center center;
+  }
+}
+
+.bg-preview {
+  width: 100%;
+  max-height: 180px;
+  border-radius: 14px;
+  object-fit: cover;
+}

@@ -1,4 +1,4 @@
-import { type FormEvent, useCallback, useEffect, useState } from 'react'
+import { type FormEvent, useCallback, useEffect, useRef, useState } from 'react'
 import {
   createTripInvite,
   loadTripAccess,
@@ -12,6 +12,7 @@ import {
 import { getSupabaseClient } from '../lib/supabaseClient'
 import {
   deleteTrip,
+  setTripBackground,
   travelTypes,
   updateTrip,
   type TravelType,
@@ -35,6 +36,7 @@ import {
 } from './DesignSystem'
 
 type TripSettingsProps = {
+  backgroundUrl?: string | null
   currentRole: TripMemberRole | null
   onBack: () => void
   onTripDeleted: () => void
@@ -56,6 +58,7 @@ function getVisibleErrorMessage(error: unknown, fallback: string) {
 }
 
 export function TripSettings({
+  backgroundUrl,
   onBack,
   onTripDeleted,
   onTripUpdated,
@@ -86,6 +89,11 @@ export function TripSettings({
   const [tripEditError, setTripEditError] = useState('')
   const [inviteError, setInviteError] = useState('')
   const [memberError, setMemberError] = useState('')
+  const [isBgOpen, setIsBgOpen] = useState(false)
+  const [isUploadingBg, setIsUploadingBg] = useState(false)
+  const [isRemovingBg, setIsRemovingBg] = useState(false)
+  const [bgError, setBgError] = useState('')
+  const bgInputRef = useRef<HTMLInputElement>(null)
   const [settingsRole, setSettingsRole] = useState<TripMemberRole | null>(null)
   const isOwner = settingsRole === 'owner'
   const canEditTrip = settingsRole === 'owner' || settingsRole === 'editor'
@@ -194,6 +202,72 @@ export function TripSettings({
     setEditEndsOn(trip.ends_on)
     setEditTravelType(trip.metadata.travel_type ?? 'Other')
     setIsEditingTrip(false)
+  }
+
+  function closeBgModal() {
+    setBgError('')
+    setIsBgOpen(false)
+    if (bgInputRef.current) {
+      bgInputRef.current.value = ''
+    }
+  }
+
+  async function handleBgFileChange(event: React.ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0]
+    if (!file) return
+
+    setBgError('')
+
+    if (file.size > 10 * 1024 * 1024) {
+      setBgError('Image must be 10 MB or smaller.')
+      if (bgInputRef.current) bgInputRef.current.value = ''
+      return
+    }
+
+    setIsUploadingBg(true)
+
+    try {
+      const client = getSupabaseClient()
+      const storagePath = `${trip.id}/background`
+
+      const { error: uploadError } = await client.storage
+        .from('trip-backgrounds')
+        .upload(storagePath, file, { upsert: true, contentType: file.type })
+
+      if (uploadError) {
+        throw new Error(uploadError.message)
+      }
+
+      await setTripBackground(trip.id, storagePath)
+      onTripUpdated({ ...trip, background_path: storagePath })
+      closeBgModal()
+    } catch (err) {
+      setBgError(getVisibleErrorMessage(err, 'Unable to upload background image.'))
+    } finally {
+      setIsUploadingBg(false)
+      if (bgInputRef.current) bgInputRef.current.value = ''
+    }
+  }
+
+  async function handleRemoveBg() {
+    setBgError('')
+    setIsRemovingBg(true)
+
+    try {
+      const client = getSupabaseClient()
+
+      await client.storage
+        .from('trip-backgrounds')
+        .remove([`${trip.id}/background`])
+
+      await setTripBackground(trip.id, null)
+      onTripUpdated({ ...trip, background_path: null })
+      closeBgModal()
+    } catch (err) {
+      setBgError(getVisibleErrorMessage(err, 'Unable to remove background image.'))
+    } finally {
+      setIsRemovingBg(false)
+    }
   }
 
   async function handleDeleteTrip(event: FormEvent<HTMLFormElement>) {
@@ -337,7 +411,12 @@ export function TripSettings({
   }
 
   return (
-    <main className="app-shell dashboard-shell">
+    <main
+      className={`app-shell dashboard-shell${backgroundUrl ? ' has-trip-bg' : ''}`}
+      style={backgroundUrl ? {
+        backgroundImage: `linear-gradient(rgba(0,0,0,0.52),rgba(0,0,0,0.52)),url(${backgroundUrl})`,
+      } : undefined}
+    >
       <section className="page-shell trips-panel">
         <DetailHeader
           onBack={onBack}
@@ -430,6 +509,66 @@ export function TripSettings({
                 </Button>
               </FormActions>
             </form>
+          </ModalSheet>
+        ) : null}
+
+        {isBgOpen ? (
+          <ModalSheet
+            ariaLabel="Background image"
+            onClose={closeBgModal}
+            title="Background Image"
+          >
+            <input
+              ref={bgInputRef}
+              type="file"
+              accept="image/jpeg,image/png,image/webp,image/gif,image/heic,image/heif"
+              style={{ display: 'none' }}
+              onChange={(e) => void handleBgFileChange(e)}
+            />
+
+            {backgroundUrl ? (
+              <img
+                src={backgroundUrl}
+                alt="Current trip background"
+                className="bg-preview"
+              />
+            ) : null}
+
+            {bgError ? (
+              <FeedbackMessage tone="error">{bgError}</FeedbackMessage>
+            ) : null}
+
+            <FormActions>
+              {trip.background_path ? (
+                <Button
+                  variant="destructive"
+                  type="button"
+                  onClick={() => void handleRemoveBg()}
+                  disabled={isRemovingBg || isUploadingBg}
+                >
+                  {isRemovingBg ? 'Removing…' : 'Remove Image'}
+                </Button>
+              ) : null}
+              <Button
+                variant="secondary"
+                type="button"
+                onClick={closeBgModal}
+                disabled={isUploadingBg || isRemovingBg}
+              >
+                Cancel
+              </Button>
+              <Button
+                type="button"
+                onClick={() => bgInputRef.current?.click()}
+                disabled={isUploadingBg || isRemovingBg}
+              >
+                {isUploadingBg
+                  ? 'Uploading…'
+                  : trip.background_path
+                    ? 'Replace Image'
+                    : 'Upload Image'}
+              </Button>
+            </FormActions>
           </ModalSheet>
         ) : null}
 
@@ -538,6 +677,19 @@ export function TripSettings({
                 icon="edit"
                 label="Edit trip basics"
                 onClick={() => setIsEditingTrip(true)}
+              />
+            </div>
+          </CardSurface>
+        ) : null}
+
+        {!isLoading && !error && isOwner ? (
+          <CardSurface className="settings-panel" aria-label="Background image">
+            <div className="settings-action-row">
+              <h2>Background Image</h2>
+              <IconButton
+                icon="image"
+                label="Manage background image"
+                onClick={() => setIsBgOpen(true)}
               />
             </div>
           </CardSurface>

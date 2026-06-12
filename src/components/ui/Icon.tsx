@@ -4,6 +4,7 @@ import {
   Check,
   ChevronRight,
   CircleX,
+  Image,
   LogOut,
   Pencil,
   Plus,
@@ -24,6 +25,7 @@ export type IconName =
   | 'close'
   | 'delete'
   | 'edit'
+  | 'image'
   | 'refresh'
   | 'settings'
   | 'sign-out'
@@ -44,6 +46,7 @@ const iconMap: Record<IconName, LucideIcon> = {
   close: X,
   delete: Trash2,
   edit: Pencil,
+  image: Image,
   refresh: RefreshCw,
   settings: Settings,
   'sign-out': LogOut,

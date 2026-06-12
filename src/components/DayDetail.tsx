@@ -25,6 +25,7 @@ import {
 } from './DesignSystem'
 
 type DayDetailProps = {
+  backgroundUrl?: string | null
   canEditPlannerItems: boolean
   day: TripDay
   dayNumber: number
@@ -39,6 +40,7 @@ function getVisibleErrorMessage(error: unknown, fallback: string) {
 }
 
 export function DayDetail({
+  backgroundUrl,
   canEditPlannerItems,
   day,
   dayNumber,
@@ -155,7 +157,12 @@ export function DayDetail({
   }
 
   return (
-    <main className="app-shell dashboard-shell day-detail-screen">
+    <main
+      className={`app-shell dashboard-shell day-detail-screen${backgroundUrl ? ' has-trip-bg' : ''}`}
+      style={backgroundUrl ? {
+        backgroundImage: `linear-gradient(rgba(0,0,0,0.52),rgba(0,0,0,0.52)),url(${backgroundUrl})`,
+      } : undefined}
+    >
       <section className="page-shell trips-panel">
         <DetailHeader
           meta={

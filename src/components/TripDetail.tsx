@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react'
 import {
   formatTripDateRange,
   formatTripDayDate,
+  getTripBackgroundUrl,
   getTripDayCount,
   loadPlannerItems,
   loadTripDays,
@@ -120,6 +121,7 @@ export function TripDetail({ trip, onBack, onTripDeleted, onTripUpdated }: TripD
   const [activeDayId, setActiveDayId] = useState<string | null>(null)
   const [isSettingsOpen, setIsSettingsOpen] = useState(false)
   const [currentRole, setCurrentRole] = useState<TripMemberRole | null>(null)
+  const [backgroundUrl, setBackgroundUrl] = useState<string | null>(null)
   const [error, setError] = useState('')
 
   const loadDays = useCallback(async () => {
@@ -147,6 +149,27 @@ export function TripDetail({ trip, onBack, onTripDeleted, onTripUpdated }: TripD
   useEffect(() => {
     void loadDays()
   }, [loadDays])
+
+  useEffect(() => {
+    if (!trip.background_path) {
+      setBackgroundUrl(null)
+      return
+    }
+
+    let cancelled = false
+
+    getTripBackgroundUrl(trip.background_path)
+      .then((url) => {
+        if (!cancelled) setBackgroundUrl(url)
+      })
+      .catch(() => {
+        if (!cancelled) setBackgroundUrl(null)
+      })
+
+    return () => {
+      cancelled = true
+    }
+  }, [trip.background_path])
 
   function getItemsForDay(dayId: string) {
     return plannerItems.filter((item) => item.trip_day_id === dayId)
@@ -182,9 +205,17 @@ export function TripDetail({ trip, onBack, onTripDeleted, onTripUpdated }: TripD
     tripDays.length > 0 ? tripDays.length : getTripDayCount(trip.starts_on, trip.ends_on)
   const countdown = getPreTripCountdown(trip.starts_on)
 
+  const bgStyle = backgroundUrl
+    ? {
+        backgroundImage: `linear-gradient(rgba(0,0,0,0.52),rgba(0,0,0,0.52)),url(${backgroundUrl})`,
+      }
+    : undefined
+  const bgClass = backgroundUrl ? ' has-trip-bg' : ''
+
   if (isSettingsOpen) {
     return (
       <TripSettings
+        backgroundUrl={backgroundUrl}
         currentRole={currentRole}
         onBack={() => setIsSettingsOpen(false)}
         onTripDeleted={onTripDeleted}
@@ -197,6 +228,7 @@ export function TripDetail({ trip, onBack, onTripDeleted, onTripUpdated }: TripD
   if (activeDay) {
     return (
       <DayDetail
+        backgroundUrl={backgroundUrl}
         canEditPlannerItems={canEditPlannerItems}
         day={activeDay}
         dayNumber={activeDayIndex + 1}
@@ -209,7 +241,10 @@ export function TripDetail({ trip, onBack, onTripDeleted, onTripUpdated }: TripD
   }
 
   return (
-    <main className="app-shell dashboard-shell trip-dashboard-screen">
+    <main
+      className={`app-shell dashboard-shell trip-dashboard-screen${bgClass}`}
+      style={bgStyle}
+    >
       <section className="page-shell trip-dashboard">
         <DetailHeader
           action={
