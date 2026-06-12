@@ -1,5 +1,6 @@
 import { type ReactNode } from 'react'
-import { ActionBar } from './ActionBar'
+import { IconButton } from './IconButton'
+import { PageControls } from './PageControls'
 import { ScreenHeader } from './ScreenHeader'
 
 type DetailHeaderProps = {
@@ -19,8 +20,11 @@ export function DetailHeader({
 }: DetailHeaderProps) {
   return (
     <header className="detail-header">
-      <ActionBar backLabel="Back" onBack={onBack} />
-      <ScreenHeader eyebrow={eyebrow} title={title} meta={meta} actions={action} />
+      <PageControls
+        leading={<IconButton icon="back" label="Back" onClick={onBack} />}
+        trailing={action}
+      />
+      <ScreenHeader eyebrow={eyebrow} title={title} meta={meta} />
     </header>
   )
 }

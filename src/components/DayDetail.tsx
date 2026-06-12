@@ -180,7 +180,6 @@ export function DayDetail({
                   setItemFormError('')
                   setIsItemFormOpen(true)
                 }}
-                variant="primary"
               />
             ) : null
           }
