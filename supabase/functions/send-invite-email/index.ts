@@ -6,22 +6,16 @@ const CORS_HEADERS = {
 }
 
 type InviteRow = {
-  id: string
-  email: string
+  invite_id: string
+  invitee_email: string
   role: string
   invited_by: string
   trip_id: string
-  trips: {
-    name: string
-    destination: string | null
-    starts_on: string | null
-    ends_on: string | null
-  }
-}
-
-type InviterProfile = {
-  display_name: string | null
-  email: string | null
+  trip_name: string
+  trip_destination: string | null
+  trip_starts_on: string | null
+  trip_ends_on: string | null
+  inviter_name: string
 }
 
 Deno.serve(async (req) => {
@@ -40,9 +34,8 @@ Deno.serve(async (req) => {
 
     const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? ''
     const anonKey = Deno.env.get('SUPABASE_ANON_KEY') ?? ''
-    const serviceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     const resendApiKey = Deno.env.get('RESEND_API_KEY') ?? ''
-    const appUrl = Deno.env.get('APP_URL') ?? 'https://aaronbenjaminmay.github.io/Maycation-Planner'
+    const appUrl = Deno.env.get('APP_URL') ?? 'https://maycation.app'
     const fromEmail = Deno.env.get('FROM_EMAIL') ?? 'Maycation <noreply@maycation.app>'
 
     const userClient = createClient(supabaseUrl, anonKey, {
@@ -67,26 +60,11 @@ Deno.serve(async (req) => {
       })
     }
 
-    const serviceClient = createClient(supabaseUrl, serviceRoleKey)
+    const { data: rows, error: inviteError } = await userClient.rpc('get_invite_for_email', {
+      target_invite_id: inviteId,
+    })
 
-    const { data: invite, error: inviteError } = await serviceClient
-      .from('trip_invites')
-      .select(`
-        id,
-        email,
-        role,
-        invited_by,
-        trip_id,
-        trips!inner (
-          name,
-          destination,
-          starts_on,
-          ends_on
-        )
-      `)
-      .eq('id', inviteId)
-      .eq('status', 'pending')
-      .single<InviteRow>()
+    const invite = (rows as InviteRow[] | null)?.[0] ?? null
 
     if (inviteError || !invite) {
       console.error('send-invite-email: invite not found', { inviteId, userId: user.id, inviteError })
@@ -96,37 +74,20 @@ Deno.serve(async (req) => {
       })
     }
 
-    if (invite.invited_by !== user.id) {
-      console.error('send-invite-email: forbidden', { inviteId, invitedBy: invite.invited_by, userId: user.id })
-      return new Response(JSON.stringify({ error: 'Forbidden' }), {
-        status: 403,
-        headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
-      })
-    }
-
-    const { data: inviterProfile, error: profileError } = await serviceClient
-      .from('profiles')
-      .select('display_name, email')
-      .eq('user_id', invite.invited_by)
-      .single<InviterProfile>()
-
-    if (profileError) {
-      console.error('send-invite-email: profile lookup failed', { userId: invite.invited_by, profileError })
-    }
-
-    const inviterName = inviterProfile?.display_name || inviterProfile?.email || 'A trip owner'
-    const trip = invite.trips
     const roleLabel = invite.role === 'editor' ? 'editor' : 'viewer'
 
-    const tripMeta = [formatDateRange(trip.starts_on, trip.ends_on), trip.destination]
+    const tripMeta = [
+      formatDateRange(invite.trip_starts_on, invite.trip_ends_on),
+      invite.trip_destination,
+    ]
       .filter(Boolean)
       .join(' · ')
 
     const emailHtml = buildInviteEmail({
-      inviterName,
-      tripName: trip.name,
+      inviterName: invite.inviter_name,
+      tripName: invite.trip_name,
       tripMeta,
-      inviteeEmail: invite.email,
+      inviteeEmail: invite.invitee_email,
       roleLabel,
       appUrl,
     })
@@ -139,8 +100,8 @@ Deno.serve(async (req) => {
       },
       body: JSON.stringify({
         from: fromEmail,
-        to: invite.email,
-        subject: `You're invited to join ${trip.name} on Maycation`,
+        to: invite.invitee_email,
+        subject: `You're invited to join ${invite.trip_name} on Maycation`,
         html: emailHtml,
       }),
     })
@@ -154,7 +115,7 @@ Deno.serve(async (req) => {
       })
     }
 
-    await serviceClient
+    await userClient
       .from('trip_invites')
       .update({ last_sent_at: new Date().toISOString() })
       .eq('id', inviteId)
