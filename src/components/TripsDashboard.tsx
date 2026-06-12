@@ -133,11 +133,17 @@ export function TripsDashboard() {
     )
   }
 
+  function handleTripDeleted() {
+    setActiveTrip(null)
+    void loadTrips()
+  }
+
   if (activeTrip) {
     return (
       <TripDetail
         trip={activeTrip}
         onBack={() => setActiveTrip(null)}
+        onTripDeleted={handleTripDeleted}
         onTripUpdated={handleTripUpdated}
       />
     )

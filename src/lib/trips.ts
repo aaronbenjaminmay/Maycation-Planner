@@ -466,6 +466,20 @@ export async function createTrip(input: CreateTripInput) {
   return tripId
 }
 
+export async function deleteTrip(tripId: string) {
+  const client = getSupabaseClient()
+  const { data: deletedId, error } = await client.rpc('delete_trip', {
+    target_trip_id: tripId,
+  })
+
+  if (error) {
+    await logSupabaseError('Failed to delete trip', error)
+    throw new Error(getSupabaseErrorMessage(error))
+  }
+
+  return deletedId as string
+}
+
 export async function updateTrip(input: UpdateTripInput) {
   const client = getSupabaseClient()
   const trimmedName = input.name.trim()

@@ -24,6 +24,7 @@ import { TripSettings } from './TripSettings'
 type TripDetailProps = {
   trip: Trip
   onBack: () => void
+  onTripDeleted: () => void
   onTripUpdated: (trip: Trip) => void
 }
 
@@ -112,7 +113,7 @@ function sortItemsByPlanOrder(items: PlannerItem[]) {
   })
 }
 
-export function TripDetail({ trip, onBack, onTripUpdated }: TripDetailProps) {
+export function TripDetail({ trip, onBack, onTripDeleted, onTripUpdated }: TripDetailProps) {
   const [tripDays, setTripDays] = useState<TripDay[]>([])
   const [plannerItems, setPlannerItems] = useState<PlannerItem[]>([])
   const [isLoadingDays, setIsLoadingDays] = useState(true)
@@ -186,6 +187,7 @@ export function TripDetail({ trip, onBack, onTripUpdated }: TripDetailProps) {
       <TripSettings
         currentRole={currentRole}
         onBack={() => setIsSettingsOpen(false)}
+        onTripDeleted={onTripDeleted}
         onTripUpdated={onTripUpdated}
         trip={trip}
       />

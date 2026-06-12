@@ -11,6 +11,7 @@ import {
 } from '../lib/tripMembers'
 import { getSupabaseClient } from '../lib/supabaseClient'
 import {
+  deleteTrip,
   travelTypes,
   updateTrip,
   type TravelType,
@@ -36,6 +37,7 @@ import {
 type TripSettingsProps = {
   currentRole: TripMemberRole | null
   onBack: () => void
+  onTripDeleted: () => void
   onTripUpdated: (trip: Trip) => void
   trip: Trip
 }
@@ -55,6 +57,7 @@ function getVisibleErrorMessage(error: unknown, fallback: string) {
 
 export function TripSettings({
   onBack,
+  onTripDeleted,
   onTripUpdated,
   trip,
 }: TripSettingsProps) {
@@ -75,6 +78,10 @@ export function TripSettings({
   const [editTravelType, setEditTravelType] = useState<TravelType>(
     trip.metadata.travel_type ?? 'Other',
   )
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false)
+  const [isDeletingTrip, setIsDeletingTrip] = useState(false)
+  const [confirmTripName, setConfirmTripName] = useState('')
+  const [deleteError, setDeleteError] = useState('')
   const [error, setError] = useState('')
   const [tripEditError, setTripEditError] = useState('')
   const [inviteError, setInviteError] = useState('')
@@ -173,6 +180,12 @@ export function TripSettings({
     setIsInviteOpen(false)
   }
 
+  function closeDeleteModal() {
+    setDeleteError('')
+    setConfirmTripName('')
+    setIsDeleteOpen(false)
+  }
+
   function closeEditModal() {
     setTripEditError('')
     setEditName(trip.name)
@@ -181,6 +194,31 @@ export function TripSettings({
     setEditEndsOn(trip.ends_on)
     setEditTravelType(trip.metadata.travel_type ?? 'Other')
     setIsEditingTrip(false)
+  }
+
+  async function handleDeleteTrip(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault()
+    if (!isOwner) {
+      return
+    }
+
+    if (confirmTripName.trim() !== trip.name.trim()) {
+      return
+    }
+
+    setDeleteError('')
+    setIsDeletingTrip(true)
+
+    try {
+      await deleteTrip(trip.id)
+      onTripDeleted()
+    } catch (deleteFailure) {
+      setDeleteError(
+        getVisibleErrorMessage(deleteFailure, 'Unable to delete this trip.'),
+      )
+    } finally {
+      setIsDeletingTrip(false)
+    }
   }
 
   async function handleInvite(event: FormEvent<HTMLFormElement>) {
@@ -346,6 +384,49 @@ export function TripSettings({
                 </Button>
                 <Button type="submit" disabled={isInviting}>
                   {isInviting ? 'Inviting…' : 'Invite User'}
+                </Button>
+              </FormActions>
+            </form>
+          </ModalSheet>
+        ) : null}
+
+        {isDeleteOpen ? (
+          <ModalSheet
+            ariaLabel="Delete trip"
+            onClose={closeDeleteModal}
+            title="Delete Trip"
+          >
+            <form className="trip-form" onSubmit={handleDeleteTrip}>
+              <p className="muted">
+                This will permanently delete <strong>{trip.name}</strong> and all associated days, activities, and members. This cannot be undone.
+              </p>
+
+              <TextInput
+                label="Type trip name to confirm"
+                value={confirmTripName}
+                onChange={setConfirmTripName}
+                required
+              />
+
+              {deleteError ? (
+                <FeedbackMessage tone="error">{deleteError}</FeedbackMessage>
+              ) : null}
+
+              <FormActions>
+                <Button
+                  variant="secondary"
+                  type="button"
+                  onClick={closeDeleteModal}
+                  disabled={isDeletingTrip}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  variant="destructive"
+                  type="submit"
+                  disabled={isDeletingTrip || confirmTripName.trim() !== trip.name.trim()}
+                >
+                  {isDeletingTrip ? 'Deleting…' : 'Delete Trip'}
                 </Button>
               </FormActions>
             </form>
@@ -549,6 +630,21 @@ export function TripSettings({
                   </Badge>
                 </div>
               ))}
+            </div>
+          </CardSurface>
+        ) : null}
+
+        {!isLoading && !error && isOwner ? (
+          <CardSurface className="settings-panel" aria-label="Delete trip">
+            <div className="settings-action-row">
+              <h2>Delete Trip</h2>
+              <Button
+                variant="destructive"
+                type="button"
+                onClick={() => setIsDeleteOpen(true)}
+              >
+                Delete
+              </Button>
             </div>
           </CardSurface>
         ) : null}
