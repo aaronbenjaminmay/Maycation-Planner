@@ -159,7 +159,6 @@ export function TripsDashboard() {
                 icon="add"
                 label="Create Trip"
                 onClick={() => setIsCreateOpen(true)}
-                variant="primary"
               />
               <IconButton
                 icon="sign-out"
