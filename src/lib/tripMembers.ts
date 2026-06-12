@@ -162,6 +162,17 @@ export async function createTripInvite(
   return inviteId
 }
 
+export async function sendInviteEmail(inviteId: string) {
+  const client = getSupabaseClient()
+  const { error } = await client.functions.invoke('send-invite-email', {
+    body: { inviteId },
+  })
+
+  if (error) {
+    throw new Error('Unable to send invite email.')
+  }
+}
+
 export async function acceptTripInvite(inviteId: string) {
   const client = getSupabaseClient()
   const { data: tripId, error } = await client.rpc('accept_trip_invite', {

@@ -861,6 +861,12 @@ button.dashboard-card {
   background: var(--color-danger-surface);
 }
 
+.feedback--success {
+  border-color: rgba(53, 184, 168, 0.3);
+  background: rgba(53, 184, 168, 0.08);
+  color: var(--color-accent-default);
+}
+
 .system-icon {
   display: block;
   flex: 0 0 auto;

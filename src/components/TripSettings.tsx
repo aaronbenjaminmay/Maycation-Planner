@@ -5,6 +5,7 @@ import {
   loadTripInvites,
   loadTripMembers,
   removeTripMember,
+  sendInviteEmail,
   updateTripMemberRole,
   type TripInvite,
   type TripMember,
@@ -88,6 +89,7 @@ export function TripSettings({
   const [error, setError] = useState('')
   const [tripEditError, setTripEditError] = useState('')
   const [inviteError, setInviteError] = useState('')
+  const [inviteSuccessEmail, setInviteSuccessEmail] = useState<string | null>(null)
   const [memberError, setMemberError] = useState('')
   const [isBgOpen, setIsBgOpen] = useState(false)
   const [isUploadingBg, setIsUploadingBg] = useState(false)
@@ -186,6 +188,7 @@ export function TripSettings({
     setEmail('')
     setInviteRole('viewer')
     setIsInviteOpen(false)
+    setInviteSuccessEmail(null)
   }
 
   function closeDeleteModal() {
@@ -305,14 +308,17 @@ export function TripSettings({
     setIsInviting(true)
 
     try {
-      await createTripInvite(trip.id, email, inviteRole)
+      const sentEmail = email.trim()
+      const inviteId = await createTripInvite(trip.id, sentEmail, inviteRole)
+      await sendInviteEmail(inviteId)
       setEmail('')
       setInviteRole('viewer')
       setIsInviteOpen(false)
+      setInviteSuccessEmail(sentEmail)
       await loadSettings()
     } catch (inviteFailure) {
       setInviteError(
-        getVisibleErrorMessage(inviteFailure, 'Unable to send invite.'),
+        getVisibleErrorMessage(inviteFailure, 'Unable to send invite. Please try again.'),
       )
     } finally {
       setIsInviting(false)
@@ -664,6 +670,11 @@ export function TripSettings({
                 onClick={() => setIsInviteOpen(true)}
               />
             </div>
+            {inviteSuccessEmail ? (
+              <FeedbackMessage tone="success">
+                Invite sent to {inviteSuccessEmail}
+              </FeedbackMessage>
+            ) : null}
           </CardSurface>
         ) : null}
 
