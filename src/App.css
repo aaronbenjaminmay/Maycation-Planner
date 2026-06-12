@@ -1636,15 +1636,39 @@ button.dashboard-card {
   background: var(--accent);
 }
 
-/* Trip background image */
+/* Trip background image — fixed viewport layer via pseudo-elements */
 .dashboard-shell.has-trip-bg {
+  position: relative;
+}
+
+.dashboard-shell.has-trip-bg::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background-image: var(--trip-bg-image);
   background-size: cover;
   background-position: center top;
   background-repeat: no-repeat;
+  pointer-events: none;
+}
+
+.dashboard-shell.has-trip-bg::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  background: rgba(0, 0, 0, 0.52);
+  pointer-events: none;
+}
+
+.dashboard-shell.has-trip-bg > * {
+  position: relative;
+  z-index: 2;
 }
 
 @media (min-width: 721px) {
-  .dashboard-shell.has-trip-bg {
+  .dashboard-shell.has-trip-bg::before {
     background-position: center center;
   }
 }

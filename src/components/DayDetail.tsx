@@ -159,9 +159,7 @@ export function DayDetail({
   return (
     <main
       className={`app-shell dashboard-shell day-detail-screen${backgroundUrl ? ' has-trip-bg' : ''}`}
-      style={backgroundUrl ? {
-        backgroundImage: `linear-gradient(rgba(0,0,0,0.52),rgba(0,0,0,0.52)),url(${backgroundUrl})`,
-      } : undefined}
+      style={backgroundUrl ? ({ '--trip-bg-image': `url(${backgroundUrl})` } as React.CSSProperties) : undefined}
     >
       <section className="page-shell trips-panel">
         <DetailHeader

@@ -206,9 +206,7 @@ export function TripDetail({ trip, onBack, onTripDeleted, onTripUpdated }: TripD
   const countdown = getPreTripCountdown(trip.starts_on)
 
   const bgStyle = backgroundUrl
-    ? {
-        backgroundImage: `linear-gradient(rgba(0,0,0,0.52),rgba(0,0,0,0.52)),url(${backgroundUrl})`,
-      }
+    ? ({ '--trip-bg-image': `url(${backgroundUrl})` } as React.CSSProperties)
     : undefined
   const bgClass = backgroundUrl ? ' has-trip-bg' : ''
 
