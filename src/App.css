@@ -124,6 +124,13 @@
   background: var(--control-bg);
 }
 
+.settings-action-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
 .empty-state {
   justify-items: start;
 }
@@ -204,14 +211,6 @@
 .member-list {
   display: grid;
   gap: 10px;
-}
-
-.invite-status-group {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 8px;
-  justify-content: flex-end;
 }
 
 .member-actions {
@@ -356,7 +355,6 @@ button.dashboard-card {
 
 .day-tile {
   display: grid;
-  gap: 18px;
   width: 100%;
   min-height: 158px;
   padding: 20px;
@@ -372,6 +370,8 @@ button.dashboard-card {
 
 .day-tile__header {
   display: flex;
+  flex: 1;
+  min-width: 0;
   align-items: start;
   justify-content: space-between;
   gap: 16px;
@@ -404,12 +404,6 @@ button.dashboard-card {
 .day-tile__summary {
   margin-top: 6px;
   font-weight: 700;
-}
-
-.day-tile__affordance {
-  width: fit-content;
-  color: var(--accent);
-  font-weight: 800;
 }
 
 .day-tile__stats {
@@ -509,10 +503,6 @@ button.dashboard-card {
     display: grid;
     grid-template-columns: 1fr;
   }
-
-  .invite-status-group {
-    justify-content: flex-start;
-  }
 }
 
 .trip-dashboard-screen {
@@ -527,28 +517,6 @@ button.dashboard-card {
   margin: 0 auto;
   display: grid;
   gap: 24px;
-}
-
-.trip-dashboard-kicker,
-.trip-settings-strip > p {
-  margin: 0 0 14px;
-  color: #a1a1a6;
-  font-size: 13px;
-  font-weight: 900;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-}
-
-.trip-dashboard-date-range {
-  width: fit-content;
-  margin-top: 12px;
-  padding: 4px 10px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 999px;
-  color: #fff;
-  background: rgba(28, 28, 30, 0.72);
-  font-size: 13px;
-  font-weight: 900;
 }
 
 .trip-intel-card {
@@ -669,8 +637,7 @@ button.dashboard-card {
 
 @supports ((backdrop-filter: blur(18px)) or (-webkit-backdrop-filter: blur(18px))) {
   .trip-intel-card,
-  .trip-dashboard .day-tile,
-  .trip-settings-strip button {
+  .trip-dashboard .day-tile {
     -webkit-backdrop-filter: blur(18px);
     backdrop-filter: blur(18px);
   }
@@ -709,17 +676,6 @@ button.dashboard-card {
 
 .trip-dashboard {
   gap: 18px;
-}
-.trip-dashboard-kicker,
-.trip-settings-strip > p {
-  margin-bottom: 10px;
-  font-size: 11px;
-  letter-spacing: 0.16em;
-}
-
-.trip-dashboard-date-range {
-  margin-top: 9px;
-  font-size: 11px;
 }
 
 .trip-intel-card {
@@ -760,7 +716,7 @@ button.dashboard-card {
 .trip-dashboard .day-tile {
   min-height: 94px;
   padding: 18px 20px;
-  border-radius: 18px;
+  border-radius: var(--radius-card);
 }
 
 .trip-dashboard .day-tile__content {
@@ -955,7 +911,7 @@ button.dashboard-card {
 .empty-state,
 .settings-panel,
 .member-card {
-  border-radius: 18px;
+  border-radius: var(--radius-card);
   background: rgba(28, 28, 30, 0.72);
 }
 
@@ -1104,7 +1060,7 @@ button.dashboard-card {
   min-height: 92px;
   padding: 16px 18px;
   border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 18px;
+  border-radius: var(--radius-card);
   background: rgba(28, 28, 30, 0.76);
 }
 
@@ -1117,10 +1073,6 @@ button.dashboard-card {
   height: 44px;
   min-height: 44px;
   background: var(--accent);
-}
-
-.form-actions {
-  gap: 10px;
 }
 
 .form-actions button:not(.icon-button),
@@ -1226,7 +1178,7 @@ button.dashboard-card {
 .eyebrow,
 .label,
 .planner-item-time {
-  margin: 0 0 8px;
+  margin: 0 0 var(--spacing-xs);
   color: var(--accent);
   font-size: 11px;
   font-weight: 900;
@@ -1289,10 +1241,6 @@ button.dashboard-card {
   padding: 46px 24px 84px;
 }
 
-.trip-dashboard-date-range {
-  margin-top: 10px;
-  font-size: 11px;
-}
 
 .trip-intel-card {
   min-height: 154px;
@@ -1396,11 +1344,7 @@ button.dashboard-card {
 .trip-form,
 .planner-item-form,
 .invite-form {
-  gap: 14px;
-}
-
-.form-actions {
-  gap: 10px;
+  gap: var(--spacing-md);
 }
 
 .form-actions button:not(.icon-button),
@@ -1463,10 +1407,6 @@ button.dashboard-card {
   margin-left: auto;
 }
 
-.trip-dashboard-date-range {
-  width: fit-content;
-}
-
 .planner-item-card__controls {
   display: grid;
   justify-items: end;
@@ -1485,7 +1425,7 @@ button.dashboard-card {
   min-height: 112px;
   padding: 18px 154px 18px 20px;
   border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 18px;
+  border-radius: var(--radius-card);
   background: rgba(28, 28, 30, 0.76);
 }
 
@@ -1585,9 +1525,6 @@ button.dashboard-card {
   grid-column: 1 / -1;
 }
 
-.member-row .invite-status-group {
-  justify-content: flex-end;
-}
 @media (max-width: 720px) {
   .dashboard-shell,
   .trip-dashboard-screen,
@@ -1606,10 +1543,6 @@ button.dashboard-card {
   .member-row {
     grid-template-columns: 1fr;
     align-items: stretch;
-  }
-
-  .member-row .invite-status-group {
-    justify-content: flex-start;
   }
 }
 

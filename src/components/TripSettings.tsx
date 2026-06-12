@@ -7,7 +7,6 @@ import {
   removeTripMember,
   updateTripMemberRole,
   type TripInvite,
-  type TripInviteStatus,
   type TripMember,
 } from '../lib/tripMembers'
 import { getSupabaseClient } from '../lib/supabaseClient'
@@ -20,6 +19,7 @@ import {
 } from '../lib/trips'
 import {
   Badge,
+  Button,
   CardSurface,
   DetailHeader,
   EmptyState,
@@ -27,6 +27,7 @@ import {
   FormActions,
   FormGrid,
   IconButton,
+  ModalSheet,
   SelectInput,
   TextInput,
   type BadgeTone,
@@ -47,13 +48,6 @@ const roleTones: Record<TripMemberRole, BadgeTone> = {
   viewer: 'secondary',
 }
 
-const statusTones: Record<TripInviteStatus, BadgeTone> = {
-  pending: 'warning',
-  accepted: 'accent',
-  declined: 'danger',
-  expired: 'danger',
-  revoked: 'danger',
-}
 
 function getVisibleErrorMessage(error: unknown, fallback: string) {
   return error instanceof Error && error.message ? error.message : fallback
@@ -68,6 +62,7 @@ export function TripSettings({
   const [invites, setInvites] = useState<TripInvite[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [isInviting, setIsInviting] = useState(false)
+  const [isInviteOpen, setIsInviteOpen] = useState(false)
   const [isEditingTrip, setIsEditingTrip] = useState(false)
   const [isSavingTrip, setIsSavingTrip] = useState(false)
   const [busyMemberId, setBusyMemberId] = useState<string | null>(null)
@@ -171,6 +166,23 @@ export function TripSettings({
     }
   }, [isOwner, members, settingsRole, trip.id])
 
+  function closeInviteModal() {
+    setInviteError('')
+    setEmail('')
+    setInviteRole('viewer')
+    setIsInviteOpen(false)
+  }
+
+  function closeEditModal() {
+    setTripEditError('')
+    setEditName(trip.name)
+    setEditDestination(trip.destination ?? '')
+    setEditStartsOn(trip.starts_on)
+    setEditEndsOn(trip.ends_on)
+    setEditTravelType(trip.metadata.travel_type ?? 'Other')
+    setIsEditingTrip(false)
+  }
+
   async function handleInvite(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
     if (!isOwner) {
@@ -184,6 +196,7 @@ export function TripSettings({
       await createTripInvite(trip.id, email, inviteRole)
       setEmail('')
       setInviteRole('viewer')
+      setIsInviteOpen(false)
       await loadSettings()
     } catch (inviteFailure) {
       setInviteError(
@@ -293,31 +306,12 @@ export function TripSettings({
           title="Settings"
         />
 
-        {isLoading ? (
-          <EmptyState title="Loading settings">
-            <p className="muted">Gathering trip members.</p>
-          </EmptyState>
-        ) : null}
-
-        {!isLoading && error ? (
-          <EmptyState
-            title="Could not load settings"
-            action={
-              <button type="button" onClick={() => void loadSettings()}>
-                Try again
-              </button>
-            }
+        {isInviteOpen ? (
+          <ModalSheet
+            ariaLabel="Invite user"
+            onClose={closeInviteModal}
+            title="Invite User"
           >
-            <p className="muted">{error}</p>
-          </EmptyState>
-        ) : null}
-
-        {!isLoading && !error && isOwner ? (
-          <CardSurface className="settings-panel" aria-label="Invite user">
-            <div>
-              <h2>Invite User</h2>
-            </div>
-
             <form className="invite-form" onSubmit={handleInvite}>
               <TextInput
                 label="Email"
@@ -341,90 +335,130 @@ export function TripSettings({
                 <FeedbackMessage tone="error">{inviteError}</FeedbackMessage>
               ) : null}
 
-              <IconButton
-                disabled={isInviting}
-                icon="user-plus"
-                label={isInviting ? 'Creating invite' : 'Create Invite'}
-                type="submit"
-                variant="primary"
-              />
+              <FormActions>
+                <Button
+                  variant="secondary"
+                  type="button"
+                  onClick={closeInviteModal}
+                  disabled={isInviting}
+                >
+                  Cancel
+                </Button>
+                <Button type="submit" disabled={isInviting}>
+                  {isInviting ? 'Inviting…' : 'Invite User'}
+                </Button>
+              </FormActions>
             </form>
+          </ModalSheet>
+        ) : null}
+
+        {isEditingTrip ? (
+          <ModalSheet
+            ariaLabel="Edit trip"
+            onClose={closeEditModal}
+            title="Edit Trip"
+          >
+            <form className="trip-form" onSubmit={handleTripUpdate}>
+              <TextInput
+                label="Trip Name"
+                value={editName}
+                onChange={setEditName}
+                required
+              />
+
+              <TextInput
+                label="Location"
+                value={editDestination}
+                onChange={setEditDestination}
+              />
+
+              <FormGrid>
+                <TextInput
+                  label="Start Date"
+                  type="date"
+                  value={editStartsOn}
+                  onChange={setEditStartsOn}
+                  required
+                />
+                <TextInput
+                  label="End Date"
+                  type="date"
+                  value={editEndsOn}
+                  onChange={setEditEndsOn}
+                  required
+                />
+              </FormGrid>
+
+              <SelectInput
+                label="Travel Type"
+                value={editTravelType}
+                onChange={(v) => setEditTravelType(v as TravelType)}
+                options={travelTypes.map((type) => ({ value: type, label: type }))}
+              />
+
+              {tripEditError ? (
+                <FeedbackMessage tone="error">{tripEditError}</FeedbackMessage>
+              ) : null}
+
+              <FormActions>
+                <Button
+                  variant="secondary"
+                  type="button"
+                  onClick={closeEditModal}
+                  disabled={isSavingTrip}
+                >
+                  Cancel
+                </Button>
+                <Button type="submit" disabled={isSavingTrip}>
+                  {isSavingTrip ? 'Saving…' : 'Save Trip'}
+                </Button>
+              </FormActions>
+            </form>
+          </ModalSheet>
+        ) : null}
+
+        {isLoading ? (
+          <EmptyState title="Loading settings">
+            <p className="muted">Gathering trip members.</p>
+          </EmptyState>
+        ) : null}
+
+        {!isLoading && error ? (
+          <EmptyState
+            title="Could not load settings"
+            action={
+              <button type="button" onClick={() => void loadSettings()}>
+                Try again
+              </button>
+            }
+          >
+            <p className="muted">{error}</p>
+          </EmptyState>
+        ) : null}
+
+        {!isLoading && !error && isOwner ? (
+          <CardSurface className="settings-panel" aria-label="Invite user">
+            <div className="settings-action-row">
+              <h2>Invite User</h2>
+              <IconButton
+                icon="user-plus"
+                label="Invite user"
+                onClick={() => setIsInviteOpen(true)}
+              />
+            </div>
           </CardSurface>
         ) : null}
 
         {!isLoading && !error && canEditTrip ? (
           <CardSurface className="settings-panel" aria-label="Edit trip">
-            <div>
+            <div className="settings-action-row">
               <h2>Edit Trip</h2>
-            </div>
-
-            {!isEditingTrip ? (
               <IconButton
                 icon="edit"
                 label="Edit trip basics"
                 onClick={() => setIsEditingTrip(true)}
               />
-            ) : (
-              <form className="trip-form" onSubmit={handleTripUpdate}>
-                <TextInput
-                  label="Trip Name"
-                  value={editName}
-                  onChange={setEditName}
-                  required
-                />
-
-                <TextInput
-                  label="Location"
-                  value={editDestination}
-                  onChange={setEditDestination}
-                />
-
-                <FormGrid>
-                  <TextInput
-                    label="Start Date"
-                    type="date"
-                    value={editStartsOn}
-                    onChange={setEditStartsOn}
-                    required
-                  />
-                  <TextInput
-                    label="End Date"
-                    type="date"
-                    value={editEndsOn}
-                    onChange={setEditEndsOn}
-                    required
-                  />
-                </FormGrid>
-
-                <SelectInput
-                  label="Travel Type"
-                  value={editTravelType}
-                  onChange={(v) => setEditTravelType(v as TravelType)}
-                  options={travelTypes.map((type) => ({ value: type, label: type }))}
-                />
-
-                {tripEditError ? (
-                  <FeedbackMessage tone="error">{tripEditError}</FeedbackMessage>
-                ) : null}
-
-                <FormActions>
-                  <button
-                    type="button"
-                    className="secondary-button"
-                    onClick={() => {
-                      setTripEditError('')
-                      setIsEditingTrip(false)
-                    }}
-                    disabled={isSavingTrip}
-                  >
-                    Cancel
-                  </button>
-                  <button type="submit" disabled={isSavingTrip}>
-                    {isSavingTrip ? 'Saving...' : 'Save Trip'}
-                  </button>
-                </FormActions>
-              </form>
-            )}
+            </div>
           </CardSurface>
         ) : null}
 
@@ -441,7 +475,7 @@ export function TripSettings({
                 <div className="member-row" key={member.id}>
                   <div>
                     <strong>{getMemberName(member)}</strong>
-                    {member.display_name ? (
+                    {member.display_name && member.display_name !== member.email ? (
                       <p className="muted">{member.email}</p>
                     ) : null}
                   </div>
@@ -495,31 +529,24 @@ export function TripSettings({
           </CardSurface>
         ) : null}
 
-        {!isLoading && !error && isOwner && invites.length > 0 ? (
-          <CardSurface className="settings-panel" aria-label="Trip invites">
+        {!isLoading && !error && isOwner && invites.some((i) => i.status === 'pending') ? (
+          <CardSurface className="settings-panel" aria-label="Pending invites">
             <div>
-              <h2>Invites</h2>
+              <h2>Pending Invites</h2>
             </div>
 
             <div className="member-list">
-              {invites.map((invite) => (
+              {invites.filter((i) => i.status === 'pending').map((invite) => (
                 <div className="member-row" key={invite.id}>
                   <div>
                     <strong>{invite.email}</strong>
-                    {invite.status === 'pending' ? (
-                      <p className="muted">
-                        Expires {formatInviteDate(invite.expires_at)}
-                      </p>
-                    ) : null}
+                    <p className="muted">
+                      Expires {formatInviteDate(invite.expires_at)}
+                    </p>
                   </div>
-                  <div className="invite-status-group">
-                    <Badge tone={roleTones[invite.role]}>
-                      {getRoleLabel(invite.role)}
-                    </Badge>
-                    <Badge tone={statusTones[invite.status]}>
-                      {getInviteStatusLabel(invite.status)}
-                    </Badge>
-                  </div>
+                  <Badge tone={roleTones[invite.role]}>
+                    {getRoleLabel(invite.role)}
+                  </Badge>
                 </div>
               ))}
             </div>
@@ -554,20 +581,5 @@ function getRoleLabel(role: TripMemberRole) {
       return 'Owner'
     case 'viewer':
       return 'Viewer'
-  }
-}
-
-function getInviteStatusLabel(status: TripInvite['status']) {
-  switch (status) {
-    case 'accepted':
-      return 'Accepted'
-    case 'declined':
-      return 'Declined'
-    case 'expired':
-      return 'Expired'
-    case 'pending':
-      return 'Pending'
-    case 'revoked':
-      return 'Revoked'
   }
 }
