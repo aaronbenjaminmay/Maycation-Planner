@@ -41,7 +41,7 @@ function App() {
     return (
       <main className="app-shell">
         <CardSurface className="auth-panel">
-          <p className="eyebrow">Maycation Planner</p>
+          <img src="/wordmark-white.png" alt="Maycation" className="auth-wordmark" />
           <h1>Loading your planner</h1>
         </CardSurface>
       </main>
@@ -55,8 +55,8 @@ function App() {
   return (
     <main className="app-shell">
       <CardSurface className="auth-panel">
+        <img src="/wordmark-white.png" alt="Maycation" className="auth-wordmark" />
         <div>
-          <p className="eyebrow">Maycation Planner</p>
           <h1>Plan the trip together</h1>
           <p className="muted">
             Sign in or create an account for the shared family planner.

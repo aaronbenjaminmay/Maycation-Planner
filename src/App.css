@@ -1550,6 +1550,13 @@ button.dashboard-card {
   }
 }
 
+/* Login screen wordmark */
+.auth-wordmark {
+  display: block;
+  width: 160px;
+  margin: 0 auto;
+}
+
 /* Shared button system */
 .button {
   box-sizing: border-box;
