@@ -202,7 +202,7 @@ export function TripSettings({
       return
     }
 
-    if (confirmTripName.trim() !== trip.name.trim()) {
+    if (confirmTripName.trim() !== 'DELETE') {
       return
     }
 
@@ -402,7 +402,7 @@ export function TripSettings({
               </p>
 
               <TextInput
-                label="Type trip name to confirm"
+                label="Type DELETE to confirm"
                 value={confirmTripName}
                 onChange={setConfirmTripName}
                 required
@@ -424,7 +424,7 @@ export function TripSettings({
                 <Button
                   variant="destructive"
                   type="submit"
-                  disabled={isDeletingTrip || confirmTripName.trim() !== trip.name.trim()}
+                  disabled={isDeletingTrip || confirmTripName.trim() !== 'DELETE'}
                 >
                   {isDeletingTrip ? 'Deleting…' : 'Delete Trip'}
                 </Button>
