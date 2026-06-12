@@ -30,7 +30,7 @@ export function DayTile({
           <Icon name="calendar" size="large" />
         </span>
         <div className="day-tile__header">
-          <div>
+          <div className="day-tile__text">
             <h2>{date ?? title}</h2>
             {subtitle ? <p className="muted day-tile__summary">{subtitle}</p> : null}
             {date ? <span className="day-tile__day-label">Day {dayNumber}</span> : null}

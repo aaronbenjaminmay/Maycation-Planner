@@ -406,6 +406,11 @@ button.dashboard-card {
   font-weight: 700;
 }
 
+.day-tile__text {
+  flex: 1;
+  min-width: 0;
+}
+
 .day-tile__stats {
   flex: 0 0 auto;
   display: flex;
@@ -474,15 +479,6 @@ button.dashboard-card {
   .form-actions,
   .dashboard-tile-grid {
     grid-template-columns: 1fr;
-  }
-
-  .day-tile__header {
-    align-items: stretch;
-    flex-direction: column;
-  }
-
-  .day-tile__stats {
-    justify-content: flex-start;
   }
 
   .planner-item-card {
