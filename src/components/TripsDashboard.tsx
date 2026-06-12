@@ -169,7 +169,6 @@ export function TripsDashboard() {
         {isCreateOpen ? (
           <ModalSheet
             ariaLabel="Create trip"
-            eyebrow="Maycation Planner"
             onClose={() => {
               setCreateError('')
               setIsCreateOpen(false)
@@ -221,9 +220,9 @@ export function TripsDashboard() {
                 <div className="member-row" key={invite.id}>
                   <div>
                     <strong>{invite.trip_name}</strong>
-                    <p className="muted">
-                      {formatInviteTripMeta(invite)}
-                    </p>
+                    {formatInviteTripMeta(invite) ? (
+                      <p className="muted">{formatInviteTripMeta(invite)}</p>
+                    ) : null}
                   </div>
 
                   <Badge tone={roleTones[invite.role]}>
@@ -288,24 +287,25 @@ export function TripsDashboard() {
   )
 }
 
-function formatDate(value: string) {
-  return new Intl.DateTimeFormat(undefined, {
+function formatInviteTripMeta(invite: PendingTripInvite) {
+  const formatter = new Intl.DateTimeFormat(undefined, {
     month: 'short',
     day: 'numeric',
-    year: 'numeric',
-  }).format(new Date(`${value}T00:00:00`))
-}
+  })
 
-function formatInviteTripMeta(invite: PendingTripInvite) {
-  const location = invite.destination || 'Location not set'
+  const parts: string[] = []
 
   if (invite.starts_on && invite.ends_on) {
-    return `${location} - ${formatDate(invite.starts_on)} - ${formatDate(
-      invite.ends_on,
-    )}`
+    const start = formatter.format(new Date(`${invite.starts_on}T00:00:00`))
+    const end = formatter.format(new Date(`${invite.ends_on}T00:00:00`))
+    parts.push(`${start} – ${end}`)
   }
 
-  return location
+  if (invite.destination) {
+    parts.push(invite.destination)
+  }
+
+  return parts.join(' • ')
 }
 
 function getRoleLabel(role: PendingTripInvite['role']) {

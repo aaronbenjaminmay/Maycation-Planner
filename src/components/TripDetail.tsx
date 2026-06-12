@@ -281,10 +281,12 @@ export function TripDetail({ trip, onBack, onTripUpdated }: TripDetailProps) {
                         : 'No matching day'}
                     </dd>
                   </div>
+                  {nextTodayItem ? (
                   <div>
                     <dt>Next</dt>
-                    <dd>{nextTodayItem ? nextTodayItem.title : 'No incomplete items'}</dd>
+                    <dd>{nextTodayItem.title}</dd>
                   </div>
+                  ) : null}
                 </dl>
               </>
             ) : null}
@@ -292,10 +294,7 @@ export function TripDetail({ trip, onBack, onTripUpdated }: TripDetailProps) {
             {tripPhase === 'after' ? (
               <>
                 <div className="trip-intel-card__header">
-                  <div>
-                    <span>Today Intel</span>
-                    <strong>Trip complete</strong>
-                  </div>
+                  <strong>Trip complete</strong>
                 </div>
                 <dl>
                   <div>
@@ -338,7 +337,7 @@ export function TripDetail({ trip, onBack, onTripUpdated }: TripDetailProps) {
                   itemCount={dayItems.length}
                   key={day.id}
                   onOpen={() => setActiveDayId(day.id)}
-                  subtitle={day.label || `Day ${index + 1}`}
+                  subtitle={day.label || undefined}
                   title={day.label || `Day ${index + 1}`}
                 />
               )
@@ -347,13 +346,13 @@ export function TripDetail({ trip, onBack, onTripUpdated }: TripDetailProps) {
             <DayTile
               completedCount={0}
               dayNumber={tripDays.length + 1}
-              itemCount={reservationItems.length}
+              itemCount={0}
               onOpen={() => {
                 if (nextReservation?.trip_day_id) {
                   setActiveDayId(nextReservation.trip_day_id)
                 }
               }}
-              subtitle={nextReservation ? nextReservation.title : 'Dining and fixed plans'}
+              subtitle={nextReservation?.title}
               title="Reservations"
             />
           </section>

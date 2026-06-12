@@ -184,10 +184,9 @@ export function formatTripDateRange(startsOn: string, endsOn: string) {
   const formatter = new Intl.DateTimeFormat(undefined, {
     month: 'short',
     day: 'numeric',
-    year: 'numeric',
   })
 
-  return `${formatter.format(parseDateInput(startsOn))} - ${formatter.format(
+  return `${formatter.format(parseDateInput(startsOn))} – ${formatter.format(
     parseDateInput(endsOn),
   )}`
 }
@@ -197,7 +196,6 @@ export function formatTripDayDate(date: string) {
     weekday: 'short',
     month: 'short',
     day: 'numeric',
-    year: 'numeric',
   }).format(parseDateInput(date))
 }
 

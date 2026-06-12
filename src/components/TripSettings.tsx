@@ -316,7 +316,6 @@ export function TripSettings({
           <CardSurface className="settings-panel" aria-label="Invite user">
             <div>
               <h2>Invite User</h2>
-              <p className="muted">Invite a family member by email.</p>
             </div>
 
             <form className="invite-form" onSubmit={handleInvite}>
@@ -357,9 +356,6 @@ export function TripSettings({
           <CardSurface className="settings-panel" aria-label="Edit trip">
             <div>
               <h2>Edit Trip</h2>
-              <p className="muted">
-                Update the trip basics shared across the dashboard.
-              </p>
             </div>
 
             {!isEditingTrip ? (
@@ -407,10 +403,6 @@ export function TripSettings({
                   options={travelTypes.map((type) => ({ value: type, label: type }))}
                 />
 
-                <p className="muted">
-                  Changing dates does not update existing trip days yet.
-                </p>
-
                 {tripEditError ? (
                   <FeedbackMessage tone="error">{tripEditError}</FeedbackMessage>
                 ) : null}
@@ -440,9 +432,6 @@ export function TripSettings({
           <CardSurface className="settings-panel" aria-label="Trip members">
             <div>
               <h2>Members</h2>
-              <p className="muted">
-                {members.length} {members.length === 1 ? 'member' : 'members'}
-              </p>
             </div>
 
             {memberError ? <p className="feedback">{memberError}</p> : null}
@@ -452,7 +441,9 @@ export function TripSettings({
                 <div className="member-row" key={member.id}>
                   <div>
                     <strong>{getMemberName(member)}</strong>
-                    <p className="muted">{member.email || 'Email not set'}</p>
+                    {member.display_name ? (
+                      <p className="muted">{member.email}</p>
+                    ) : null}
                   </div>
 
                   <Badge tone={roleTones[member.role]}>
@@ -508,7 +499,6 @@ export function TripSettings({
           <CardSurface className="settings-panel" aria-label="Trip invites">
             <div>
               <h2>Invites</h2>
-              <p className="muted">Invitation history and current status.</p>
             </div>
 
             <div className="member-list">
@@ -516,9 +506,11 @@ export function TripSettings({
                 <div className="member-row" key={invite.id}>
                   <div>
                     <strong>{invite.email}</strong>
-                    <p className="muted">
-                      Expires {formatInviteDate(invite.expires_at)}
-                    </p>
+                    {invite.status === 'pending' ? (
+                      <p className="muted">
+                        Expires {formatInviteDate(invite.expires_at)}
+                      </p>
+                    ) : null}
                   </div>
                   <div className="invite-status-group">
                     <Badge tone={roleTones[invite.role]}>
