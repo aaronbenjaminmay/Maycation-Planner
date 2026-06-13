@@ -1557,6 +1557,40 @@ button.dashboard-card {
   margin: 0 auto;
 }
 
+/* Login screen mobile fixes
+ *
+ * Root cause: the global @media (max-width: 560px) block sets
+ * place-items: stretch on .app-shell. On authenticated screens
+ * .dashboard-shell overrides display: block so stretch has no effect.
+ * On the auth screen (.app-shell without .dashboard-shell), stretch
+ * expands the auth-panel to fill the full viewport height, which
+ * redistributes that extra height into the mode-toggle via CSS Grid's
+ * default align-self: stretch. The mode-toggle buttons become square,
+ * and border-radius: 999px turns them into circles.
+ */
+
+/* Lock mode-toggle height so buttons can never grow into circles,
+   regardless of the containing layout. */
+.mode-toggle {
+  height: 52px; /* 4px padding-top + 44px button + 4px padding-bottom */
+}
+
+@media (max-width: 560px) {
+  /* Re-center the auth shell. Authenticated screens are unaffected
+     because .dashboard-shell switches them to display: block. */
+  .app-shell:not(.dashboard-shell) {
+    place-items: center;
+  }
+
+  .auth-panel {
+    gap: 14px;
+  }
+
+  .auth-wordmark {
+    width: 120px;
+  }
+}
+
 /* Shared button system */
 .button {
   box-sizing: border-box;
