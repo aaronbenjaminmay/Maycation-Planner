@@ -2,6 +2,7 @@ import {
   formatPlannerItemTimeRange,
   formatTripDayDate,
   type PlannerItem,
+  type ReservationType,
   type Trip,
   type TripDay,
 } from '../lib/trips'
@@ -9,7 +10,15 @@ import {
   CardSurface,
   DetailHeader,
   EmptyState,
+  Icon,
 } from './DesignSystem'
+
+const reservationTypeIconMap: Record<ReservationType, 'ticket' | 'utensils' | 'bed' | 'plane'> = {
+  activity: 'ticket',
+  food: 'utensils',
+  lodging: 'bed',
+  transportation: 'plane',
+}
 
 type TripReservationsProps = {
   backgroundUrl?: string | null
@@ -111,7 +120,10 @@ function ReservationCard({ item }: { item: PlannerItem }) {
         {timeRange ? (
           <p className="planner-item-time">{timeRange}</p>
         ) : null}
-        <strong>{item.title}</strong>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+          <Icon name={reservationTypeIconMap[item.reservation_type]} size="small" />
+          <strong>{item.title}</strong>
+        </div>
         {item.location_name ? (
           <p className="muted">{item.location_name}</p>
         ) : null}

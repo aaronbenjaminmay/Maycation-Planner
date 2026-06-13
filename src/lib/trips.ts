@@ -10,6 +10,25 @@ export const travelTypes = [
 
 export type TravelType = (typeof travelTypes)[number]
 
+export const tripDayTypes = [
+  'activity',
+  'travel',
+  'relax',
+  'explore',
+  'special',
+] as const
+
+export type TripDayType = (typeof tripDayTypes)[number]
+
+export const reservationTypes = [
+  'activity',
+  'food',
+  'lodging',
+  'transportation',
+] as const
+
+export type ReservationType = (typeof reservationTypes)[number]
+
 export type TripMemberRole = 'owner' | 'editor' | 'viewer'
 
 export type Trip = {
@@ -31,6 +50,7 @@ export type TripDay = {
   date: string
   label: string | null
   sort_order: number
+  day_type: TripDayType
 }
 
 export const plannerItemKinds = [
@@ -57,6 +77,7 @@ export type PlannerItem = {
   external_url: string | null
   status: string
   sort_order: number
+  reservation_type: ReservationType
   metadata: {
     completed?: boolean
     [key: string]: unknown
@@ -87,6 +108,14 @@ export type CreatePlannerItemInput = {
   confirmationCode?: string
   address?: string
   externalUrl?: string
+  reservationType?: ReservationType
+}
+
+export type UpdateTripDayInput = {
+  tripId: string
+  dayId: string
+  label: string
+  dayType: TripDayType
 }
 
 export type UpdatePlannerItemInput = CreatePlannerItemInput & {
@@ -111,6 +140,7 @@ type TripDayRow = {
   date: string
   label: string | null
   sort_order: number
+  day_type: TripDayType
 }
 
 type PlannerItemRow = {
@@ -128,6 +158,7 @@ type PlannerItemRow = {
   external_url: string | null
   status: string
   sort_order: number
+  reservation_type: ReservationType
   metadata: Record<string, unknown> | null
 }
 
@@ -262,6 +293,7 @@ function mapTripDayRow(row: TripDayRow): TripDay {
     date: row.date,
     label: row.label,
     sort_order: row.sort_order,
+    day_type: row.day_type,
   }
 }
 
@@ -281,6 +313,7 @@ function mapPlannerItemRow(row: PlannerItemRow): PlannerItem {
     external_url: row.external_url,
     status: row.status,
     sort_order: row.sort_order,
+    reservation_type: row.reservation_type,
     metadata: row.metadata ?? {},
   }
 }
@@ -349,6 +382,7 @@ export async function createPlannerItem(input: CreatePlannerItemInput) {
     item_confirmation_code: input.confirmationCode?.trim() || null,
     item_address: input.address?.trim() || null,
     item_url: input.externalUrl?.trim() || null,
+    item_reservation_type: input.reservationType ?? 'activity',
   })
 
   if (error) {
@@ -383,6 +417,7 @@ export async function updatePlannerItem(input: UpdatePlannerItemInput) {
     item_confirmation_code: input.confirmationCode?.trim() || null,
     item_address: input.address?.trim() || null,
     item_url: input.externalUrl?.trim() || null,
+    item_reservation_type: input.reservationType ?? 'activity',
   })
 
   if (error) {
@@ -391,6 +426,21 @@ export async function updatePlannerItem(input: UpdatePlannerItemInput) {
   }
 
   return itemId
+}
+
+export async function updateTripDay(input: UpdateTripDayInput) {
+  const client = getSupabaseClient()
+  const { error } = await client.rpc('update_trip_day', {
+    target_trip_id: input.tripId,
+    target_day_id: input.dayId,
+    day_label: input.label,
+    new_day_type: input.dayType,
+  })
+
+  if (error) {
+    await logSupabaseError('Failed to update trip day', error)
+    throw new Error(getSupabaseErrorMessage(error))
+  }
 }
 
 export async function deletePlannerItem(tripId: string, itemId: string) {

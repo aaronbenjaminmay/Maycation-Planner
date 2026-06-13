@@ -1,8 +1,10 @@
 import { type FormEvent, useState } from 'react'
 import {
   plannerItemKinds,
+  reservationTypes,
   type CreatePlannerItemInput,
   type PlannerItemKind,
+  type ReservationType,
   type TripDay,
 } from '../lib/trips'
 import {
@@ -43,6 +45,7 @@ export type PlannerItemFormValues = {
   confirmationCode: string
   address: string
   externalUrl: string
+  reservationType: ReservationType
 }
 
 const kindLabels: Record<PlannerItemKind, string> = {
@@ -50,6 +53,13 @@ const kindLabels: Record<PlannerItemKind, string> = {
   note: 'Note',
   reservation: 'Reservation',
   travel: 'Travel',
+}
+
+const reservationTypeLabels: Record<ReservationType, string> = {
+  activity: 'Activity',
+  food: 'Food & Dining',
+  lodging: 'Lodging',
+  transportation: 'Transportation',
 }
 
 export function AddPlannerItemForm({
@@ -78,6 +88,9 @@ export function AddPlannerItemForm({
   const [confirmationCode, setConfirmationCode] = useState(initialValues?.confirmationCode ?? '')
   const [address, setAddress] = useState(initialValues?.address ?? '')
   const [externalUrl, setExternalUrl] = useState(initialValues?.externalUrl ?? '')
+  const [reservationType, setReservationType] = useState<ReservationType>(
+    initialValues?.reservationType ?? 'activity',
+  )
   const [validationMessage, setValidationMessage] = useState('')
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -106,6 +119,7 @@ export function AddPlannerItemForm({
       confirmationCode,
       address,
       externalUrl,
+      reservationType,
     })
   }
 
@@ -123,6 +137,15 @@ export function AddPlannerItemForm({
           onChange={(v) => setKind(v as PlannerItemKind)}
           options={plannerItemKinds.map((k) => ({ value: k, label: kindLabels[k] }))}
         />
+
+        {kind === 'reservation' ? (
+          <SelectInput
+            label="Type"
+            value={reservationType}
+            onChange={(v) => setReservationType(v as ReservationType)}
+            options={reservationTypes.map((t) => ({ value: t, label: reservationTypeLabels[t] }))}
+          />
+        ) : null}
 
         <TextInput
           label="Title"

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { type FormEvent, useState } from 'react'
 import {
   createPlannerItem,
   deletePlannerItem,
@@ -6,23 +6,32 @@ import {
   formatPlannerItemTimeInput,
   formatTripDayDate,
   togglePlannerItemCompletion,
+  tripDayTypes,
   updatePlannerItem,
+  updateTripDay,
   type CreatePlannerItemInput,
   type PlannerItem,
   type Trip,
   type TripDay,
+  type TripDayType,
 } from '../lib/trips'
 import {
   AddPlannerItemForm,
   type PlannerItemFormValues,
 } from './AddPlannerItemForm'
 import {
+  Button,
   CardSurface,
   DetailHeader,
   EmptyState,
   FeedbackMessage,
+  FormActions,
+  Icon,
   IconButton,
+  ModalSheet,
+  SelectInput,
   StatusButton,
+  TextInput,
 } from './DesignSystem'
 
 type DayDetailProps = {
@@ -35,6 +44,22 @@ type DayDetailProps = {
   onItemCreated: () => Promise<void>
   trip: Trip
 }
+
+const dayTypeLabels: Record<TripDayType, string> = {
+  activity: 'Activity',
+  explore: 'Explore',
+  relax: 'Relax',
+  special: 'Special',
+  travel: 'Travel',
+}
+
+const dayTypeIconMap = {
+  activity: 'ticket',
+  explore: 'compass',
+  relax: 'umbrella',
+  special: 'star',
+  travel: 'plane',
+} as const
 
 function getVisibleErrorMessage(error: unknown, fallback: string) {
   return error instanceof Error && error.message ? error.message : fallback
@@ -62,11 +87,44 @@ export function DayDetail({
     Record<string, boolean>
   >({})
   const [completionError, setCompletionError] = useState('')
+  const [isDayEditOpen, setIsDayEditOpen] = useState(false)
+  const [dayEditLabel, setDayEditLabel] = useState('')
+  const [dayEditType, setDayEditType] = useState<TripDayType>('activity')
+  const [isDayEditSubmitting, setIsDayEditSubmitting] = useState(false)
+  const [dayEditError, setDayEditError] = useState('')
 
   function closeItemForm() {
     setIsItemFormOpen(false)
     setEditingItem(null)
     setItemFormError('')
+  }
+
+  function openDayEdit() {
+    setDayEditLabel(day.label ?? '')
+    setDayEditType(day.day_type)
+    setDayEditError('')
+    setIsDayEditOpen(true)
+  }
+
+  async function handleDayEditSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault()
+    setDayEditError('')
+    setIsDayEditSubmitting(true)
+
+    try {
+      await updateTripDay({
+        tripId: trip.id,
+        dayId: day.id,
+        label: dayEditLabel,
+        dayType: dayEditType,
+      })
+      setIsDayEditOpen(false)
+      await onItemCreated()
+    } catch (err) {
+      setDayEditError(getVisibleErrorMessage(err, 'Unable to save day.'))
+    } finally {
+      setIsDayEditSubmitting(false)
+    }
   }
 
   async function handleItemSubmit(input: CreatePlannerItemInput) {
@@ -166,26 +224,74 @@ export function DayDetail({
         <DetailHeader
           meta={
             <>
-              <p className="muted">{formatTripDayDate(day.date)}</p>
+              <p className="muted" style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                <Icon name={dayTypeIconMap[day.day_type]} size="small" />
+                {formatTripDayDate(day.date)}
+              </p>
               {day.label ? <p className="day-title">{day.label}</p> : null}
             </>
           }
           onBack={onBack}
           action={
             canEditPlannerItems ? (
-              <IconButton
-                icon="add"
-                label="Add item"
-                onClick={() => {
-                  setEditingItem(null)
-                  setItemFormError('')
-                  setIsItemFormOpen(true)
-                }}
-              />
+              <div style={{ display: 'flex', gap: 4 }}>
+                <IconButton
+                  icon="edit"
+                  label="Edit day"
+                  onClick={openDayEdit}
+                />
+                <IconButton
+                  icon="add"
+                  label="Add item"
+                  onClick={() => {
+                    setEditingItem(null)
+                    setItemFormError('')
+                    setIsItemFormOpen(true)
+                  }}
+                />
+              </div>
             ) : null
           }
           title={`Day ${dayNumber}`}
         />
+
+        {isDayEditOpen ? (
+          <ModalSheet
+            ariaLabel="Edit day"
+            eyebrow="Edit Day"
+            onClose={() => setIsDayEditOpen(false)}
+            title={day.label || `Day ${dayNumber}`}
+          >
+            <form onSubmit={handleDayEditSubmit}>
+              <SelectInput
+                label="Day type"
+                value={dayEditType}
+                onChange={(v) => setDayEditType(v as TripDayType)}
+                options={tripDayTypes.map((t) => ({ value: t, label: dayTypeLabels[t] }))}
+              />
+              <TextInput
+                label="Label"
+                value={dayEditLabel}
+                onChange={setDayEditLabel}
+              />
+              {dayEditError ? (
+                <FeedbackMessage tone="error">{dayEditError}</FeedbackMessage>
+              ) : null}
+              <FormActions>
+                <Button
+                  variant="secondary"
+                  type="button"
+                  onClick={() => setIsDayEditOpen(false)}
+                >
+                  Cancel
+                </Button>
+                <Button type="submit" disabled={isDayEditSubmitting}>
+                  {isDayEditSubmitting ? 'Saving...' : 'Save Day'}
+                </Button>
+              </FormActions>
+            </form>
+          </ModalSheet>
+        ) : null}
 
         {isItemFormOpen ? (
           <AddPlannerItemForm
@@ -318,5 +424,6 @@ function getPlannerItemFormValues(item: PlannerItem): PlannerItemFormValues {
     confirmationCode: item.confirmation_code ?? '',
     address: item.location_address ?? '',
     externalUrl: item.external_url ?? '',
+    reservationType: item.reservation_type,
   }
 }

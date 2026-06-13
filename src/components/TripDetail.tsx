@@ -384,6 +384,7 @@ export function TripDetail({ trip, onBack, onTripDeleted, onTripUpdated }: TripD
                   completedCount={completedCount}
                   date={formatDashboardDate(day.date)}
                   dayNumber={index + 1}
+                  dayType={day.day_type}
                   itemCount={dayItems.length}
                   key={day.id}
                   onOpen={() => setActiveDayId(day.id)}
