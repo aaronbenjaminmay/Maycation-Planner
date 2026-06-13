@@ -17,7 +17,7 @@ type DayTileProps = {
 const dayTypeIconMap: Record<TripDayType, IconName> = {
   activity: 'ticket',
   explore: 'compass',
-  relax: 'umbrella',
+  relax: 'tree-palm',
   special: 'star',
   travel: 'plane',
 }
@@ -43,8 +43,12 @@ export function DayTile({
         </span>
         <div className="day-tile__header">
           <div className="day-tile__text">
-            <h2>{date ?? title}</h2>
-            {subtitle ? <p className="muted day-tile__summary">{subtitle}</p> : null}
+            <h2>{title}</h2>
+            {date ? (
+              <p className="muted day-tile__summary">{date}</p>
+            ) : subtitle ? (
+              <p className="muted day-tile__summary">{subtitle}</p>
+            ) : null}
             {date ? <span className="day-tile__day-label">Day {dayNumber}</span> : null}
           </div>
           {itemCount > 0 ? (

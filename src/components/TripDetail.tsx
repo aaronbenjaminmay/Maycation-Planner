@@ -388,7 +388,6 @@ export function TripDetail({ trip, onBack, onTripDeleted, onTripUpdated }: TripD
                   itemCount={dayItems.length}
                   key={day.id}
                   onOpen={() => setActiveDayId(day.id)}
-                  subtitle={day.label || undefined}
                   title={day.label || `Day ${index + 1}`}
                 />
               )

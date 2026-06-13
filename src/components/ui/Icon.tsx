@@ -16,7 +16,7 @@ import {
   Star,
   Ticket,
   Trash2,
-  Umbrella,
+  TreePalm,
   UserPlus,
   Utensils,
   X,
@@ -41,7 +41,7 @@ export type IconName =
   | 'sign-out'
   | 'star'
   | 'ticket'
-  | 'umbrella'
+  | 'tree-palm'
   | 'user-plus'
   | 'utensils'
   | 'x-circle'
@@ -69,7 +69,7 @@ const iconMap: Record<IconName, LucideIcon> = {
   'sign-out': LogOut,
   star: Star,
   ticket: Ticket,
-  umbrella: Umbrella,
+  'tree-palm': TreePalm,
   'user-plus': UserPlus,
   utensils: Utensils,
   'x-circle': CircleX,

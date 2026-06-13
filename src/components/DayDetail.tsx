@@ -56,7 +56,7 @@ const dayTypeLabels: Record<TripDayType, string> = {
 const dayTypeIconMap = {
   activity: 'ticket',
   explore: 'compass',
-  relax: 'umbrella',
+  relax: 'tree-palm',
   special: 'star',
   travel: 'plane',
 } as const
@@ -223,13 +223,10 @@ export function DayDetail({
       <section className="page-shell trips-panel">
         <DetailHeader
           meta={
-            <>
-              <p className="muted" style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                <Icon name={dayTypeIconMap[day.day_type]} size="small" />
-                {formatTripDayDate(day.date)}
-              </p>
-              {day.label ? <p className="day-title">{day.label}</p> : null}
-            </>
+            <p className="muted" style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+              <Icon name={dayTypeIconMap[day.day_type]} size="small" />
+              {formatTripDayDate(day.date)}
+            </p>
           }
           onBack={onBack}
           action={
@@ -252,7 +249,7 @@ export function DayDetail({
               </div>
             ) : null
           }
-          title={`Day ${dayNumber}`}
+          title={day.label || `Day ${dayNumber}`}
         />
 
         {isDayEditOpen ? (
@@ -262,7 +259,7 @@ export function DayDetail({
             onClose={() => setIsDayEditOpen(false)}
             title={day.label || `Day ${dayNumber}`}
           >
-            <form onSubmit={handleDayEditSubmit}>
+            <form className="planner-item-form" onSubmit={handleDayEditSubmit}>
               <SelectInput
                 label="Day type"
                 value={dayEditType}
@@ -270,7 +267,7 @@ export function DayDetail({
                 options={tripDayTypes.map((t) => ({ value: t, label: dayTypeLabels[t] }))}
               />
               <TextInput
-                label="Label"
+                label="Day Title"
                 value={dayEditLabel}
                 onChange={setDayEditLabel}
               />
