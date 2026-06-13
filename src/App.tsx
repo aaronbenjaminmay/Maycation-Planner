@@ -42,7 +42,6 @@ function App() {
       <main className="app-shell">
         <CardSurface className="auth-panel">
           <img src="/wordmark-white.png" alt="Maycation" className="auth-wordmark" />
-          <h1>Loading your planner</h1>
         </CardSurface>
       </main>
     )
@@ -56,12 +55,6 @@ function App() {
     <main className="app-shell">
       <CardSurface className="auth-panel">
         <img src="/wordmark-white.png" alt="Maycation" className="auth-wordmark" />
-        <div>
-          <h1>Plan the trip together</h1>
-          <p className="muted">
-            Sign in or create an account for the shared family planner.
-          </p>
-        </div>
 
         <div className="mode-toggle" aria-label="Choose authentication mode">
           <button
