@@ -20,6 +20,7 @@ import {
   CardSurface,
   DetailHeader,
   EmptyState,
+  FeedbackMessage,
   IconButton,
   StatusButton,
 } from './DesignSystem'
@@ -219,7 +220,7 @@ export function DayDetail({
         {items.length > 0 ? (
           <section className="planner-item-list" aria-label="Planner items">
             {completionError ? (
-              <p className="feedback">{completionError}</p>
+              <FeedbackMessage tone="error">{completionError}</FeedbackMessage>
             ) : null}
             {items.map((item) => {
               const isCompleted = getPlannerItemCompletedValue(item)

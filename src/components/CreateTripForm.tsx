@@ -5,6 +5,7 @@ import {
   type TravelType,
 } from '../lib/trips'
 import {
+  Button,
   FeedbackMessage,
   FormActions,
   FormGrid,
@@ -101,12 +102,12 @@ export function CreateTripForm({
       ) : null}
 
       <FormActions>
-        <button type="button" className="secondary-button" onClick={onCancel}>
+        <Button variant="secondary" type="button" onClick={onCancel}>
           Cancel
-        </button>
-        <button type="submit" disabled={isSubmitting}>
+        </Button>
+        <Button type="submit" disabled={isSubmitting}>
           {isSubmitting ? 'Creating...' : 'Create Trip'}
-        </button>
+        </Button>
       </FormActions>
     </form>
   )

@@ -39,40 +39,47 @@
   background: var(--control-bg);
 }
 
+.trip-card:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* Auth-screen buttons are raw HTML, not the Button component */
 .mode-toggle button,
-.auth-form button,
-.empty-state button:not(.icon-button),
-.form-actions button:not(.icon-button),
-.member-actions button:not(.icon-button) {
+.auth-form button {
   min-height: 44px;
+  padding: 0 var(--spacing-md);
   border: 1px solid transparent;
-  border-radius: 6px;
+  border-radius: var(--radius-full);
   color: var(--text-h);
   background: transparent;
   font: inherit;
-  font-weight: 700;
+  font-size: 14px;
+  font-weight: 900;
+  white-space: nowrap;
   cursor: pointer;
 }
 
 .mode-toggle button.active,
-.auth-form button,
-.empty-state button:not(.icon-button),
-.form-actions button:not(.secondary-button):not(.icon-button),
-.member-actions button:not(.secondary-button):not(.danger-button):not(.icon-button) {
-  background: var(--accent);
+.auth-form button {
   color: var(--accent-text);
+  border-color: var(--accent);
+  background: var(--accent);
 }
 
-.danger-button {
-  border-color: var(--danger-border) !important;
-  color: var(--danger-text) !important;
-  background: var(--danger-bg) !important;
+.auth-form button:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--accent) 86%, white 14%);
 }
 
-.secondary-button {
-  border-color: var(--border) !important;
-  color: var(--text-h) !important;
-  background: var(--control-bg) !important;
+.auth-form button:focus-visible,
+.mode-toggle button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.auth-form button:disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
 }
 
 .auth-form,
@@ -83,22 +90,6 @@
   gap: 16px;
 }
 
-.mode-toggle button:focus-visible,
-.auth-form button:focus-visible,
-.empty-state button:not(.icon-button):focus-visible,
-.form-actions button:not(.icon-button):focus-visible,
-.trip-card:focus-visible,
-.member-actions button:not(.icon-button):focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 2px;
-}
-
-.auth-form button:disabled,
-.form-actions button:not(.icon-button):disabled,
-.member-actions button:not(.icon-button):disabled {
-  cursor: not-allowed;
-  opacity: 0.65;
-}
 
 .feedback {
   padding: 12px;
@@ -220,10 +211,6 @@
   gap: 8px;
 }
 
-.member-actions button {
-  min-height: 38px;
-  padding: 0 12px;
-}
 
 .modal-backdrop {
   position: fixed;
@@ -304,24 +291,6 @@
   flex: 0 0 auto;
 }
 
-.action-bar__trailing button:not(.icon-button),
-.screen-header__actions button:not(.icon-button),
-.empty-state button:not(.icon-button) {
-  min-height: 44px;
-  padding: 0 14px;
-  border: 1px solid transparent;
-  border-radius: 6px;
-  color: var(--accent-text);
-  background: var(--accent);
-  font: inherit;
-  font-weight: 700;
-  cursor: pointer;
-}
-
-.screen-header__actions .secondary-button {
-  color: var(--text-h);
-  background: var(--control-bg);
-}
 
 .dashboard-card {
   width: 100%;
@@ -465,34 +434,14 @@ button.dashboard-card {
     padding: 22px;
   }
 
-  .account-strip {
-    align-items: stretch;
-    flex-direction: column;
-  }
-
-.screen-header {
+  .screen-header {
     align-items: stretch;
     flex-direction: column;
   }
 
   .form-grid,
-  .form-actions,
-  .dashboard-tile-grid {
+  .form-actions {
     grid-template-columns: 1fr;
-  }
-
-  .planner-item-card {
-    align-items: stretch;
-    flex-direction: column;
-  }
-  .planner-item-actions {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-  }
-
-  .member-card {
-    grid-template-columns: 1fr;
-    align-items: stretch;
   }
 
   .member-actions {
@@ -648,10 +597,6 @@ button.dashboard-card {
     gap: 20px;
   }
 
-  .trip-dashboard-header h1 {
-    font-size: clamp(2.2rem, 12vw, 3.2rem);
-  }
-
   .trip-destination-grid {
     grid-template-columns: 1fr;
   }
@@ -739,15 +684,6 @@ button.dashboard-card {
   background: var(--bg);
 }
 
-.day-detail-screen .dashboard-panel {
-  width: min(100%, 760px);
-  margin: 0 auto;
-  padding: 0;
-  border: 0;
-  background: transparent;
-  box-shadow: none;
-}
-
 .day-detail-screen .detail-header {
   gap: 18px;
   padding-bottom: 18px;
@@ -807,10 +743,6 @@ button.dashboard-card {
     padding-top: 28px;
   }
 
-  .trip-dashboard-header h1 {
-    font-size: clamp(1.85rem, 10vw, 2.5rem);
-  }
-
   .trip-dashboard .day-tile {
     min-height: 88px;
   }
@@ -838,9 +770,7 @@ button.dashboard-card {
   gap: 20px;
 }
 
-.screen-header h1,
-.auth-panel h1,
-.trip-dashboard-header h1 {
+.screen-header h1 {
   color: var(--text-h);
   font-size: clamp(1.85rem, 7vw, 2.75rem);
   font-weight: 900;
@@ -871,25 +801,6 @@ button.dashboard-card {
   display: block;
   flex: 0 0 auto;
 }
-.mode-toggle button,
-.auth-form button,
-.form-actions button:not(.icon-button),
-.member-actions button:not(.icon-button),
-.empty-state button:not(.icon-button) {
-  min-height: 44px;
-  border-radius: 999px;
-  font-size: 14px;
-  font-weight: 900;
-}
-
-.secondary-button {
-  border-color: rgba(255, 255, 255, 0.1) !important;
-  background: rgba(255, 255, 255, 0.05) !important;
-}
-
-.danger-button {
-  border-radius: 999px;
-}
 
 .mode-toggle {
   border-color: rgba(255, 255, 255, 0.08);
@@ -911,8 +822,7 @@ button.dashboard-card {
 
 .dashboard-card,
 .empty-state,
-.settings-panel,
-.member-card {
+.settings-panel {
   border-radius: var(--radius-card);
   background: rgba(28, 28, 30, 0.72);
 }
@@ -976,9 +886,7 @@ button.dashboard-card {
   border-bottom: 0;
 }
 
-.screen-header h1,
-.auth-panel h1,
-.trip-dashboard-header h1 {
+.screen-header h1 {
   font-size: clamp(1.85rem, 6vw, 2.65rem);
   font-weight: 900;
   line-height: 0.98;
@@ -1045,10 +953,6 @@ button.dashboard-card {
   font-size: 14px;
 }
 
-.day-detail-screen .dashboard-panel {
-  width: min(100%, 760px);
-}
-
 .day-detail-screen .planner-item-list {
   gap: 14px;
 }
@@ -1077,11 +981,6 @@ button.dashboard-card {
   background: var(--accent);
 }
 
-.form-actions button:not(.icon-button),
-.auth-form button,
-.member-actions button:not(.icon-button) {
-  border-radius: 999px;
-}
 
 @media (max-width: 720px) {
   .dashboard-panel,
@@ -1118,7 +1017,6 @@ button.dashboard-card {
   .trip-intel-card,
   .planner-item-card,
   .settings-panel,
-  .member-card,
   .empty-state
 ) {
   border: 1px solid rgba(255, 255, 255, 0.08);
@@ -1138,8 +1036,7 @@ button.dashboard-card {
 }
 
 .screen-header,
-.detail-header,
-.trip-dashboard-header {
+.detail-header {
   gap: 12px;
   padding-bottom: 16px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
@@ -1189,9 +1086,7 @@ button.dashboard-card {
   text-transform: uppercase;
 }
 
-.screen-header h1,
-.auth-panel h1,
-.trip-dashboard-header h1 {
+.screen-header h1 {
   margin: 0;
   color: var(--text-h);
   font-size: clamp(1.8rem, 6vw, 2.55rem);
@@ -1213,7 +1108,6 @@ button.dashboard-card {
 .dashboard-card strong,
 .settings-panel h2,
 .empty-state h2,
-.member-card strong,
 .planner-item-card strong,
 .trip-dashboard .day-tile h2,
 .day-tile h2 {
@@ -1291,14 +1185,6 @@ button.dashboard-card {
   margin-top: 4px;
 }
 
-.day-detail-screen .dashboard-panel {
-  width: min(100%, 760px);
-  padding: 0;
-  border: 0;
-  background: transparent;
-  box-shadow: none;
-}
-
 .day-detail-screen .detail-header {
   margin-bottom: 4px;
 }
@@ -1349,15 +1235,6 @@ button.dashboard-card {
   gap: var(--spacing-md);
 }
 
-.form-actions button:not(.icon-button),
-.auth-form button,
-.member-actions button:not(.icon-button),
-.mode-toggle button {
-  min-height: 44px;
-  border-radius: 999px;
-  font-size: 14px;
-  font-weight: 900;
-}
 
 @media (max-width: 720px) {
   .dashboard-panel,
@@ -1597,10 +1474,10 @@ button.dashboard-card {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  height: 40px;
-  padding: 0 14px;
+  min-height: 44px;
+  padding: 0 var(--spacing-md);
   border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   color: var(--text-h);
   background: rgba(28, 28, 30, 0.84);
   font: inherit;
@@ -1634,15 +1511,21 @@ button.dashboard-card {
 }
 
 .button--primary {
-  color: #fff;
+  color: var(--accent-text);
   border-color: var(--accent);
   background: var(--accent);
 }
 
 .button--primary:hover:not(:disabled) {
-  color: #fff;
+  color: var(--accent-text);
   border-color: var(--accent);
   background: color-mix(in srgb, var(--accent) 86%, white 14%);
+}
+
+.button--secondary {
+  color: var(--text-h);
+  border-color: var(--border);
+  background: var(--control-bg);
 }
 
 .button--destructive {

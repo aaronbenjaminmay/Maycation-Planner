@@ -13,6 +13,7 @@ import {
 } from '../lib/trips'
 import { loadTripAccess } from '../lib/tripMembers'
 import {
+  Button,
   CardSurface,
   DayTile,
   DetailHeader,
@@ -287,9 +288,9 @@ export function TripDetail({ trip, onBack, onTripDeleted, onTripUpdated }: TripD
           <EmptyState
             title="Could not load trip dashboard"
             action={
-              <button type="button" onClick={() => void loadDays()}>
+              <Button type="button" onClick={() => void loadDays()}>
                 Try again
-              </button>
+              </Button>
             }
           >
             <p className="muted">{error}</p>

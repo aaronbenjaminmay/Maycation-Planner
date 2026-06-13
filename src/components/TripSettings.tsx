@@ -651,9 +651,9 @@ export function TripSettings({
           <EmptyState
             title="Could not load settings"
             action={
-              <button type="button" onClick={() => void loadSettings()}>
+              <Button type="button" onClick={() => void loadSettings()}>
                 Try again
-              </button>
+              </Button>
             }
           >
             <p className="muted">{error}</p>
@@ -710,7 +710,7 @@ export function TripSettings({
               <h2>Members</h2>
             </div>
 
-            {memberError ? <p className="feedback">{memberError}</p> : null}
+            {memberError ? <FeedbackMessage tone="error">{memberError}</FeedbackMessage> : null}
 
             <div className="member-list">
               {members.map((member) => (
@@ -729,25 +729,25 @@ export function TripSettings({
                   {isOwner ? (
                     <div className="member-actions">
                       {member.role === 'viewer' ? (
-                        <button
+                        <Button
+                          variant="secondary"
                           type="button"
-                          className="secondary-button"
                           onClick={() => void handleRoleChange(member, 'editor')}
                           disabled={busyMemberId === member.id}
                         >
                           Make editor
-                        </button>
+                        </Button>
                       ) : null}
 
                       {member.role === 'editor' ? (
-                        <button
+                        <Button
+                          variant="secondary"
                           type="button"
-                          className="secondary-button"
                           onClick={() => void handleRoleChange(member, 'viewer')}
                           disabled={busyMemberId === member.id}
                         >
                           Make viewer
-                        </button>
+                        </Button>
                       ) : null}
 
                       {canRemoveMember(member, ownerCount) ? (

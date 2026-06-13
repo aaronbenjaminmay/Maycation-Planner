@@ -13,6 +13,7 @@ import {
   Button,
   CardSurface,
   EmptyState,
+  FeedbackMessage,
   IconButton,
   ModalSheet,
   PageControls,
@@ -222,7 +223,7 @@ export function TripsDashboard() {
               <h2>Pending Invitations</h2>
             </div>
 
-            {inviteError ? <p className="feedback">{inviteError}</p> : null}
+            {inviteError ? <FeedbackMessage tone="error">{inviteError}</FeedbackMessage> : null}
 
             <div className="member-list">
               {pendingInvites.map((invite) => (
@@ -239,21 +240,20 @@ export function TripsDashboard() {
                   </Badge>
 
                   <div className="member-actions">
-                    <button
-                      type="button"
+                    <Button
                       onClick={() => void handleAcceptInvite(invite.id)}
                       disabled={busyInviteId === invite.id}
                     >
                       {busyInviteId === invite.id ? 'Accepting...' : 'Accept'}
-                    </button>
-                    <button
+                    </Button>
+                    <Button
+                      variant="secondary"
                       type="button"
-                      className="secondary-button"
                       onClick={() => void handleDeclineInvite(invite.id)}
                       disabled={busyInviteId === invite.id}
                     >
                       Decline
-                    </button>
+                    </Button>
                   </div>
                 </div>
               ))}

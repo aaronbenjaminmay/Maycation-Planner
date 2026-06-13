@@ -6,6 +6,7 @@ import {
   type TripDay,
 } from '../lib/trips'
 import {
+  Button,
   FeedbackMessage,
   FormActions,
   FormGrid,
@@ -197,12 +198,12 @@ export function AddPlannerItemForm({
               : undefined
           }
         >
-          <button type="button" className="secondary-button" onClick={onCancel}>
+          <Button variant="secondary" type="button" onClick={onCancel}>
             Cancel
-          </button>
-          <button type="submit" disabled={isSubmitting}>
+          </Button>
+          <Button type="submit" disabled={isSubmitting}>
             {isSubmitting ? submittingLabel : submitLabel}
-          </button>
+          </Button>
         </FormActions>
       </form>
     </ModalSheet>
