@@ -151,7 +151,7 @@ export function TripDetail({ trip, onBack, onTripDeleted, onTripUpdated }: TripD
 
   useEffect(() => {
     void loadDays()
-  }, [loadDays])
+  }, [loadDays, trip.starts_on, trip.ends_on])
 
   useEffect(() => {
     if (!trip.background_path) {
