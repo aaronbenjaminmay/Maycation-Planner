@@ -39,6 +39,9 @@ export type PlannerItemFormValues = {
   notes: string
   startTime: string
   title: string
+  confirmationCode: string
+  address: string
+  externalUrl: string
 }
 
 const kindLabels: Record<PlannerItemKind, string> = {
@@ -71,6 +74,9 @@ export function AddPlannerItemForm({
   const [endTime, setEndTime] = useState(initialValues?.endTime ?? '')
   const [location, setLocation] = useState(initialValues?.location ?? '')
   const [notes, setNotes] = useState(initialValues?.notes ?? '')
+  const [confirmationCode, setConfirmationCode] = useState(initialValues?.confirmationCode ?? '')
+  const [address, setAddress] = useState(initialValues?.address ?? '')
+  const [externalUrl, setExternalUrl] = useState(initialValues?.externalUrl ?? '')
   const [validationMessage, setValidationMessage] = useState('')
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -96,6 +102,9 @@ export function AddPlannerItemForm({
       title,
       tripDayId: day.id,
       tripId,
+      confirmationCode,
+      address,
+      externalUrl,
     })
   }
 
@@ -141,6 +150,26 @@ export function AddPlannerItemForm({
           value={location}
           onChange={setLocation}
         />
+
+        {kind === 'reservation' ? (
+          <>
+            <TextInput
+              label="Address"
+              value={address}
+              onChange={setAddress}
+            />
+            <TextInput
+              label="Confirmation #"
+              value={confirmationCode}
+              onChange={setConfirmationCode}
+            />
+            <TextInput
+              label="Booking link"
+              value={externalUrl}
+              onChange={setExternalUrl}
+            />
+          </>
+        ) : null}
 
         <TextArea
           label="Notes"

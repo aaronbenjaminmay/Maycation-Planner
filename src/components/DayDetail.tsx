@@ -241,7 +241,24 @@ export function DayDetail({
                     {item.location_name ? (
                       <p className="muted">{item.location_name}</p>
                     ) : null}
+                    {item.kind === 'reservation' && item.location_address ? (
+                      <p className="muted">{item.location_address}</p>
+                    ) : null}
+                    {item.kind === 'reservation' && item.confirmation_code ? (
+                      <p className="muted">Conf #{item.confirmation_code}</p>
+                    ) : null}
                     {item.description ? <p>{item.description}</p> : null}
+                    {item.kind === 'reservation' && item.external_url ? (
+                      <a
+                        href={item.external_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="muted"
+                        style={{ color: 'var(--accent)' }}
+                      >
+                        View booking
+                      </a>
+                    ) : null}
                   </div>
 
                   <div className="planner-item-card__controls">
@@ -297,5 +314,8 @@ function getPlannerItemFormValues(item: PlannerItem): PlannerItemFormValues {
     notes: item.description ?? '',
     startTime: formatPlannerItemTimeInput(item.starts_at),
     title: item.title,
+    confirmationCode: item.confirmation_code ?? '',
+    address: item.location_address ?? '',
+    externalUrl: item.external_url ?? '',
   }
 }

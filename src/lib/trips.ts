@@ -45,13 +45,17 @@ export type PlannerItemKind = (typeof plannerItemKinds)[number]
 export type PlannerItem = {
   id: string
   trip_id: string
-  trip_day_id: string
+  trip_day_id: string | null
   kind: PlannerItemKind
   title: string
   description: string | null
   starts_at: string | null
   ends_at: string | null
   location_name: string | null
+  location_address: string | null
+  confirmation_code: string | null
+  external_url: string | null
+  status: string
   sort_order: number
   metadata: {
     completed?: boolean
@@ -80,6 +84,9 @@ export type CreatePlannerItemInput = {
   title: string
   tripDayId: string
   tripId: string
+  confirmationCode?: string
+  address?: string
+  externalUrl?: string
 }
 
 export type UpdatePlannerItemInput = CreatePlannerItemInput & {
@@ -109,13 +116,17 @@ type TripDayRow = {
 type PlannerItemRow = {
   id: string
   trip_id: string
-  trip_day_id: string
+  trip_day_id: string | null
   kind: PlannerItemKind
   title: string
   description: string | null
   starts_at: string | null
   ends_at: string | null
   location_name: string | null
+  location_address: string | null
+  confirmation_code: string | null
+  external_url: string | null
+  status: string
   sort_order: number
   metadata: Record<string, unknown> | null
 }
@@ -265,6 +276,10 @@ function mapPlannerItemRow(row: PlannerItemRow): PlannerItem {
     starts_at: row.starts_at,
     ends_at: row.ends_at,
     location_name: row.location_name,
+    location_address: row.location_address,
+    confirmation_code: row.confirmation_code,
+    external_url: row.external_url,
+    status: row.status,
     sort_order: row.sort_order,
     metadata: row.metadata ?? {},
   }
@@ -331,6 +346,9 @@ export async function createPlannerItem(input: CreatePlannerItemInput) {
     end_time: input.endTime || null,
     item_location: input.location.trim(),
     item_notes: input.notes.trim(),
+    item_confirmation_code: input.confirmationCode?.trim() || null,
+    item_address: input.address?.trim() || null,
+    item_url: input.externalUrl?.trim() || null,
   })
 
   if (error) {
@@ -362,6 +380,9 @@ export async function updatePlannerItem(input: UpdatePlannerItemInput) {
     end_time: input.endTime || null,
     item_location: input.location.trim(),
     item_notes: input.notes.trim(),
+    item_confirmation_code: input.confirmationCode?.trim() || null,
+    item_address: input.address?.trim() || null,
+    item_url: input.externalUrl?.trim() || null,
   })
 
   if (error) {

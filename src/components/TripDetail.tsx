@@ -20,6 +20,7 @@ import {
   IconButton,
 } from './DesignSystem'
 import { DayDetail } from './DayDetail'
+import { TripReservations } from './TripReservations'
 import { TripSettings } from './TripSettings'
 
 type TripDetailProps = {
@@ -120,6 +121,7 @@ export function TripDetail({ trip, onBack, onTripDeleted, onTripUpdated }: TripD
   const [isLoadingDays, setIsLoadingDays] = useState(true)
   const [activeDayId, setActiveDayId] = useState<string | null>(null)
   const [isSettingsOpen, setIsSettingsOpen] = useState(false)
+  const [showReservations, setShowReservations] = useState(false)
   const [currentRole, setCurrentRole] = useState<TripMemberRole | null>(null)
   const [backgroundUrl, setBackgroundUrl] = useState<string | null>(null)
   const [error, setError] = useState('')
@@ -219,6 +221,18 @@ export function TripDetail({ trip, onBack, onTripDeleted, onTripUpdated }: TripD
         onTripDeleted={onTripDeleted}
         onTripUpdated={onTripUpdated}
         trip={trip}
+      />
+    )
+  }
+
+  if (showReservations) {
+    return (
+      <TripReservations
+        backgroundUrl={backgroundUrl}
+        onBack={() => setShowReservations(false)}
+        plannerItems={plannerItems}
+        trip={trip}
+        tripDays={tripDays}
       />
     )
   }
@@ -379,15 +393,11 @@ export function TripDetail({ trip, onBack, onTripDeleted, onTripUpdated }: TripD
             })}
 
             <DayTile
-              completedCount={0}
+              completedCount={reservationItems.filter(isPlannerItemCompleted).length}
               dayNumber={tripDays.length + 1}
-              itemCount={0}
-              onOpen={() => {
-                if (nextReservation?.trip_day_id) {
-                  setActiveDayId(nextReservation.trip_day_id)
-                }
-              }}
-              subtitle={nextReservation?.title}
+              itemCount={reservationItems.length}
+              onOpen={() => setShowReservations(true)}
+              subtitle={nextReservation?.title ?? undefined}
               title="Reservations"
             />
           </section>
