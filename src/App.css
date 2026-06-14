@@ -1,3 +1,34 @@
+/*
+ * App.css — Maycation product-screen styles
+ *
+ * This file owns layout, product-screen patterns, and visual system layers.
+ * Component-owned CSS (buttons, icons, form controls, badges) lives in
+ * co-located files under src/components/ui/ (forms.css, badge.css, etc.)
+ * or in the component-system sections near the bottom of this file.
+ *
+ * Structure:
+ *   1. App shells and auth screen
+ *   2. Product-screen cards and lists
+ *   3. Trip dashboard screen
+ *   4. Day detail screen
+ *   5. Visual system v1 (glass morphism, color pass)
+ *   6. Disney Mayhem production-aligned visual system
+ *   7. Visual system consolidation (:where blocks)
+ *   8. Shared authenticated page shell (canonical .dashboard-shell)
+ *   9. Login screen fixes
+ *  10. Button and IconButton component styles
+ *  11. Trip background image system
+ *  12. Trip header image system
+ *  13. PageControls component style
+ *
+ * Note: many selectors appear in multiple sections. This is intentional CSS
+ * cascade layering from sequential visual system refinement passes.
+ * The LAST definition of any property wins.
+ */
+
+/* ─── 1. App shells and auth screen ─────────────────────────────────────────
+   .app-shell and .dashboard-shell have their FINAL canonical values set in
+   the "Shared authenticated page shell" section (section 8 below). */
 .app-shell {
   min-height: 100svh;
   display: grid;
@@ -149,13 +180,6 @@
   border-color: var(--accent);
 }
 
-.day-title {
-  margin-top: 10px;
-  color: var(--text-h);
-  font-size: 1.15rem;
-  font-weight: 800;
-}
-
 .planner-item-list {
   display: grid;
   gap: 10px;
@@ -219,7 +243,7 @@
   display: grid;
   place-items: center;
   padding: 18px;
-  background: rgba(0, 0, 0, 0.78);
+  background: var(--color-overlay-default);
 }
 
 .card-surface {
@@ -275,22 +299,6 @@
   font-weight: 800;
   cursor: pointer;
 }
-
-.action-bar__title {
-  min-width: 0;
-  flex: 1 1 auto;
-  overflow: hidden;
-  color: var(--text-h);
-  font-size: 14px;
-  font-weight: 900;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.action-bar__trailing {
-  flex: 0 0 auto;
-}
-
 
 .dashboard-card {
   width: 100%;
@@ -450,6 +458,8 @@ button.dashboard-card {
   }
 }
 
+/* ─── 3. Trip dashboard screen ───────────────────────────────────────────────
+   Refined across multiple passes below. Final padding is in section 8. */
 .trip-dashboard-screen {
   display: block;
   min-height: 100svh;
@@ -677,6 +687,8 @@ button.dashboard-card {
   font-size: 13px;
 }
 
+/* ─── 4. Day detail screen ───────────────────────────────────────────────────
+   Further refined in sections 5–8 below. */
 .day-detail-screen {
   display: block;
   min-height: 100svh;
@@ -748,7 +760,7 @@ button.dashboard-card {
   }
 }
 
-/* Visual system v1 */
+/* ─── 5. Visual system v1 ────────────────────────────────────────────────────
 .app-shell {
   background:
     radial-gradient(circle at 50% -10%, rgba(53, 184, 168, 0.08), transparent 34%),
@@ -849,7 +861,7 @@ button.dashboard-card {
   }
 }
 
-/* Disney Mayhem production-aligned visual system */
+/* ─── 6. Disney Mayhem production-aligned visual system ──────────────────────
 .app-shell,
 .trip-dashboard-screen,
 .day-detail-screen {
@@ -1002,12 +1014,12 @@ button.dashboard-card {
   }
 }
 
-/* Visual system consolidation */
+/* ─── 7. Visual system consolidation — canonical :where() surface rules ──────
 :where(.card-surface, .auth-panel, .dashboard-panel, .modal-sheet) {
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 20px;
-  background: rgba(28, 28, 30, 0.74);
-  box-shadow: 0 12px 34px rgba(0, 0, 0, 0.36);
+  border: 1px solid var(--color-border-glass);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface-glass);
+  box-shadow: var(--shadow-md);
 }
 
 :where(
@@ -1019,10 +1031,10 @@ button.dashboard-card {
   .settings-panel,
   .empty-state
 ) {
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 20px;
-  background: rgba(28, 28, 30, 0.74);
-  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.34);
+  border: 1px solid var(--color-border-glass);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface-glass);
+  box-shadow: var(--shadow-sm);
 }
 
 :where(.dashboard-card, .trip-card, .settings-panel, .empty-state) {
@@ -1045,18 +1057,6 @@ button.dashboard-card {
 .detail-header .screen-header {
   padding-bottom: 0;
   border-bottom: 0;
-}
-
-.action-bar {
-  position: static;
-  min-height: 40px;
-  margin: 0;
-  padding: 0;
-  border: 0;
-  border-radius: 0;
-  background: transparent;
-  backdrop-filter: none;
-  -webkit-backdrop-filter: none;
 }
 
 .screen-header {
@@ -1252,7 +1252,9 @@ button.dashboard-card {
   }
 }
 
-/* Recovery pass: shared authenticated page shell */
+/* ─── 8. Shared authenticated page shell (canonical) ────────────────────────
+   This section contains the FINAL canonical values for .dashboard-shell,
+   .page-shell, .trip-dashboard-screen, and .day-detail-screen padding. */
 .page-shell {
   width: min(100%, 900px);
   margin: 0 auto;
@@ -1276,10 +1278,6 @@ button.dashboard-card {
 .page-shell > .detail-header {
   padding-bottom: 18px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-}
-
-.page-shell .action-bar {
-  margin-bottom: 6px;
 }
 
 .page-shell .screen-header__actions {
@@ -1427,7 +1425,7 @@ button.dashboard-card {
   }
 }
 
-/* Login screen wordmark */
+/* ─── 9. Login screen wordmark and mobile fixes ──────────────────────────────
 .auth-wordmark {
   display: block;
   width: 160px;
@@ -1468,7 +1466,7 @@ button.dashboard-card {
   }
 }
 
-/* Shared button system */
+/* ─── 10. Button component styles ────────────────────────────────────────────
 .button {
   box-sizing: border-box;
   display: inline-flex;
@@ -1540,7 +1538,7 @@ button.dashboard-card {
   background: rgba(255, 69, 58, 0.14);
 }
 
-/* Shared icon button system */
+/* ─── 11. IconButton component styles ───────────────────────────────────────
 .icon-button {
   box-sizing: border-box;
   flex: 0 0 auto;
@@ -1634,6 +1632,11 @@ button.dashboard-card {
   background: var(--accent);
 }
 
+/* ─── 12. Trip background image system ───────────────────────────────────────
+   Fixed viewport background layer using CSS custom property --trip-bg-image.
+   ::before = image layer, ::after = dark overlay, > * lifts content above.
+   ─────────────────────────────────────────────────────────────────────────── */
+
 /* Trip background image — fixed viewport layer via pseudo-elements */
 .dashboard-shell.has-trip-bg {
   position: relative;
@@ -1703,25 +1706,26 @@ button.dashboard-card {
   background: rgba(255, 255, 255, 0.04);
 }
 
-/* Inline form section with label + hint + content */
-.form-row {
+/* ─── 13. Upload field and PageControls ──────────────────────────────────────
+   .upload-field: product-screen layout pattern (not a design-system primitive).
+   .page-controls: sticky bottom navigation bar shared across dashboard screens.
+   ─────────────────────────────────────────────────────────────────────────── */
+
+/* Upload field — product-screen pattern used in Edit Trip header image section */
+.upload-field {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: var(--spacing-xs);
 }
 
-.form-row__label {
+.upload-field__label {
   margin: 0;
-  font-size: 0.8125rem;
-  font-weight: 600;
-  color: var(--text-h);
-}
-
-.form-row__hint {
-  margin: 0;
-  font-size: 0.8125rem;
-  color: var(--text-muted, var(--text-h));
-  opacity: 0.6;
+  color: var(--color-text-primary);
+  font-size: var(--typography-label-font-size);
+  font-weight: var(--typography-label-font-weight);
+  letter-spacing: var(--typography-label-letter-spacing);
+  line-height: var(--typography-label-line-height);
+  text-transform: var(--typography-label-text-transform);
 }
 
 /* PageControls: persistent fixed frosted pill */

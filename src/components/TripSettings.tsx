@@ -702,9 +702,9 @@ export function TripSettings({
                 onChange={(e) => void handleHeaderImgFileChange(e)}
               />
 
-              <div className="form-row">
-                <p className="form-row__label">Header Image</p>
-                <p className="form-row__hint">Replaces the trip title on the dashboard when set.</p>
+              <div className="upload-field">
+                <p className="upload-field__label">Header Image</p>
+                <p className="muted">Replaces the trip title on the dashboard when set.</p>
                 {localHeaderImageUrl ? (
                   <img
                     src={localHeaderImageUrl}

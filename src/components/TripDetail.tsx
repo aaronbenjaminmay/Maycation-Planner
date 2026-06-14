@@ -10,8 +10,10 @@ import {
   type PlannerItem,
   type Trip,
   type TripDay,
+  type TripDayType,
   type TripMemberRole,
 } from '../lib/trips'
+import { type IconName } from './ui/Icon'
 import { loadTripAccess } from '../lib/tripMembers'
 import {
   Button,
@@ -115,6 +117,14 @@ function sortItemsByPlanOrder(items: PlannerItem[]) {
 
     return left.sort_order - right.sort_order
   })
+}
+
+const dayTypeIconMap: Record<TripDayType, IconName> = {
+  activity: 'ticket',
+  explore: 'compass',
+  relax: 'tree-palm',
+  special: 'star',
+  travel: 'plane',
 }
 
 export function TripDetail({ trip, onBack, onTripDeleted, onTripUpdated }: TripDetailProps) {
@@ -424,7 +434,7 @@ export function TripDetail({ trip, onBack, onTripDeleted, onTripUpdated }: TripD
                   completedCount={completedCount}
                   date={formatDashboardDate(day.date)}
                   dayNumber={index + 1}
-                  dayType={day.day_type}
+                  iconName={dayTypeIconMap[day.day_type]}
                   itemCount={dayItems.length}
                   key={day.id}
                   onOpen={() => setActiveDayId(day.id)}
