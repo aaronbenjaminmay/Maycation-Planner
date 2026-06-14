@@ -73,19 +73,18 @@ Core principles:
 * Shadow
 * Icon sizing
 
-### Primitives
+### Components
 
-* CardSurface
+* Button, IconButton
+* CardSurface, ModalSheet
+* Badge, FeedbackMessage, EmptyState, ProgressPill, StatusButton
+* TextInput, SelectInput, TextArea, FormRow, FormGrid, FormActions
+* ScreenHeader, PageControls
+
+### Patterns
+
 * DashboardCard
-* DayTile
-* ActionBar
-* Badge
-* ProgressPill
-* IconButton
-* ModalSheet
-* ScreenHeader
 * DetailHeader
-* FeedbackMessage
 
 ### Forms
 
@@ -124,6 +123,43 @@ In Progress
 * Figma MCP parity
 * Expanded trip planning workflows
 * Additional collaboration features
+
+## Storybook
+
+Storybook documents the complete Maycation design system: foundations, components, patterns, and design principles. It is not a product preview — it does not show trip flows, dashboard screens, or Supabase-connected features.
+
+Run Storybook locally:
+
+```bash
+npm run storybook
+```
+
+Opens at `http://localhost:6006`.
+
+**Coverage (v1.5.0):**
+- `Foundation/` — Color tokens, typography scale, spacing and radius scale
+- `Components/` — All T1 components: buttons, surfaces, forms, navigation, feedback
+- `Patterns/` — T2 compositions: DashboardCard, DetailHeader
+- `Docs/` — Design Principles and Component Classification
+
+**What Storybook is for:**
+- Reviewing component variants and states in isolation
+- Verifying token values (colors, spacing, radius, typography)
+- Checking component behavior without app context or data
+- Communicating design system conventions to designers and tooling
+
+**What not to use Storybook for:**
+- Testing authenticated product flows
+- Previewing trip dashboards or planner screens
+- Verifying Supabase data or real-time behavior
+
+Build a static Storybook:
+
+```bash
+npm run build-storybook
+```
+
+---
 
 ## Development
 

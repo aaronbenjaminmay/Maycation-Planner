@@ -1,66 +1,86 @@
 # Maycation Design System
 
-Last updated: v1.3.0
+Last updated: v1.5.0
 
 ## Component Classification
 
-Components in `src/components/ui/` are classified into three tiers:
+The design system uses a four-tier hierarchy aligned with DTCG token conventions and Figma component library conventions:
 
-| Tier | Name | Description |
-|------|------|-------------|
-| **P1** | Primitive | Domain-agnostic, fully reusable in any React app. No imports from `lib/`, no product-specific logic. Storybook-ready. |
-| **P2** | Pattern | Opinionated layout or composition that is still domain-agnostic. May import other Primitives. |
-| **P3** | Product Component | Maycation-specific. Lives in `ui/` for now but depends on product shape or mapping. Should migrate toward `components/` if coupling grows. |
+| Tier | Name | Storybook group | Description |
+|------|------|-----------------|-------------|
+| **T0** | Foundation | `Foundation/` | Design tokens, type scales, spacing scales, color systems. Not React components. |
+| **T1** | Component | `Components/` | Domain-agnostic, fully reusable in any React app. No imports from `lib/`, no product-specific logic. Storybook-ready. |
+| **T2** | Pattern | `Patterns/` | Opinionated composition of Components. Still domain-agnostic. Encodes Maycation layout conventions. |
+| **T3** | Product | (not in Storybook) | Maycation-specific. Depends on product data shapes or mapping. Lives in `ui/` but carries domain knowledge. |
 
----
-
-## Primitive Inventory (P1)
-
-These components have no imports from `lib/` and carry no product domain knowledge.
-
-| Component | File | CSS home | Notes |
-|-----------|------|----------|-------|
-| `Badge` | `Badge.tsx` | `badge.css` | Tone variants via prop |
-| `Button` | `Button.tsx` | `App.css §10` | Primary, destructive variants |
-| `CardSurface` | `CardSurface.tsx` | `App.css §5–7` | Polymorphic `as` prop |
-| `EmptyState` | `EmptyState.tsx` | `App.css` | Optional `action` slot |
-| `FeedbackMessage` | `FeedbackMessage.tsx` | `forms.css` | Error/success inline feedback |
-| `FormActions` | `FormActions.tsx` | `forms.css` | Button row for form footers |
-| `FormGrid` | `FormGrid.tsx` | `forms.css` | 2-column responsive field layout |
-| `FormRow` | `FormRow.tsx` | `forms.css` | Label + input + hint wrapper |
-| `Icon` | `Icon.tsx` | (inline SVG) | `IconName` union type is the icon registry |
-| `IconButton` | `IconButton.tsx` | `App.css §11` | Variants: primary, destructive, complete |
-| `ModalSheet` | `ModalSheet.tsx` | `App.css §7–8` | Bottom-sheet dialog |
-| `PageControls` | `PageControls.tsx` | `App.css §13` | Sticky bottom nav bar |
-| `ProgressPill` | `ProgressPill.tsx` | `App.css` | Completion count display |
-| `ScreenHeader` | `ScreenHeader.tsx` | `App.css §8` | Top nav bar with back button |
-| `SelectInput` | `SelectInput.tsx` | `forms.css` | Styled `<select>` |
-| `StatusButton` | `StatusButton.tsx` | `App.css` | Checkbox-style toggle button |
-| `TextArea` | `TextArea.tsx` | `forms.css` | Styled `<textarea>` |
-| `TextInput` | `TextInput.tsx` | `forms.css` | Styled `<input>` |
+> **Note:** This replaces the prior P1/P2/P3 classification. "Primitives" has been retired as a Storybook group name. In DTCG terminology, colors, spacing, and tokens are the primitives — React components are Components.
 
 ---
 
-## Pattern Inventory (P2)
+## Component Inventory (T1)
 
-Opinionated layout components that compose Primitives but remain domain-agnostic.
+Domain-agnostic components with no imports from `lib/`. All are Storybook-documented as of v1.5.0.
 
-| Component | File | CSS home | Notes |
-|-----------|------|----------|-------|
-| `DashboardCard` | `DashboardCard.tsx` | `App.css §3` | Stat/summary card |
-| `DetailHeader` | `DetailHeader.tsx` | `App.css §4` | Back-nav + title + action slot |
+### General
+
+| Component | File | CSS home | Storybook path |
+|-----------|------|----------|----------------|
+| `Badge` | `Badge.tsx` | `badge.css` | `Components/Badge` |
+| `Button` | `Button.tsx` | `App.css §10` | `Components/Button` |
+| `CardSurface` | `CardSurface.tsx` | `App.css §5–7` | `Components/CardSurface` |
+| `FeedbackMessage` | `FeedbackMessage.tsx` | `forms.css` | `Components/FeedbackMessage` |
+| `Icon` | `Icon.tsx` | (inline SVG) | `Components/Icon` |
+| `IconButton` | `IconButton.tsx` | `App.css §11` | `Components/IconButton` |
+| `ModalSheet` | `ModalSheet.tsx` | `App.css §7–8` | `Components/ModalSheet` |
+
+### Forms
+
+| Component | File | CSS home | Storybook path |
+|-----------|------|----------|----------------|
+| `FormActions` | `FormActions.tsx` | `forms.css` | `Components/Forms/FormActions` |
+| `FormGrid` | `FormGrid.tsx` | `forms.css` | `Components/Forms/FormGrid` |
+| `FormRow` | `FormRow.tsx` | `forms.css` | `Components/Forms/FormRow` |
+| `SelectInput` | `SelectInput.tsx` | `forms.css` | `Components/Forms/SelectInput` |
+| `TextArea` | `TextArea.tsx` | `forms.css` | `Components/Forms/TextArea` |
+| `TextInput` | `TextInput.tsx` | `forms.css` | `Components/Forms/TextInput` |
+
+### Navigation
+
+| Component | File | CSS home | Storybook path |
+|-----------|------|----------|----------------|
+| `PageControls` | `PageControls.tsx` | `App.css §13` | `Components/Navigation/PageControls` |
+| `ScreenHeader` | `ScreenHeader.tsx` | `App.css §8` | `Components/Navigation/ScreenHeader` |
+
+### Feedback
+
+| Component | File | CSS home | Storybook path |
+|-----------|------|----------|----------------|
+| `EmptyState` | `EmptyState.tsx` | `App.css` | `Components/Feedback/EmptyState` |
+| `ProgressPill` | `ProgressPill.tsx` | (via Badge) | `Components/Feedback/ProgressPill` |
+| `StatusButton` | `StatusButton.tsx` | (via IconButton) | `Components/Feedback/StatusButton` |
 
 ---
 
-## Product Component Inventory (P3)
+## Pattern Inventory (T2)
 
-Components that carry Maycation-specific knowledge or visual conventions.
+Opinionated compositions of Components. Domain-agnostic but encode Maycation layout conventions.
 
-| Component | File | CSS home | Notes |
-|-----------|------|----------|-------|
-| `DayTile` | `DayTile.tsx` | `App.css` | Accepts `iconName?: IconName`; icon-to-day-type mapping lives in `TripDetail.tsx` |
+| Component | File | CSS home | Storybook path | Composes |
+|-----------|------|----------|----------------|----------|
+| `DashboardCard` | `DashboardCard.tsx` | `App.css §3` | `Patterns/DashboardCard` | `CardSurface` |
+| `DetailHeader` | `DetailHeader.tsx` | `App.css §4, §8` | `Patterns/DetailHeader` | `PageControls` + `ScreenHeader` |
 
-Product screens (`TripCard`, `ReservationCard` sub-component) live in `src/components/` and are not exported from `ui/index.ts`.
+---
+
+## Product Component Inventory (T3)
+
+Components that carry Maycation domain knowledge. Not in Storybook.
+
+| Component | File | Notes |
+|-----------|------|-------|
+| `DayTile` | `DayTile.tsx` | Icon-to-day-type mapping lives in `TripDetail.tsx` |
+
+Product screens and sub-components (`TripCard`, `ReservationCard`) live in `src/components/` and are not exported from `ui/index.ts`.
 
 ---
 
@@ -158,7 +178,7 @@ These hardcoded values remain in `App.css` and are candidates for future token m
 
 ## Storybook
 
-**Status as of v1.4.0:** Active. Storybook is installed and documented.
+**Status as of v1.5.0:** Active. Full design system coverage complete.
 
 **Location:** Run `npm run storybook` — served at `http://localhost:6006`
 
@@ -166,31 +186,53 @@ These hardcoded values remain in `App.css` and are candidates for future token m
 
 **Story files:** `src/stories/**/*.stories.tsx`
 
-### What's in v1.4.0
+**Total entries:** 99 stories across 25 groups
 
-**Foundation stories** (`Foundation/` group in Storybook):
-- `Colors` — All semantic color tokens as labeled swatches
-- `Typography` — Eyebrow, label, caption, body, and heading type styles
-- `Spacing & Radius` — Spacing scale bars + radius token demos
+### Storybook structure (v1.5.0)
 
-**Primitive stories** (`Primitives/` group in Storybook):
-- `Button` — Primary, secondary, destructive, disabled variants
-- `IconButton` — Default, primary, destructive, complete (unselected/selected), disabled variants
-- `Icon` — Full icon catalog + size variants
-- `CardSurface` — Static div, interactive div, button form
-- `ModalSheet` — Default, with eyebrow, with form content
-- `Badge` — All tone variants (neutral, accent, info, secondary, warning, danger)
-- `FeedbackMessage` — Neutral, error, success tones
+```
+Foundation/
+  Colors                 — All semantic color tokens as labeled swatches
+  Spacing & Radius       — Spacing scale bars + radius token demos
+  Typography             — Eyebrow, label, caption, body, heading type styles
 
-### What's intentionally excluded from v1.4.0
+Components/
+  Badge                  — All tone variants
+  Button                 — Primary, secondary, destructive, disabled
+  CardSurface            — Static, interactive, as button
+  FeedbackMessage        — Neutral, error, success
+  Icon                   — Full catalog (21 icons) + size variants
+  IconButton             — All variants + selected/disabled states
+  ModalSheet             — Default, with eyebrow, with form content
+  Forms/
+    FormActions          — Cancel/save, leading delete, destructive confirm
+    FormGrid             — Two-column, odd field count, date range
+    FormRow              — Text, select, textarea children
+    SelectInput          — Default, hint, disabled
+    TextArea             — Default, empty, hint, taller, disabled
+    TextInput            — Default, placeholder, hint, email, password, disabled
+  Navigation/
+    PageControls         — Back/add, back only, back/settings, with save
+    ScreenHeader         — Title, eyebrow, meta, actions, all slots
+  Feedback/
+    EmptyState           — Title only, with body, with action, full
+    ProgressPill         — In progress, complete, needs attention
+    StatusButton         — Incomplete, complete, read-only, disabled
 
-- `DayTile` — P3 Product Component; Maycation-specific layout
-- `DashboardCard` — P2 Pattern; not yet story-ready without product context
-- `DetailHeader`, `ScreenHeader` — P2 Patterns; require layout context to be meaningful
-- `PageControls` — App-shell navigation; product-coupled
-- `ProgressPill`, `StatusButton`, `EmptyState` — Deferred to v1.5.0
-- All form primitives (`FormRow`, `TextInput`, `SelectInput`, `TextArea`, etc.) — Deferred to v1.5.0 forms sprint
-- Product screens, trip flows, dashboard pages, Supabase-connected components
+Patterns/
+  DashboardCard          — Static, subtitle, eyebrow, interactive, meta, gallery
+  DetailHeader           — Back+title, eyebrow, trailing action, settings, all slots
+
+Docs/
+  Design Principles      — 7 principles from PROJECT_CONSTITUTION.md
+  Component Classification — Foundation/Component/Pattern/Product taxonomy
+```
+
+### What's intentionally excluded
+
+- `DayTile` — T3 Product Component; icon-to-day-type mapping is product-specific
+- All product screens (trip flows, dashboard, reservations, planner items)
+- All Supabase-connected components
 
 ### Global CSS setup
 
@@ -202,8 +244,6 @@ Components with co-located CSS (`badge.css`, `forms.css`) load automatically whe
 
 ### Future Storybook phases
 
-**v1.5.0 — Form Primitives:** Stories for `FormRow`, `TextInput`, `SelectInput`, `TextArea`, `FormGrid`, `FormActions`, `FeedbackMessage`.
-
-**v1.6.0 — Patterns & Layout:** Stories for `ScreenHeader`, `DetailHeader`, `DashboardCard`, `ProgressPill`, `StatusButton`, `EmptyState`.
+**v1.6.0 — Figma Foundations:** Establish Figma variable library and component library in parity with Storybook. Map token names 1:1.
 
 **v1.x.0 — CSS Migration:** Migrate component styles from `App.css` to co-located CSS files. This removes the `App.css` dependency from Storybook's global imports and makes each component self-contained.
