@@ -134,7 +134,7 @@ When a class or component is removed, delete all its CSS. Do not leave commented
 | 7 | Visual system consolidation | Canonical `:where()` blocks using tokens |
 | 8 | Shared authenticated page shell (canonical) | `.page-shell`, `.dashboard-shell` |
 | 9 | Login screen wordmark and mobile fixes | `.wordmark`, mobile overrides |
-| 10 | Button component styles | `.btn`, `.btn--*` |
+| 10 | Button component styles | `.button`, `.button--*` |
 | 11 | IconButton component styles | `.icon-button`, `.icon-button--*` |
 | 12 | Trip background image system | `.dashboard-shell.has-trip-bg`, `::before`/`::after` layers |
 | 13 | Upload field and PageControls | `.upload-field`, `.page-controls` |
@@ -156,16 +156,54 @@ These hardcoded values remain in `App.css` and are candidates for future token m
 
 ---
 
-## Storybook Readiness
+## Storybook
 
-**Status as of v1.3.0:** Pre-adoption. Design system hardening complete; Storybook installation is the next step.
+**Status as of v1.4.0:** Active. Storybook is installed and documented.
 
-**Blockers resolved in v1.3.0:**
-- form-row CSS conflict between `forms.css` and `App.css` (fixed)
-- `DayTile` domain coupling to `TripDayType` (resolved via `iconName` prop)
-- `ActionBar` dead component (removed)
+**Location:** Run `npm run storybook` — served at `http://localhost:6006`
 
-**Remaining work before Storybook stories are trustworthy:**
-- CSS co-location: most Primitive styles still live in `App.css` rather than component-adjacent files. Stories that don't import `App.css` will render unstyled.
-- Recommended approach: in Storybook, import `App.css` globally (in `.storybook/preview.ts`) until component CSS is fully migrated out.
-- Token migration debt above should be resolved before publishing a public design system.
+**Framework:** Storybook 10 + `@storybook/react-vite`
+
+**Story files:** `src/stories/**/*.stories.tsx`
+
+### What's in v1.4.0
+
+**Foundation stories** (`Foundation/` group in Storybook):
+- `Colors` — All semantic color tokens as labeled swatches
+- `Typography` — Eyebrow, label, caption, body, and heading type styles
+- `Spacing & Radius` — Spacing scale bars + radius token demos
+
+**Primitive stories** (`Primitives/` group in Storybook):
+- `Button` — Primary, secondary, destructive, disabled variants
+- `IconButton` — Default, primary, destructive, complete (unselected/selected), disabled variants
+- `Icon` — Full icon catalog + size variants
+- `CardSurface` — Static div, interactive div, button form
+- `ModalSheet` — Default, with eyebrow, with form content
+- `Badge` — All tone variants (neutral, accent, info, secondary, warning, danger)
+- `FeedbackMessage` — Neutral, error, success tones
+
+### What's intentionally excluded from v1.4.0
+
+- `DayTile` — P3 Product Component; Maycation-specific layout
+- `DashboardCard` — P2 Pattern; not yet story-ready without product context
+- `DetailHeader`, `ScreenHeader` — P2 Patterns; require layout context to be meaningful
+- `PageControls` — App-shell navigation; product-coupled
+- `ProgressPill`, `StatusButton`, `EmptyState` — Deferred to v1.5.0
+- All form primitives (`FormRow`, `TextInput`, `SelectInput`, `TextArea`, etc.) — Deferred to v1.5.0 forms sprint
+- Product screens, trip flows, dashboard pages, Supabase-connected components
+
+### Global CSS setup
+
+`.storybook/preview.ts` imports CSS in the same order as `main.tsx`:
+```
+tokens/generated/tokens.css → src/index.css → src/tokens-bridge.css → src/App.css
+```
+Components with co-located CSS (`badge.css`, `forms.css`) load automatically when imported.
+
+### Future Storybook phases
+
+**v1.5.0 — Form Primitives:** Stories for `FormRow`, `TextInput`, `SelectInput`, `TextArea`, `FormGrid`, `FormActions`, `FeedbackMessage`.
+
+**v1.6.0 — Patterns & Layout:** Stories for `ScreenHeader`, `DetailHeader`, `DashboardCard`, `ProgressPill`, `StatusButton`, `EmptyState`.
+
+**v1.x.0 — CSS Migration:** Migrate component styles from `App.css` to co-located CSS files. This removes the `App.css` dependency from Storybook's global imports and makes each component self-contained.

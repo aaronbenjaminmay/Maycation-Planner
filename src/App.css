@@ -760,7 +760,7 @@ button.dashboard-card {
   }
 }
 
-/* ─── 5. Visual system v1 ────────────────────────────────────────────────────
+/* ─── 5. Visual system v1 ──────────────────────────────────────────────── */
 .app-shell {
   background:
     radial-gradient(circle at 50% -10%, rgba(53, 184, 168, 0.08), transparent 34%),
@@ -861,7 +861,7 @@ button.dashboard-card {
   }
 }
 
-/* ─── 6. Disney Mayhem production-aligned visual system ──────────────────────
+/* ─── 6. Disney Mayhem production-aligned visual system ────────────────── */
 .app-shell,
 .trip-dashboard-screen,
 .day-detail-screen {
@@ -1014,7 +1014,7 @@ button.dashboard-card {
   }
 }
 
-/* ─── 7. Visual system consolidation — canonical :where() surface rules ──────
+/* ─── 7. Visual system consolidation — canonical :where() surface rules ── */
 :where(.card-surface, .auth-panel, .dashboard-panel, .modal-sheet) {
   border: 1px solid var(--color-border-glass);
   border-radius: var(--radius-lg);
@@ -1466,7 +1466,7 @@ button.dashboard-card {
   }
 }
 
-/* ─── 10. Button component styles ────────────────────────────────────────────
+/* ─── 10. Button component styles ────────────────────────────────────────── */
 .button {
   box-sizing: border-box;
   display: inline-flex;
@@ -1538,7 +1538,7 @@ button.dashboard-card {
   background: rgba(255, 69, 58, 0.14);
 }
 
-/* ─── 11. IconButton component styles ───────────────────────────────────────
+/* ─── 11. IconButton component styles ──────────────────────────────────── */
 .icon-button {
   box-sizing: border-box;
   flex: 0 0 auto;
