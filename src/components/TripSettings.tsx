@@ -13,7 +13,9 @@ import {
 import { getSupabaseClient } from '../lib/supabaseClient'
 import {
   deleteTrip,
+  getTripHeaderImageUrl,
   setTripBackground,
+  setTripHeaderImage,
   travelTypes,
   updateTrip,
   type TravelType,
@@ -96,6 +98,11 @@ export function TripSettings({
   const [isRemovingBg, setIsRemovingBg] = useState(false)
   const [bgError, setBgError] = useState('')
   const bgInputRef = useRef<HTMLInputElement>(null)
+  const [isUploadingHeaderImg, setIsUploadingHeaderImg] = useState(false)
+  const [isRemovingHeaderImg, setIsRemovingHeaderImg] = useState(false)
+  const [headerImgError, setHeaderImgError] = useState('')
+  const [localHeaderImageUrl, setLocalHeaderImageUrl] = useState<string | null>(null)
+  const headerImgInputRef = useRef<HTMLInputElement>(null)
   const [settingsRole, setSettingsRole] = useState<TripMemberRole | null>(null)
   const isOwner = settingsRole === 'owner'
   const canEditTrip = settingsRole === 'owner' || settingsRole === 'editor'
@@ -130,12 +137,25 @@ export function TripSettings({
   }, [loadSettings])
 
   useEffect(() => {
+    if (isEditingTrip) return
     setEditName(trip.name)
     setEditDestination(trip.destination ?? '')
     setEditStartsOn(trip.starts_on)
     setEditEndsOn(trip.ends_on)
     setEditTravelType(trip.metadata.travel_type ?? 'Other')
-  }, [trip])
+  }, [trip, isEditingTrip])
+
+  useEffect(() => {
+    if (!trip.header_image_path) {
+      setLocalHeaderImageUrl(null)
+      return
+    }
+    let cancelled = false
+    getTripHeaderImageUrl(trip.header_image_path)
+      .then((url) => { if (!cancelled) setLocalHeaderImageUrl(url) })
+      .catch(() => { if (!cancelled) setLocalHeaderImageUrl(null) })
+    return () => { cancelled = true }
+  }, [trip.header_image_path])
 
   useEffect(() => {
     if (!import.meta.env.DEV) {
@@ -199,12 +219,66 @@ export function TripSettings({
 
   function closeEditModal() {
     setTripEditError('')
+    setHeaderImgError('')
     setEditName(trip.name)
     setEditDestination(trip.destination ?? '')
     setEditStartsOn(trip.starts_on)
     setEditEndsOn(trip.ends_on)
     setEditTravelType(trip.metadata.travel_type ?? 'Other')
     setIsEditingTrip(false)
+    if (headerImgInputRef.current) headerImgInputRef.current.value = ''
+  }
+
+  async function handleHeaderImgFileChange(event: React.ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0]
+    if (!file) return
+
+    setHeaderImgError('')
+
+    if (file.size > 10 * 1024 * 1024) {
+      setHeaderImgError('Image must be 10 MB or smaller.')
+      if (headerImgInputRef.current) headerImgInputRef.current.value = ''
+      return
+    }
+
+    setIsUploadingHeaderImg(true)
+
+    try {
+      const client = getSupabaseClient()
+      const storagePath = `${trip.id}/header`
+
+      const { error: uploadError } = await client.storage
+        .from('trip-backgrounds')
+        .upload(storagePath, file, { upsert: true, contentType: file.type })
+
+      if (uploadError) {
+        throw new Error(uploadError.message)
+      }
+
+      await setTripHeaderImage(trip.id, storagePath)
+      onTripUpdated({ ...trip, header_image_path: storagePath })
+    } catch (err) {
+      setHeaderImgError(getVisibleErrorMessage(err, 'Unable to upload header image.'))
+    } finally {
+      setIsUploadingHeaderImg(false)
+      if (headerImgInputRef.current) headerImgInputRef.current.value = ''
+    }
+  }
+
+  async function handleRemoveHeaderImg() {
+    setHeaderImgError('')
+    setIsRemovingHeaderImg(true)
+
+    try {
+      const client = getSupabaseClient()
+      await client.storage.from('trip-backgrounds').remove([`${trip.id}/header`])
+      await setTripHeaderImage(trip.id, null)
+      onTripUpdated({ ...trip, header_image_path: null })
+    } catch (err) {
+      setHeaderImgError(getVisibleErrorMessage(err, 'Unable to remove header image.'))
+    } finally {
+      setIsRemovingHeaderImg(false)
+    }
   }
 
   function closeBgModal() {
@@ -619,6 +693,53 @@ export function TripSettings({
                 onChange={(v) => setEditTravelType(v as TravelType)}
                 options={travelTypes.map((type) => ({ value: type, label: type }))}
               />
+
+              <input
+                ref={headerImgInputRef}
+                type="file"
+                accept="image/jpeg,image/png,image/webp,image/gif,image/heic,image/heif"
+                style={{ display: 'none' }}
+                onChange={(e) => void handleHeaderImgFileChange(e)}
+              />
+
+              <div className="form-row">
+                <p className="form-row__label">Header Image</p>
+                <p className="form-row__hint">Replaces the trip title on the dashboard when set.</p>
+                {localHeaderImageUrl ? (
+                  <img
+                    src={localHeaderImageUrl}
+                    alt="Current header image"
+                    className="header-img-preview"
+                  />
+                ) : null}
+                {headerImgError ? (
+                  <FeedbackMessage tone="error">{headerImgError}</FeedbackMessage>
+                ) : null}
+                <div style={{ display: 'flex', gap: 8 }}>
+                  {trip.header_image_path ? (
+                    <Button
+                      variant="destructive"
+                      type="button"
+                      onClick={() => void handleRemoveHeaderImg()}
+                      disabled={isRemovingHeaderImg || isUploadingHeaderImg || isSavingTrip}
+                    >
+                      {isRemovingHeaderImg ? 'Removing…' : 'Remove'}
+                    </Button>
+                  ) : null}
+                  <Button
+                    type="button"
+                    variant="secondary"
+                    onClick={() => headerImgInputRef.current?.click()}
+                    disabled={isUploadingHeaderImg || isRemovingHeaderImg || isSavingTrip}
+                  >
+                    {isUploadingHeaderImg
+                      ? 'Uploading…'
+                      : trip.header_image_path
+                        ? 'Replace'
+                        : 'Upload Image'}
+                  </Button>
+                </div>
+              </div>
 
               {tripEditError ? (
                 <FeedbackMessage tone="error">{tripEditError}</FeedbackMessage>

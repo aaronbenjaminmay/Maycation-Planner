@@ -9,6 +9,7 @@ type DetailHeaderProps = {
   meta?: ReactNode
   onBack: () => void
   title: string
+  titleContent?: ReactNode
 }
 
 export function DetailHeader({
@@ -17,6 +18,7 @@ export function DetailHeader({
   meta,
   onBack,
   title,
+  titleContent,
 }: DetailHeaderProps) {
   return (
     <header className="detail-header">
@@ -24,7 +26,7 @@ export function DetailHeader({
         leading={<IconButton icon="back" label="Back" onClick={onBack} />}
         trailing={action}
       />
-      <ScreenHeader eyebrow={eyebrow} title={title} meta={meta} />
+      {titleContent ?? <ScreenHeader eyebrow={eyebrow} title={title} meta={meta} />}
     </header>
   )
 }

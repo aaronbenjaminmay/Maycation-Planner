@@ -38,6 +38,7 @@ export type Trip = {
   starts_on: string
   ends_on: string
   background_path: string | null
+  header_image_path: string | null
   metadata: {
     travel_type?: TravelType
     [key: string]: unknown
@@ -131,6 +132,7 @@ type TripRow = {
   starts_on: string
   ends_on: string
   background_path: string | null
+  header_image_path: string | null
   metadata: Record<string, unknown> | null
 }
 
@@ -282,6 +284,7 @@ function mapTripRow(row: TripRow): Trip {
     starts_on: row.starts_on,
     ends_on: row.ends_on,
     background_path: row.background_path,
+    header_image_path: row.header_image_path,
     metadata: row.metadata ?? {},
   }
 }
@@ -571,6 +574,35 @@ export async function setTripBackground(
 }
 
 export async function getTripBackgroundUrl(path: string): Promise<string | null> {
+  const client = getSupabaseClient()
+  const { data, error } = await client.storage
+    .from('trip-backgrounds')
+    .createSignedUrl(path, 28800) // 8 hours
+
+  if (error || !data?.signedUrl) {
+    return null
+  }
+
+  return data.signedUrl
+}
+
+export async function setTripHeaderImage(
+  tripId: string,
+  storagePath: string | null,
+) {
+  const client = getSupabaseClient()
+  const { error } = await client.rpc('set_trip_header_image', {
+    target_trip_id: tripId,
+    storage_path: storagePath,
+  })
+
+  if (error) {
+    await logSupabaseError('Failed to set trip header image', error)
+    throw new Error(getSupabaseErrorMessage(error))
+  }
+}
+
+export async function getTripHeaderImageUrl(path: string): Promise<string | null> {
   const client = getSupabaseClient()
   const { data, error } = await client.storage
     .from('trip-backgrounds')

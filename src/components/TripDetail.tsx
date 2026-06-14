@@ -3,6 +3,7 @@ import {
   formatTripDateRange,
   formatTripDayDate,
   getTripBackgroundUrl,
+  getTripHeaderImageUrl,
   getTripDayCount,
   loadPlannerItems,
   loadTripDays,
@@ -125,6 +126,8 @@ export function TripDetail({ trip, onBack, onTripDeleted, onTripUpdated }: TripD
   const [showReservations, setShowReservations] = useState(false)
   const [currentRole, setCurrentRole] = useState<TripMemberRole | null>(null)
   const [backgroundUrl, setBackgroundUrl] = useState<string | null>(null)
+  const [headerImageUrl, setHeaderImageUrl] = useState<string | null>(null)
+  const [headerImageFailed, setHeaderImageFailed] = useState(false)
   const [error, setError] = useState('')
 
   const loadDays = useCallback(async () => {
@@ -173,6 +176,31 @@ export function TripDetail({ trip, onBack, onTripDeleted, onTripUpdated }: TripD
       cancelled = true
     }
   }, [trip.background_path])
+
+  useEffect(() => {
+    if (!trip.header_image_path) {
+      setHeaderImageUrl(null)
+      setHeaderImageFailed(false)
+      return
+    }
+
+    let cancelled = false
+
+    getTripHeaderImageUrl(trip.header_image_path)
+      .then((url) => {
+        if (!cancelled) {
+          setHeaderImageUrl(url)
+          setHeaderImageFailed(false)
+        }
+      })
+      .catch(() => {
+        if (!cancelled) setHeaderImageUrl(null)
+      })
+
+    return () => {
+      cancelled = true
+    }
+  }, [trip.header_image_path])
 
   function getItemsForDay(dayId: string) {
     return plannerItems.filter((item) => item.trip_day_id === dayId)
@@ -276,6 +304,18 @@ export function TripDetail({ trip, onBack, onTripDeleted, onTripUpdated }: TripD
           }
           onBack={onBack}
           title={trip.name}
+          titleContent={
+            headerImageUrl && !headerImageFailed ? (
+              <div className="trip-header-image-wrapper">
+                <img
+                  src={headerImageUrl}
+                  alt={trip.name}
+                  className="trip-header-image"
+                  onError={() => setHeaderImageFailed(true)}
+                />
+              </div>
+            ) : undefined
+          }
         />
 
         {isLoadingDays ? (
