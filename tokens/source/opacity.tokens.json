@@ -1,0 +1,88 @@
+{
+  "opacity": {
+    "primitive": {
+      "8":  { "$type": "number", "$value": 0.08, "$description": "Glass border alpha — white at 8%" },
+      "10": { "$type": "number", "$value": 0.10, "$description": "Control border alpha — white at 10%" },
+      "20": { "$type": "number", "$value": 0.20, "$description": "Danger surface alpha — red at 20%" },
+      "28": { "$type": "number", "$value": 0.28, "$description": "Input surface alpha — black at 28%; countdown border alpha — blue-vivid at 28%" },
+      "40": { "$type": "number", "$value": 0.40, "$description": "Disabled state alpha" },
+      "52": { "$type": "number", "$value": 0.52, "$description": "Header image overlay alpha" },
+      "74": { "$type": "number", "$value": 0.74, "$description": "Glass surface alpha — neutral-800 at 74%" },
+      "78": { "$type": "number", "$value": 0.78, "$description": "Modal overlay alpha — black at 78%" }
+    },
+
+    "overlay": {
+      "default": {
+        "$type": "number",
+        "$value": 0.78,
+        "$description": "Opacity for Color/Overlay/Default (Black × 78%). Figma: bind fill opacity on Color/Overlay/Default paint. CSS: use rgba(0,0,0,0.78) directly — the .modal-backdrop is a separate element with no text children, so either approach is safe."
+      }
+    },
+
+    "surface": {
+      "glass": {
+        "$type": "number",
+        "$value": 0.74,
+        "$description": "Opacity component for Color/Surface/Glass (Neutral 800 × 74%). Figma: bind fill opacity on Color/Surface/Glass paint. CSS: use rgba(28,28,30,0.74) directly — do not use element-level opacity on cards or modals."
+      },
+      "input": {
+        "$type": "number",
+        "$value": 0.28,
+        "$description": "Opacity component for Color/Surface/Input (Black × 28%). Figma: bind fill opacity on Color/Surface/Input paint. CSS: use rgba(0,0,0,0.28) directly."
+      }
+    },
+
+    "border": {
+      "glass": {
+        "$type": "number",
+        "$value": 0.08,
+        "$description": "Opacity component for Color/Border/Glass (White × 8%). Figma: bind stroke opacity. CSS: use rgba(255,255,255,0.08) directly."
+      },
+      "control": {
+        "$type": "number",
+        "$value": 0.10,
+        "$description": "Opacity component for Color/Border/Control (White × 10%). Figma: bind stroke opacity. CSS: use rgba(255,255,255,0.10) directly."
+      }
+    },
+
+    "danger": {
+      "surface": {
+        "$type": "number",
+        "$value": 0.20,
+        "$description": "Opacity component for Color/Danger/Surface (Red 500 × 20%). Figma: bind fill opacity. CSS: use rgba(168,75,75,0.20) directly."
+      }
+    },
+
+    "countdown": {
+      "border": {
+        "$type": "number",
+        "$value": 0.28,
+        "$description": "Opacity component for Color/Countdown/Border (Blue Vivid × 28%). Figma: bind stroke opacity. CSS: use rgba(10,132,255,0.28) directly."
+      }
+    },
+
+    "disabled": {
+      "default": {
+        "$type": "number",
+        "$value": 0.40,
+        "$description": "Opacity for disabled component state. Applied as element-level opacity (opacity: 0.4) on the full component, not on individual fills, because disabled state dims all visual properties uniformly."
+      }
+    },
+
+    "header-image": {
+      "overlay": {
+        "$type": "number",
+        "$value": 0.52,
+        "$description": "Opacity for trip header background image dim overlay. Applied via ::before/::after pseudo-element, not on the container, so child elements remain fully opaque."
+      }
+    },
+
+    "interactive": {
+      "hover": {
+        "$type": "number",
+        "$value": 0.10,
+        "$description": "Opacity for interactive hover overlay fills. Applied as an additional paint layer on the component fill stack, not as element-level opacity."
+      }
+    }
+  }
+}

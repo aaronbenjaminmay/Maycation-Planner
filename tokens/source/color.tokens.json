@@ -6,20 +6,30 @@
         "$value": "#000000",
         "$description": "Pure black; app-level page background"
       },
+      "white": {
+        "$type": "color",
+        "$value": "#ffffff",
+        "$description": "Pure white; base for glass borders, control borders, and overlay compositions"
+      },
       "teal-500": {
         "$type": "color",
         "$value": "#35b8a8",
         "$description": "Maycation brand teal; primary accent in dark mode"
       },
-      "teal-on": {
+      "teal-950": {
         "$type": "color",
         "$value": "#061312",
-        "$description": "Near-black used as text on teal accent backgrounds"
+        "$description": "Near-black teal; darkest point of the teal scale. Used as text on teal accent backgrounds"
       },
       "blue-500": {
         "$type": "color",
         "$value": "#3483fa",
         "$description": "Blue; used for travel kind badge and editor role pill"
+      },
+      "blue-vivid": {
+        "$type": "color",
+        "$value": "#0a84ff",
+        "$description": "Apple System Blue; used for countdown labels, trip intel header, and completed planner item borders. Distinct from blue-500 — more saturated, carries temporal/milestone emphasis"
       },
       "amber-500": {
         "$type": "color",
@@ -36,25 +46,30 @@
         "$value": "#a84b4b",
         "$description": "Muted red; used for danger state borders"
       },
+      "red-100": {
+        "$type": "color",
+        "$value": "#ffd7d7",
+        "$description": "Soft pink; lightest red. Readable on dark surfaces; used as danger message text"
+      },
       "neutral-100": {
         "$type": "color",
         "$value": "#f5f7fb",
-        "$description": "Near-white; primary text, headings, strong labels. Maps to CSS --text-h in dark mode"
+        "$description": "Near-white; primary text, headings, strong labels"
       },
       "neutral-200": {
         "$type": "color",
         "$value": "#b6bfcc",
-        "$description": "Blue-gray; secondary body text. Maps to CSS --text in dark mode"
+        "$description": "Blue-gray; secondary body text"
       },
       "neutral-300": {
         "$type": "color",
         "$value": "#a1a1a6",
-        "$description": "Mid-gray; muted metadata text. Hardcoded in Visual System consolidation pass for .muted, .day-tile__summary"
+        "$description": "Mid-gray; muted metadata text"
       },
       "neutral-700": {
         "$type": "color",
         "$value": "#2b2d32",
-        "$description": "Dark border; opaque border for non-glass components. Maps to CSS --border in dark mode"
+        "$description": "Dark border; opaque border for non-glass components"
       },
       "neutral-800": {
         "$type": "color",
@@ -64,52 +79,17 @@
       "neutral-850": {
         "$type": "color",
         "$value": "#1a1c20",
-        "$description": "Control surface background in dark mode. Maps to CSS --control-bg"
+        "$description": "Control surface background in dark mode"
       },
       "neutral-900": {
         "$type": "color",
         "$value": "#121316",
-        "$description": "Deep panel background. Maps to CSS --panel"
+        "$description": "Deep panel background"
       },
       "neutral-950": {
         "$type": "color",
         "$value": "#0d0f12",
-        "$description": "Deepest background; maps to legacy CSS --input-bg. Superseded as the canonical input surface by black-a28 (rgba(0,0,0,0.28)) in the glass morphism system; retained as a primitive"
-      },
-      "black-a28": {
-        "$type": "color",
-        "$value": "rgba(0, 0, 0, 0.28)",
-        "$description": "Black at 28% opacity; canonical form input background in the glass morphism system. Composites over glass surfaces. Canonical value from Visual System consolidation block"
-      },
-      "danger-bg": {
-        "$type": "color",
-        "$value": "rgba(168, 75, 75, 0.2)",
-        "$description": "Translucent red; danger state surface fill"
-      },
-      "danger-text": {
-        "$type": "color",
-        "$value": "#ffd7d7",
-        "$description": "Soft pink; readable danger message text on dark backgrounds"
-      },
-      "glass-surface": {
-        "$type": "color",
-        "$value": "rgba(28, 28, 30, 0.74)",
-        "$description": "Glass morphism background for cards, panels, modals. Neutral-800 at 74% opacity"
-      },
-      "glass-border": {
-        "$type": "color",
-        "$value": "rgba(255, 255, 255, 0.08)",
-        "$description": "Subtle white edge for glass surfaces"
-      },
-      "white-a10": {
-        "$type": "color",
-        "$value": "rgba(255, 255, 255, 0.1)",
-        "$description": "White at 10% opacity; slightly brighter than glass-border; used for interactive control element borders (form inputs, pills, secondary buttons)"
-      },
-      "overlay": {
-        "$type": "color",
-        "$value": "rgba(0, 0, 0, 0.78)",
-        "$description": "Modal backdrop overlay"
+        "$description": "Deepest background; retained as a primitive for legacy reference"
       }
     },
 
@@ -134,13 +114,13 @@
       },
       "input": {
         "$type": "color",
-        "$value": "{color.primitive.black-a28}",
-        "$description": "Form input background; transparent overlay that composites over glass surfaces. Canonical value from Visual System consolidation block"
+        "$value": "rgba(0, 0, 0, 0.28)",
+        "$description": "Form input background. CSS composite: color.primitive.black × opacity.primitive.28. Do not use element-level opacity — use rgba() directly so child text remains fully opaque. Figma: bind fill color to Color/Black, fill opacity to Opacity/Surface/Input."
       },
       "glass": {
         "$type": "color",
-        "$value": "{color.primitive.glass-surface}",
-        "$description": "Primary surface for cards, panels, and modals with backdrop blur"
+        "$value": "rgba(28, 28, 30, 0.74)",
+        "$description": "Glass morphism background for cards, panels, modals. CSS composite: color.primitive.neutral-800 × opacity.primitive.74. Do not use element-level opacity — use rgba() directly so child text remains fully opaque. Figma: bind fill color to Color/Neutral 800, fill opacity to Opacity/Surface/Glass."
       }
     },
 
@@ -152,13 +132,13 @@
       },
       "glass": {
         "$type": "color",
-        "$value": "{color.primitive.glass-border}",
-        "$description": "Translucent white border for glass surfaces"
+        "$value": "rgba(255, 255, 255, 0.08)",
+        "$description": "Subtle white edge for glass surfaces. CSS composite: color.primitive.white × opacity.primitive.8. Figma: bind stroke color to Color/White, stroke opacity to Opacity/Border/Glass."
       },
       "control": {
         "$type": "color",
-        "$value": "{color.primitive.white-a10}",
-        "$description": "Border for interactive control elements; form inputs, select, textarea, role/status/progress pills, secondary buttons. Intentionally brighter than border.glass to signal interactivity"
+        "$value": "rgba(255, 255, 255, 0.10)",
+        "$description": "Border for interactive control elements; form inputs, select, textarea, role/status/progress pills, secondary buttons. CSS composite: color.primitive.white × opacity.primitive.10. Intentionally brighter than border.glass to signal interactivity. Figma: bind stroke color to Color/White, stroke opacity to Opacity/Border/Control."
       }
     },
 
@@ -171,12 +151,12 @@
       "secondary": {
         "$type": "color",
         "$value": "{color.primitive.neutral-200}",
-        "$description": "Body text; maps to CSS --text variable"
+        "$description": "Body text"
       },
       "muted": {
         "$type": "color",
         "$value": "{color.primitive.neutral-300}",
-        "$description": "Metadata, summaries, day-tile subheadings; differs from text.secondary — see unresolved note in token inventory"
+        "$description": "Metadata, summaries, day-tile subheadings"
       }
     },
 
@@ -188,7 +168,7 @@
       },
       "text": {
         "$type": "color",
-        "$value": "{color.primitive.teal-on}",
+        "$value": "{color.primitive.teal-950}",
         "$description": "Text color for use on accent-colored backgrounds"
       }
     },
@@ -196,8 +176,8 @@
     "danger": {
       "surface": {
         "$type": "color",
-        "$value": "{color.primitive.danger-bg}",
-        "$description": "Danger action background fill"
+        "$value": "rgba(168, 75, 75, 0.20)",
+        "$description": "Danger action background fill. CSS composite: color.primitive.red-500 × opacity.primitive.20. Figma: bind fill color to Color/Red 500, fill opacity to Opacity/Danger/Surface."
       },
       "border": {
         "$type": "color",
@@ -206,7 +186,7 @@
       },
       "text": {
         "$type": "color",
-        "$value": "{color.primitive.danger-text}",
+        "$value": "{color.primitive.red-100}",
         "$description": "Danger state text; readable on dark surfaces"
       }
     },
@@ -255,8 +235,21 @@
     "overlay": {
       "default": {
         "$type": "color",
-        "$value": "{color.primitive.overlay}",
-        "$description": "Modal backdrop; applied to the full-screen dim layer"
+        "$value": "rgba(0, 0, 0, 0.78)",
+        "$description": "Modal backdrop overlay. CSS composite: color.primitive.black × opacity.primitive.78. Applied to .modal-backdrop which is a separate full-screen element with no text children, so rgba() and element opacity are both acceptable here."
+      }
+    },
+
+    "countdown": {
+      "default": {
+        "$type": "color",
+        "$value": "{color.primitive.blue-vivid}",
+        "$description": "Countdown and milestone label color; used on trip intel card header spans. Signals temporal anticipation and high-emphasis trip moments"
+      },
+      "border": {
+        "$type": "color",
+        "$value": "rgba(10, 132, 255, 0.28)",
+        "$description": "Completed planner item card border. CSS composite: color.primitive.blue-vivid × opacity.primitive.28. Signals a completed milestone without overwhelming the card."
       }
     }
   }

@@ -29,6 +29,11 @@
       "$type": "dimension",
       "$value": "{radius.md}",
       "$description": "Semantic alias for input field radius. References radius.md"
+    },
+    "pill": {
+      "$type": "dimension",
+      "$value": "{radius.full}",
+      "$description": "Semantic alias for pill-shaped and circular elements; icon buttons, progress pills, role pills, status pills, form buttons. References radius.full (999px) so pill radius can change independently of the ordinal scale"
     }
   }
 }

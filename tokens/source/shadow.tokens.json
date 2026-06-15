@@ -9,7 +9,7 @@
         "spread": "0",
         "color": "rgba(0, 0, 0, 0.34)"
       },
-      "$description": "Component card shadow; used on dashboard-card, trip-card, day-tile, planner-item-card. From Visual System consolidation pass"
+      "$description": "Small shadow primitive. Semantic alias: --shadow-surface-card"
     },
     "md": {
       "$type": "shadow",
@@ -20,7 +20,7 @@
         "spread": "0",
         "color": "rgba(0, 0, 0, 0.36)"
       },
-      "$description": "Panel surface shadow; used on card-surface, auth-panel, dashboard-panel, modal-sheet. From Visual System consolidation pass"
+      "$description": "Medium shadow primitive. Semantic alias: --shadow-surface-panel"
     },
     "lg": {
       "$type": "shadow",
@@ -31,7 +31,42 @@
         "spread": "0",
         "color": "rgba(0, 0, 0, 0.28)"
       },
-      "$description": "Large ambient shadow; matches the CSS --shadow variable value from index.css"
+      "$description": "Large shadow primitive. Semantic alias: --shadow-surface-overlay"
+    },
+    "surface": {
+      "card": {
+        "$type": "shadow",
+        "$value": {
+          "offsetX": "0",
+          "offsetY": "10px",
+          "blur": "28px",
+          "spread": "0",
+          "color": "rgba(0, 0, 0, 0.34)"
+        },
+        "$description": "Shadow for component cards: dashboard-card, trip-card, day-tile, planner-item-card. Semantic alias for shadow.sm."
+      },
+      "panel": {
+        "$type": "shadow",
+        "$value": {
+          "offsetX": "0",
+          "offsetY": "12px",
+          "blur": "34px",
+          "spread": "0",
+          "color": "rgba(0, 0, 0, 0.36)"
+        },
+        "$description": "Shadow for panel surfaces: card-surface, modal-sheet, auth-panel, dashboard-panel. Semantic alias for shadow.md."
+      },
+      "overlay": {
+        "$type": "shadow",
+        "$value": {
+          "offsetX": "0",
+          "offsetY": "18px",
+          "blur": "50px",
+          "spread": "0",
+          "color": "rgba(0, 0, 0, 0.28)"
+        },
+        "$description": "Ambient shadow; matches the CSS --shadow variable value. Semantic alias for shadow.lg."
+      }
     }
   }
 }

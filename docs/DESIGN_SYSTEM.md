@@ -1,6 +1,6 @@
 # Maycation Design System
 
-Last updated: v1.5.0
+Last updated: v1.6.0
 
 ## Component Classification
 
@@ -139,6 +139,25 @@ Before writing any color, shadow, spacing, or radius value, check `tokens/genera
 **5. No feature flags or compatibility shims.**
 When a class or component is removed, delete all its CSS. Do not leave commented-out rules or `.old-*` aliases.
 
+**6. Opacity Handling Rule.**
+Maycation models opacity as a design-system primitive, but Figma and CSS express it differently.
+
+*In Figma:*
+- Use opaque color primitives (`Color/Neutral 800`, `Color/White`, `Color/Black`).
+- Apply opacity as a separate `Opacity/*` variable at the paint/fill/stroke layer (not element-level opacity).
+- Example: `CardSurface` fill = `Color/Neutral 800` + fill opacity = `Opacity/Surface/Glass` (0.74).
+
+*In CSS:*
+- Do **not** use `opacity:` on container components (cards, modals, buttons, inputs) to simulate surface transparency — it affects all children and dims text.
+- Use composited `rgba()` values directly so text and child elements remain fully opaque.
+- Document any composited `rgba()` value with the primitive color and opacity token it represents.
+- Example:
+  ```css
+  /* Color/Neutral 800 × Opacity/Surface/Glass (0.74) */
+  background: rgba(28, 28, 30, 0.74);
+  ```
+- Element-level `opacity:` is acceptable for: disabled state (entire component dims uniformly), pseudo-element overlays, and standalone backdrop elements with no text children.
+
 ---
 
 ## App.css Section Map
@@ -161,7 +180,7 @@ When a class or component is removed, delete all its CSS. Do not leave commented
 
 ---
 
-## Known Token Migration Debt (v1.3.0)
+## Known Token Migration Debt
 
 These hardcoded values remain in `App.css` and are candidates for future token migration:
 
@@ -169,10 +188,15 @@ These hardcoded values remain in `App.css` and are candidates for future token m
 |-------|----------|-------|
 | `#35b8a8` | Early passes | Old accent color; superseded by `--accent` in newer passes |
 | `#a1a1a6` | `.muted`, `.day-tile__icon`, `.trip-intel-card dt` | Should become `var(--color-text-muted)` once token is confirmed |
-| `#0a84ff` | `.trip-intel-card__header span` | Possibly intentional blue accent; needs design decision |
 | `rgba(255, 255, 255, 0.08)` | Early passes (15+ occurrences) | Now superseded by `var(--color-border-glass)` in §7 |
-| `rgba(0, 0, 0, 0.52)` | `.dashboard-shell.has-trip-bg::after` | Background overlay; no token exists for this specific use |
-| Button/icon-button hover backgrounds | `rgba(255, 255, 255, 0.08)` | No token for interactive hover state; needs new token |
+| `rgba(0, 0, 0, 0.52)` | `.dashboard-shell.has-trip-bg::after` | Trip image overlay; use `var(--opacity-header-image-overlay)` when migrating (pseudo-element, so element opacity is acceptable) |
+| Button/icon-button hover backgrounds | `rgba(255, 255, 255, 0.08–0.14)` | Use as fill overlay layer per Opacity Handling Rule; `var(--opacity-interactive-hover)` available |
+
+Inline `rgba()` values in CSS for glass surfaces (`rgba(28,28,30,0.74)`, `rgba(255,255,255,0.08)`, etc.) are **intentional** per the Opacity Handling Rule — do not replace them with `var(--color-surface-glass)` (which is now opaque) without also applying the rgba composition. Each composite rgba in CSS should have a comment in the format:
+```css
+/* Color/[primitive] × Opacity/[semantic] */
+background: rgba(...);
+```
 
 ---
 
@@ -244,6 +268,6 @@ Components with co-located CSS (`badge.css`, `forms.css`) load automatically whe
 
 ### Future Storybook phases
 
-**v1.6.0 — Figma Foundations:** Establish Figma variable library and component library in parity with Storybook. Map token names 1:1.
+**v1.6.0 — Figma Foundations:** Token architecture, variable collection structure, Figma-to-code mapping, and Accent Blue decision. See [docs/FIGMA_FOUNDATIONS.md](./FIGMA_FOUNDATIONS.md) for the full specification.
 
 **v1.x.0 — CSS Migration:** Migrate component styles from `App.css` to co-located CSS files. This removes the `App.css` dependency from Storybook's global imports and makes each component self-contained.

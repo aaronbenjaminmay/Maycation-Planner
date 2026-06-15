@@ -491,7 +491,7 @@ button.dashboard-card {
 
 .trip-intel-card__header span {
   display: block;
-  color: #0a84ff;
+  color: var(--color-countdown-default);
   font-size: 13px;
   font-weight: 900;
   letter-spacing: 0.18em;
@@ -1211,7 +1211,7 @@ button.dashboard-card {
 }
 .day-detail-screen .planner-item-card.completed,
 .planner-item-card.completed {
-  border-color: rgba(10, 132, 255, 0.28);
+  border-color: var(--color-countdown-border);
   background: rgba(28, 28, 30, 0.62);
 }
 
