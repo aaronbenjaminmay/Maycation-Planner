@@ -11,7 +11,7 @@
       "40": { "$type": "number", "$value": 0.40, "$description": "Opacity scale step (reserved)" },
       "52": { "$type": "number", "$value": 0.52, "$description": "Header image overlay alpha" },
       "65": { "$type": "number", "$value": 0.65, "$description": "Disabled component state alpha. Applied as element-level opacity on the full component — disabled state dims all visual properties uniformly." },
-      "74": { "$type": "number", "$value": 0.74, "$description": "Glass surface alpha — neutral-800 at 74%" },
+      "72": { "$type": "number", "$value": 0.72, "$description": "Glass surface alpha — neutral-800 at 72%" },
       "78": { "$type": "number", "$value": 0.78, "$description": "Modal overlay alpha — black at 78%" }
     },
 
@@ -26,8 +26,8 @@
     "surface": {
       "glass": {
         "$type": "number",
-        "$value": 0.74,
-        "$description": "Opacity component for Color/Surface/Glass (Neutral 800 × 74%). Figma: bind fill opacity on Color/Surface/Glass paint. CSS: use rgba(28,28,30,0.74) directly — do not use element-level opacity on cards or modals."
+        "$value": 0.72,
+        "$description": "Opacity component for Color/Surface/Glass (Neutral 800 × 72%). Figma: bind fill opacity on Color/Surface/Glass paint. CSS: use rgba(28,28,30,0.72) directly — do not use element-level opacity on cards or modals."
       },
       "input": {
         "$type": "number",

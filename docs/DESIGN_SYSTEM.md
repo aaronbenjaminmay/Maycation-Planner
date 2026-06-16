@@ -1,6 +1,6 @@
 # Maycation Design System
 
-Last updated: v1.10.0
+Last updated: v1.13.0
 
 ## Component Classification
 
@@ -108,7 +108,7 @@ Key semantic tokens:
 
 | Token | Value | Use |
 |-------|-------|-----|
-| `--color-surface-glass` | `rgba(28, 28, 30, 0.74)` | Card/surface backgrounds |
+| `--color-surface-glass` | `rgba(28, 28, 30, 0.72)` | Card/surface backgrounds |
 | `--color-surface-badge` | `rgba(0, 0, 0, 0.22)` | Badge background (v1.8.0) |
 | `--color-surface-feedback-neutral` | `rgba(255, 255, 255, 0.05)` | FeedbackMessage neutral background (v1.8.0) |
 | `--color-border-glass` | `rgba(255, 255, 255, 0.08)` | Card/surface borders |
@@ -124,7 +124,7 @@ Key semantic tokens:
 | `--opacity-disabled-default` | `0.65` | Disabled component state (v1.8.0) |
 | `--radius-lg` | `20px` | Card radius |
 | `--radius-full` | `999px` | Pill radius |
-| `--shadow-md` | `0 12px 34px 0 rgba(0,0,0,0.36)` | Modal/sheet elevation |
+| `--shadow-md` | `0 18px 50px 0 rgba(0,0,0,0.26)` | Panel elevation |
 | `--shadow-sm` | `0 10px 28px 0 rgba(0,0,0,0.34)` | Card elevation |
 | `--spacing-xs / sm / md / lg / xl` | — | Consistent spacing |
 | `--typography-label-*` | — | Label font size/weight/tracking |
@@ -162,8 +162,8 @@ Maycation models opacity as a design-system primitive, but Figma and CSS express
 - Document any composited `rgba()` value with the primitive color and opacity token it represents.
 - Example:
   ```css
-  /* Color/Neutral 800 × Opacity/Surface/Glass (0.74) */
-  background: rgba(28, 28, 30, 0.74);
+  /* Color/Neutral 800 × Opacity/Surface/Glass (0.72) */
+  background: rgba(28, 28, 30, 0.72);
   ```
 - Element-level `opacity:` is acceptable for: disabled state (entire component dims uniformly), pseudo-element overlays, and standalone backdrop elements with no text children.
 

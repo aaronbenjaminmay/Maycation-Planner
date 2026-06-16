@@ -7,7 +7,7 @@ export const colorBackgroundDefault = "#000000"; // App-level page background
 export const colorSurfaceDefault = "#121316"; // Fallback panel background; used before glass morphism is applied
 export const colorSurfaceElevated = "#1a1c20"; // Elevated control surfaces; mode-toggle, account-strip
 export const colorSurfaceInput = "rgba(0, 0, 0, 0.28)"; // Form input background. CSS composite: color.primitive.black × opacity.primitive.28. Do not use element-level opacity — use rgba() directly so child text remains fully opaque. Figma: bind fill color to Color/Black, fill opacity to Opacity/Surface/Input.
-export const colorSurfaceGlass = "rgba(28, 28, 30, 0.74)"; // Glass morphism background for cards, panels, modals. CSS composite: color.primitive.neutral-800 × opacity.primitive.74. Do not use element-level opacity — use rgba() directly so child text remains fully opaque. Figma: bind fill color to Color/Neutral 800, fill opacity to Opacity/Surface/Glass.
+export const colorSurfaceGlass = "rgba(28, 28, 30, 0.72)"; // Glass morphism background for cards, panels, modals. CSS composite: color.primitive.neutral-800 × opacity.primitive.72. Do not use element-level opacity — use rgba() directly so child text remains fully opaque. Figma: bind fill color to Color/Neutral 800, fill opacity to Opacity/Surface/Glass.
 export const colorSurfaceBadge = "rgba(0, 0, 0, 0.22)"; // Badge background fill. CSS composite: color.primitive.black × opacity.primitive.22. Intentionally off-scale (not 20 or 28) — value chosen for correct Badge visual weight. Do not use element-level opacity. Figma: bind fill color to Color/Black, fill opacity to Opacity/Surface/Badge.
 export const colorSurfaceFeedbackNeutral = "rgba(255, 255, 255, 0.05)"; // FeedbackMessage neutral background fill. CSS composite: color.primitive.white × opacity.primitive.5. Intentionally off-scale — 5% is the minimum effective opacity for a visible white surface on a near-black background. Do not use element-level opacity. Figma: bind fill color to Color/White, fill opacity to Opacity/Surface/FeedbackNeutral.
 export const colorBorderDefault = "#2b2d32"; // Opaque border for non-glass contexts
@@ -42,7 +42,7 @@ export const iconSm = "16px"; // Small icon; maps to Icon size='small' in the Ic
 export const iconMd = "18px"; // Default icon size; maps to Icon size='default'. Used in most UI contexts
 export const iconLg = "20px"; // Large icon; maps to Icon size='large'. Used in primary action buttons and selected states
 export const opacityOverlayDefault = 0.78; // Opacity for Color/Overlay/Default (Black × 78%). Figma: bind fill opacity on Color/Overlay/Default paint. CSS: use rgba(0,0,0,0.78) directly — the .modal-backdrop is a separate element with no text children, so either approach is safe.
-export const opacitySurfaceGlass = 0.74; // Opacity component for Color/Surface/Glass (Neutral 800 × 74%). Figma: bind fill opacity on Color/Surface/Glass paint. CSS: use rgba(28,28,30,0.74) directly — do not use element-level opacity on cards or modals.
+export const opacitySurfaceGlass = 0.72; // Opacity component for Color/Surface/Glass (Neutral 800 × 72%). Figma: bind fill opacity on Color/Surface/Glass paint. CSS: use rgba(28,28,30,0.72) directly — do not use element-level opacity on cards or modals.
 export const opacitySurfaceInput = 0.28; // Opacity component for Color/Surface/Input (Black × 28%). Figma: bind fill opacity on Color/Surface/Input paint. CSS: use rgba(0,0,0,0.28) directly.
 export const opacitySurfaceBadge = 0.22; // Opacity component for Color/Surface/Badge (Black × 22%). Figma: bind fill opacity. CSS: use rgba(0,0,0,0.22) directly.
 export const opacitySurfaceFeedbackNeutral = 0.05; // Opacity component for Color/Surface/FeedbackNeutral (White × 5%). Figma: bind fill opacity. CSS: use rgba(255,255,255,0.05) directly.
@@ -63,10 +63,10 @@ export const radiusCard = "20px"; // Semantic alias for the main card surface ra
 export const radiusInput = "14px"; // Semantic alias for input field radius. References radius.md
 export const radiusPill = "999px"; // Semantic alias for pill-shaped and circular elements; icon buttons, progress pills, role pills, status pills, form buttons. References radius.full (999px) so pill radius can change independently of the ordinal scale
 export const shadowSm = "0 10px 28px 0 rgba(0, 0, 0, 0.34)"; // Small shadow primitive. Semantic alias: --shadow-surface-card
-export const shadowMd = "0 12px 34px 0 rgba(0, 0, 0, 0.36)"; // Medium shadow primitive. Semantic alias: --shadow-surface-panel
+export const shadowMd = "0 18px 50px 0 rgba(0, 0, 0, 0.26)"; // Panel shadow primitive — matches rendered §5 panel surface shadow. Semantic alias: --shadow-surface-panel
 export const shadowLg = "0 18px 50px 0 rgba(0, 0, 0, 0.28)"; // Large shadow primitive. Semantic alias: --shadow-surface-overlay
 export const shadowSurfaceCard = "0 10px 28px 0 rgba(0, 0, 0, 0.34)"; // Shadow for component cards: dashboard-card, trip-card, day-tile, planner-item-card. Semantic alias for shadow.sm.
-export const shadowSurfacePanel = "0 12px 34px 0 rgba(0, 0, 0, 0.36)"; // Shadow for panel surfaces: card-surface, modal-sheet, auth-panel, dashboard-panel. Semantic alias for shadow.md.
+export const shadowSurfacePanel = "0 18px 50px 0 rgba(0, 0, 0, 0.26)"; // Shadow for panel surfaces: card-surface, modal-sheet, auth-panel, dashboard-panel. Value matches rendered production shadow (0 18px 50px 0 rgba(0,0,0,0.26)). Semantic alias for shadow.md.
 export const shadowSurfaceOverlay = "0 18px 50px 0 rgba(0, 0, 0, 0.28)"; // Ambient shadow; matches the CSS --shadow variable value. Semantic alias for shadow.lg.
 export const spacing2xs = "4px"; // Tightest spacing; account-strip inner gap
 export const spacingXs = "8px"; // Small gap; tag clusters, pill groups, screen-header actions gap

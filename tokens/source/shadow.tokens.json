@@ -15,12 +15,12 @@
       "$type": "shadow",
       "$value": {
         "offsetX": "0",
-        "offsetY": "12px",
-        "blur": "34px",
+        "offsetY": "18px",
+        "blur": "50px",
         "spread": "0",
-        "color": "rgba(0, 0, 0, 0.36)"
+        "color": "rgba(0, 0, 0, 0.26)"
       },
-      "$description": "Medium shadow primitive. Semantic alias: --shadow-surface-panel"
+      "$description": "Panel shadow primitive — matches rendered §5 panel surface shadow. Semantic alias: --shadow-surface-panel"
     },
     "lg": {
       "$type": "shadow",
@@ -49,12 +49,12 @@
         "$type": "shadow",
         "$value": {
           "offsetX": "0",
-          "offsetY": "12px",
-          "blur": "34px",
+          "offsetY": "18px",
+          "blur": "50px",
           "spread": "0",
-          "color": "rgba(0, 0, 0, 0.36)"
+          "color": "rgba(0, 0, 0, 0.26)"
         },
-        "$description": "Shadow for panel surfaces: card-surface, modal-sheet, auth-panel, dashboard-panel. Semantic alias for shadow.md."
+        "$description": "Shadow for panel surfaces: card-surface, modal-sheet, auth-panel, dashboard-panel. Value matches rendered production shadow (0 18px 50px 0 rgba(0,0,0,0.26)). Semantic alias for shadow.md."
       },
       "overlay": {
         "$type": "shadow",

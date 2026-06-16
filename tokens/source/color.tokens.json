@@ -124,8 +124,8 @@
       },
       "glass": {
         "$type": "color",
-        "$value": "rgba(28, 28, 30, 0.74)",
-        "$description": "Glass morphism background for cards, panels, modals. CSS composite: color.primitive.neutral-800 × opacity.primitive.74. Do not use element-level opacity — use rgba() directly so child text remains fully opaque. Figma: bind fill color to Color/Neutral 800, fill opacity to Opacity/Surface/Glass."
+        "$value": "rgba(28, 28, 30, 0.72)",
+        "$description": "Glass morphism background for cards, panels, modals. CSS composite: color.primitive.neutral-800 × opacity.primitive.72. Do not use element-level opacity — use rgba() directly so child text remains fully opaque. Figma: bind fill color to Color/Neutral 800, fill opacity to Opacity/Surface/Glass."
       },
       "badge": {
         "$type": "color",
