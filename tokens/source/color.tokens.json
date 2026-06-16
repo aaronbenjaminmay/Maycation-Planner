@@ -191,6 +191,30 @@
       }
     },
 
+    "info": {
+      "border": {
+        "$type": "color",
+        "$value": "{color.primitive.blue-500}",
+        "$description": "Info UI state border. Semantic alias for Blue 500. Used by Badge --info tone. Do not use color.role.editor for component UI states — role tokens carry product-domain meaning."
+      }
+    },
+
+    "warning": {
+      "border": {
+        "$type": "color",
+        "$value": "{color.primitive.amber-500}",
+        "$description": "Warning UI state border. Semantic alias for Amber 500. Used by Badge --warning and ProgressPill --attention tones. Do not use color.kind.reservation for component UI states — kind tokens carry product-domain meaning."
+      }
+    },
+
+    "secondary": {
+      "border": {
+        "$type": "color",
+        "$value": "{color.primitive.purple-500}",
+        "$description": "Secondary UI state border. Semantic alias for Purple 500. Used by Badge --secondary tone. Do not use color.role.viewer for component UI states — role tokens carry product-domain meaning."
+      }
+    },
+
     "kind": {
       "activity": {
         "$type": "color",

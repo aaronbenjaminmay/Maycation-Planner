@@ -23,19 +23,19 @@ export const Neutral: Story = {
 }
 
 export const Accent: Story = {
-  args: { children: 'Activity', tone: 'accent' },
+  args: { children: 'Accent', tone: 'accent' },
 }
 
 export const Info: Story = {
-  args: { children: 'Editor', tone: 'info' },
+  args: { children: 'Info', tone: 'info' },
 }
 
 export const Secondary: Story = {
-  args: { children: 'Viewer', tone: 'secondary' },
+  args: { children: 'Secondary', tone: 'secondary' },
 }
 
 export const Warning: Story = {
-  args: { children: 'Reservation', tone: 'warning' },
+  args: { children: 'Warning', tone: 'warning' },
 }
 
 export const Danger: Story = {
@@ -47,10 +47,10 @@ export const AllTones: Story = {
   render: () => (
     <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, alignItems: 'center' }}>
       <Badge tone="neutral">Neutral</Badge>
-      <Badge tone="accent">Activity</Badge>
-      <Badge tone="info">Editor</Badge>
-      <Badge tone="secondary">Viewer</Badge>
-      <Badge tone="warning">Reservation</Badge>
+      <Badge tone="accent">Accent</Badge>
+      <Badge tone="info">Info</Badge>
+      <Badge tone="secondary">Secondary</Badge>
+      <Badge tone="warning">Warning</Badge>
       <Badge tone="danger">Danger</Badge>
     </div>
   ),

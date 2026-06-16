@@ -111,6 +111,9 @@ Key semantic tokens:
 | `--color-surface-glass` | `rgba(28, 28, 30, 0.74)` | Card/surface backgrounds |
 | `--color-border-glass` | `rgba(255, 255, 255, 0.08)` | Card/surface borders |
 | `--color-overlay-default` | `rgba(0, 0, 0, 0.78)` | Modal backdrop |
+| `--color-info-border` | `#3483fa` | Badge --info tone border (v1.7.0) |
+| `--color-warning-border` | `#f2a93b` | Badge --warning / ProgressPill --attention border (v1.7.0) |
+| `--color-secondary-border` | `#9b8cff` | Badge --secondary tone border (v1.7.0) |
 | `--color-text-primary` | `#f5f7fb` | Body / label text |
 | `--color-text-muted` | — | Use `.muted` utility class |
 | `--radius-lg` | `20px` | Card radius |
@@ -181,6 +184,8 @@ Maycation models opacity as a design-system primitive, but Figma and CSS express
 ---
 
 ## Known Token Migration Debt
+
+**v1.7.0 Token Architecture Phase 1** resolved the highest-priority item: Badge no longer depends on product-domain tokens (`color.role.editor`, `color.role.viewer`, `color.kind.reservation`). Three semantic token families were added: `color.info.border`, `color.warning.border`, `color.secondary.border`. See `docs/TOKEN_DEBT.md` for the resolved entry.
 
 These hardcoded values remain in `App.css` and are candidates for future token migration:
 

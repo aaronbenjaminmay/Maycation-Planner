@@ -47,6 +47,9 @@ color.border.*       — borders in various contexts (opaque token; CSS uses rgb
 color.text.*         — text colors by hierarchy
 color.accent.*       — brand accent (teal)
 color.danger.*       — destructive/error states
+color.info.*         — info UI state (v1.7.0; currently border only)
+color.warning.*      — warning UI state (v1.7.0; currently border only)
+color.secondary.*    — secondary UI state (v1.7.0; currently border only)
 color.countdown.*    — trip milestone and temporal emphasis (see §3)
 color.overlay.*      — modal and overlay layers
 opacity.overlay.*    — semantic opacity values for overlay compositing
@@ -151,6 +154,9 @@ Tokens marked † contain an inline `rgba()` CSS composite value (not a primitiv
 | `color.danger.surface` † | `rgba(168,75,75,0.20)` | `Color/Red 500` | `Opacity/Danger/Surface` |
 | `color.danger.border` | `#a84b4b` | `Color/Red 500` | — |
 | `color.danger.text` | `#ffd7d7` | `Color/Red 100` | — |
+| `color.info.border` *(v1.7.0)* | `#3483fa` | `Color/Blue 500` | — |
+| `color.warning.border` *(v1.7.0)* | `#f2a93b` | `Color/Amber 500` | — |
+| `color.secondary.border` *(v1.7.0)* | `#9b8cff` | `Color/Purple 500` | — |
 | `color.countdown.default` | `#0a84ff` | `Color/Blue Vivid` | — |
 | `color.countdown.border` † | `rgba(10,132,255,0.28)` | `Color/Blue Vivid` | `Opacity/Countdown/Border` |
 | `color.overlay.default` † | `rgba(0,0,0,0.78)` | `Color/Black` | `Opacity/Overlay/Default` |

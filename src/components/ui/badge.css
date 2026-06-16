@@ -10,7 +10,7 @@
 }
 
 .badge--accent    { border-color: var(--color-accent-default); }
-.badge--info      { border-color: var(--color-role-editor); }
-.badge--secondary { border-color: var(--color-role-viewer); }
-.badge--warning   { border-color: var(--color-kind-reservation); }
+.badge--info      { border-color: var(--color-info-border); }
+.badge--secondary { border-color: var(--color-secondary-border); }
+.badge--warning   { border-color: var(--color-warning-border); }
 .badge--danger    { border-color: var(--color-danger-border); }

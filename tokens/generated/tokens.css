@@ -20,6 +20,9 @@
   --color-danger-surface: rgba(168, 75, 75, 0.2); /** Danger action background fill. CSS composite: color.primitive.red-500 × opacity.primitive.20. Figma: bind fill color to Color/Red 500, fill opacity to Opacity/Danger/Surface. */
   --color-danger-border: #a84b4b; /** Danger action border */
   --color-danger-text: #ffd7d7; /** Danger state text; readable on dark surfaces */
+  --color-info-border: #3483fa; /** Info UI state border. Semantic alias for Blue 500. Used by Badge --info tone. Do not use color.role.editor for component UI states — role tokens carry product-domain meaning. */
+  --color-warning-border: #f2a93b; /** Warning UI state border. Semantic alias for Amber 500. Used by Badge --warning and ProgressPill --attention tones. Do not use color.kind.reservation for component UI states — kind tokens carry product-domain meaning. */
+  --color-secondary-border: #9b8cff; /** Secondary UI state border. Semantic alias for Purple 500. Used by Badge --secondary tone. Do not use color.role.viewer for component UI states — role tokens carry product-domain meaning. */
   --color-kind-activity: #35b8a8; /** Activity planner item kind badge border; shares the brand accent color */
   --color-kind-travel: #3483fa; /** Travel planner item kind badge border */
   --color-kind-reservation: #f2a93b; /** Reservation planner item kind badge border */

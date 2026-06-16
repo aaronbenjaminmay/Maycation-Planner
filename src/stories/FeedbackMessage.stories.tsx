@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react'
 import { FeedbackMessage } from '../components/ui/FeedbackMessage'
 
 const meta = {
-  title: 'Components/FeedbackMessage',
+  title: 'Components/Feedback/FeedbackMessage',
   component: FeedbackMessage,
   parameters: { layout: 'centered' },
   argTypes: {

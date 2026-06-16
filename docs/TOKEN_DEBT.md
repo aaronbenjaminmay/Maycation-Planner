@@ -1,6 +1,33 @@
 # Token Debt
 
-Gaps between the current semantic token layer and actual component usage, discovered during Figma component builds (Feedback group, 2026-06-15). **Do not fix these yet** — they are documented here for a future token-system pass.
+Gaps between the current semantic token layer and actual component usage, discovered during Figma component builds (Feedback group, 2026-06-15) and the Token Cleanup Audit (2026-06-15).
+
+Items marked **[RESOLVED v1.7.0]** have been fixed and are retained for audit trail only.
+
+---
+
+## [RESOLVED v1.7.0] Product-Role Tokens Leaking Into Badge
+
+Three Badge variants previously referenced product-domain tokens directly. This violated the semantic layer contract — components must not depend on product tokens.
+
+**Fix applied in v1.7.0:**
+- `color.info.border` → `Color/Blue 500` (replaces `color.role.editor`)
+- `color.warning.border` → `Color/Amber 500` (replaces `color.kind.reservation`)
+- `color.secondary.border` → `Color/Purple 500` (replaces `color.role.viewer`)
+
+`badge.css` now references only `--color-info-border`, `--color-warning-border`, and `--color-secondary-border`.
+
+---
+
+## [RESOLVED v1.7.0] Missing Warning Semantic Token
+
+`color.warning.border` created in v1.7.0. See above.
+
+---
+
+## [RESOLVED v1.7.0] Missing Info Semantic Token
+
+`color.info.border` created in v1.7.0. See above.
 
 ---
 
@@ -14,46 +41,6 @@ The `FeedbackMessage --success` variant uses raw Teal 500 opacity composites wit
 | `.feedback--success` `background` | `rgba(53, 184, 168, 0.08)` | `Color/Success/Surface` → `Color/Teal 500` × `Opacity/8` |
 
 **Note:** `.feedback--success` `color` currently uses `var(--color-accent-default)` (Teal 500 fully opaque), which is correct and already semantic. Only border and background need new tokens.
-
----
-
-## Missing Warning Semantic Tokens
-
-Warning state is expressed in the UI via a Kind token (`--color-kind-reservation`) rather than a semantic Color/Warning token. Kind tokens describe booking categories, not UI severity states — using them for warning color is a category error.
-
-| CSS property | Current value | Needed token |
-|---|---|---|
-| `.badge--warning` `border-color` | `var(--color-kind-reservation)` = `#f2a93b` | `Color/Warning/Border` → `Color/Amber 500` |
-
-**Affected components:** Badge (`tone="warning"`), ProgressPill (`tone="attention"` → maps to Badge warning).
-
-**Fix path:** Create `Color/Warning/Border` semantic token aliasing `Color/Amber 500` primitive. Update `.badge--warning` to `var(--color-warning-border)`. Remove dependency on `--color-kind-reservation` in component CSS.
-
----
-
-## Missing Info Semantic Tokens
-
-Info state is expressed via the `--color-role-editor` product token (the blue color assigned to editor-role users). Role tokens carry product-domain meaning (who can do what) and should not double as UI-state tokens.
-
-| CSS property | Current value | Needed token |
-|---|---|---|
-| `.badge--info` `border-color` | `var(--color-role-editor)` = `#3483fa` | `Color/Info/Border` → `Color/Blue 500` |
-
-**Note:** There is no `Color/Info/Surface` or `Color/Info/Text` yet either — a full Info semantic family would be: `Color/Info/Border`, `Color/Info/Surface`, `Color/Info/Text`.
-
----
-
-## Product-Role Tokens Leaking Into Components
-
-Three component CSS rules reference tokens from the product-domain layer (role and kind tokens) instead of semantic UI tokens. This creates tight coupling between product business logic and component presentation.
-
-| Component | Property | Leaking token | Primitive value | Correct layer |
-|---|---|---|---|---|
-| `Badge --info` | `border-color` | `--color-role-editor` | `#3483fa` (Blue 500) | Should be `--color-info-border` |
-| `Badge --secondary` | `border-color` | `--color-role-viewer` | `#9b8cff` (Purple 500) | Should be `--color-secondary-border` |
-| `Badge --warning` | `border-color` | `--color-kind-reservation` | `#f2a93b` (Amber 500) | Should be `--color-warning-border` |
-
-**Risk:** If the product reassigns a role color (e.g. Editor is rebranded from blue to another color), Badge/Info will change unintentionally. The semantic layer exists specifically to absorb product changes without cascading to component appearance.
 
 ---
 
