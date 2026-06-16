@@ -1467,7 +1467,7 @@ button.dashboard-card {
   padding: 0 var(--spacing-md);
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: var(--radius-full);
-  color: var(--text-h);
+  color: var(--color-text-primary);
   background: rgba(28, 28, 30, 0.84);
   font: inherit;
   font-size: 14px;
@@ -1490,7 +1490,7 @@ button.dashboard-card {
 }
 
 .button:focus-visible {
-  outline: 2px solid var(--accent);
+  outline: 2px solid var(--color-accent-default);
   outline-offset: 2px;
 }
 
@@ -1500,32 +1500,32 @@ button.dashboard-card {
 }
 
 .button--primary {
-  color: var(--accent-text);
-  border-color: var(--accent);
-  background: var(--accent);
+  color: var(--color-accent-text);
+  border-color: var(--color-accent-default);
+  background: var(--color-accent-default);
 }
 
 .button--primary:hover:not(:disabled) {
-  color: var(--accent-text);
-  border-color: var(--accent);
-  background: color-mix(in srgb, var(--accent) 86%, white 14%);
+  color: var(--color-accent-text);
+  border-color: var(--color-accent-default);
+  background: color-mix(in srgb, var(--color-accent-default) 86%, white 14%);
 }
 
 .button--secondary {
-  color: var(--text-h);
-  border-color: var(--border);
-  background: var(--control-bg);
+  color: var(--color-text-primary);
+  border-color: var(--color-border-default);
+  background: var(--color-surface-elevated);
 }
 
 .button--destructive {
-  color: var(--danger-text);
-  border-color: var(--danger-border);
+  color: var(--color-danger-text);
+  border-color: var(--color-danger-border);
   background: rgba(255, 69, 58, 0.08);
 }
 
 .button--destructive:hover:not(:disabled) {
-  color: var(--danger-text);
-  border-color: var(--danger-text);
+  color: var(--color-danger-text);
+  border-color: var(--color-danger-text);
   background: rgba(255, 69, 58, 0.14);
 }
 
@@ -1545,7 +1545,7 @@ button.dashboard-card {
   padding: 0;
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 999px;
-  color: var(--text-h);
+  color: var(--color-text-primary);
   background: rgba(28, 28, 30, 0.84);
   box-shadow: none;
   font: inherit;
@@ -1568,7 +1568,7 @@ button.dashboard-card {
 }
 
 .icon-button:focus-visible {
-  outline: 2px solid var(--accent);
+  outline: 2px solid var(--color-accent-default);
   outline-offset: 2px;
 }
 
@@ -1585,25 +1585,25 @@ button.dashboard-card {
   min-height: 44px;
   max-height: 44px;
   color: #fff;
-  border-color: var(--accent);
-  background: var(--accent);
+  border-color: var(--color-accent-default);
+  background: var(--color-accent-default);
 }
 
 .icon-button--primary:hover:not(:disabled) {
   color: #fff;
-  border-color: var(--accent);
-  background: color-mix(in srgb, var(--accent) 86%, white 14%);
+  border-color: var(--color-accent-default);
+  background: color-mix(in srgb, var(--color-accent-default) 86%, white 14%);
 }
 
 .icon-button--destructive {
-  color: var(--danger-text);
-  border-color: var(--danger-border);
+  color: var(--color-danger-text);
+  border-color: var(--color-danger-border);
   background: rgba(255, 69, 58, 0.08);
 }
 
 .icon-button--destructive:hover:not(:disabled) {
-  color: var(--danger-text);
-  border-color: var(--danger-text);
+  color: var(--color-danger-text);
+  border-color: var(--color-danger-text);
   background: rgba(255, 69, 58, 0.14);
 }
 
@@ -1613,14 +1613,14 @@ button.dashboard-card {
 
 .icon-button--complete.icon-button--selected {
   color: #fff;
-  border-color: var(--accent);
-  background: var(--accent);
+  border-color: var(--color-accent-default);
+  background: var(--color-accent-default);
 }
 
 .icon-button--complete.icon-button--selected:hover:not(:disabled) {
   color: #fff;
-  border-color: var(--accent);
-  background: var(--accent);
+  border-color: var(--color-accent-default);
+  background: var(--color-accent-default);
 }
 
 /* ─── 12. Trip background image system ───────────────────────────────────────
