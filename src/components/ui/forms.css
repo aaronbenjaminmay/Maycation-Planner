@@ -42,7 +42,7 @@
 
 .form-control:disabled {
   cursor: not-allowed;
-  opacity: 0.65;
+  opacity: var(--opacity-disabled-default);
 }
 
 /* ─── Select: reset native appearance, inject chevron ───────────────────── */

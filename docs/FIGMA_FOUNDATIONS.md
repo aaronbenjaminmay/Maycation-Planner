@@ -1,6 +1,6 @@
 # Maycation Figma Foundations
 
-Last updated: v1.7.0
+Last updated: v1.8.0
 
 This document defines the token architecture, variable collection structure, naming conventions, and implementation path for Maycation's Figma design system. It is the source of truth for how code tokens map to Figma Variables, Tokens Studio, and future Code Connect work.
 
@@ -47,16 +47,18 @@ color.border.*       — borders in various contexts (opaque token; CSS uses rgb
 color.text.*         — text colors by hierarchy
 color.accent.*       — brand accent (teal)
 color.danger.*       — destructive/error states
+color.success.*      — success UI state (v1.8.0; surface, border, text)
 color.info.*         — info UI state (v1.7.0; currently border only)
 color.warning.*      — warning UI state (v1.7.0; currently border only)
 color.secondary.*    — secondary UI state (v1.7.0; currently border only)
 color.countdown.*    — trip milestone and temporal emphasis (see §3)
 color.overlay.*      — modal and overlay layers
 opacity.overlay.*    — semantic opacity values for overlay compositing
-opacity.surface.*    — semantic opacity values for surface compositing
+opacity.surface.*    — semantic opacity values for surface compositing (includes badge, feedback-neutral — v1.8.0)
 opacity.border.*     — semantic opacity values for border compositing
 opacity.danger.*     — semantic opacity values for danger surface compositing
-opacity.disabled.*   — semantic opacity values for disabled state
+opacity.success.*    — semantic opacity values for success surface/border compositing (v1.8.0)
+opacity.disabled.*   — semantic opacity values for disabled state (updated to 0.65 — v1.8.0)
 opacity.header-image.* — semantic opacity for trip background image dim
 opacity.interactive.*  — semantic opacity for hover overlay fills
 radius.card          — semantic alias for card surface radius
@@ -123,12 +125,16 @@ All primitives are opaque. No alpha-composited colors in the primitive layer.
 
 | Token | Value | Composition usage |
 |-------|-------|-------------------|
-| `opacity.primitive.8` | `0.08` | Glass border (white × 8%) |
+| `opacity.primitive.5` *(v1.8.0)* | `0.05` | FeedbackMessage neutral background (white × 5%); intentionally off-scale |
+| `opacity.primitive.8` | `0.08` | Glass border (white × 8%); success surface (teal-500 × 8%) |
 | `opacity.primitive.10` | `0.10` | Control border (white × 10%) |
 | `opacity.primitive.20` | `0.20` | Danger surface (red-500 × 20%) |
+| `opacity.primitive.22` *(v1.8.0)* | `0.22` | Badge background (black × 22%); intentionally off-scale |
 | `opacity.primitive.28` | `0.28` | Input surface (black × 28%); countdown border (blue-vivid × 28%) |
-| `opacity.primitive.40` | `0.40` | Disabled state |
+| `opacity.primitive.30` *(v1.8.0)* | `0.30` | Success border (teal-500 × 30%); intentionally off-scale |
+| `opacity.primitive.40` | `0.40` | Scale step (reserved) |
 | `opacity.primitive.52` | `0.52` | Header image overlay |
+| `opacity.primitive.65` *(v1.8.0)* | `0.65` | Disabled component state |
 | `opacity.primitive.74` | `0.74` | Glass surface (neutral-800 × 74%) |
 | `opacity.primitive.78` | `0.78` | Overlay backdrop (black × 78%) |
 
@@ -143,6 +149,8 @@ Tokens marked † contain an inline `rgba()` CSS composite value (not a primitiv
 | `color.surface.elevated` | `#1a1c20` | `Color/Neutral 850` | — |
 | `color.surface.input` † | `rgba(0,0,0,0.28)` | `Color/Black` | `Opacity/Surface/Input` |
 | `color.surface.glass` † | `rgba(28,28,30,0.74)` | `Color/Neutral 800` | `Opacity/Surface/Glass` |
+| `color.surface.badge` † *(v1.8.0)* | `rgba(0,0,0,0.22)` | `Color/Black` | `Opacity/Surface/Badge` |
+| `color.surface.feedback-neutral` † *(v1.8.0)* | `rgba(255,255,255,0.05)` | `Color/White` | `Opacity/Surface/FeedbackNeutral` |
 | `color.border.default` | `#2b2d32` | `Color/Neutral 700` | — |
 | `color.border.glass` † | `rgba(255,255,255,0.08)` | `Color/White` | `Opacity/Border/Glass` |
 | `color.border.control` † | `rgba(255,255,255,0.10)` | `Color/White` | `Opacity/Border/Control` |
@@ -154,6 +162,9 @@ Tokens marked † contain an inline `rgba()` CSS composite value (not a primitiv
 | `color.danger.surface` † | `rgba(168,75,75,0.20)` | `Color/Red 500` | `Opacity/Danger/Surface` |
 | `color.danger.border` | `#a84b4b` | `Color/Red 500` | — |
 | `color.danger.text` | `#ffd7d7` | `Color/Red 100` | — |
+| `color.success.surface` † *(v1.8.0)* | `rgba(53,184,168,0.08)` | `Color/Teal 500` | `Opacity/Success/Surface` |
+| `color.success.border` † *(v1.8.0)* | `rgba(53,184,168,0.30)` | `Color/Teal 500` | `Opacity/Success/Border` |
+| `color.success.text` *(v1.8.0)* | `#35b8a8` | `Color/Teal 500` | — |
 | `color.info.border` *(v1.7.0)* | `#3483fa` | `Color/Blue 500` | — |
 | `color.warning.border` *(v1.7.0)* | `#f2a93b` | `Color/Amber 500` | — |
 | `color.secondary.border` *(v1.7.0)* | `#9b8cff` | `Color/Purple 500` | — |
@@ -173,8 +184,12 @@ CSS variables generated for these (e.g., `--opacity-surface-glass: 0.74`). Prima
 | `opacity.border.glass` | `0.08` | Glass border stroke opacity |
 | `opacity.border.control` | `0.10` | Control border stroke opacity |
 | `opacity.danger.surface` | `0.20` | Danger fill opacity |
+| `opacity.success.surface` *(v1.8.0)* | `0.08` | Success background fill opacity |
+| `opacity.success.border` *(v1.8.0)* | `0.30` | Success border stroke opacity |
+| `opacity.surface.badge` *(v1.8.0)* | `0.22` | Badge background fill opacity |
+| `opacity.surface.feedback-neutral` *(v1.8.0)* | `0.05` | FeedbackMessage neutral fill opacity |
 | `opacity.countdown.border` | `0.28` | Countdown/completed border opacity |
-| `opacity.disabled.default` | `0.40` | Disabled state (element-level opacity is acceptable here) |
+| `opacity.disabled.default` *(updated v1.8.0)* | `0.65` | Disabled state (element-level opacity is acceptable here) |
 | `opacity.header-image.overlay` | `0.52` | Trip bg image dim (pseudo-element, element opacity acceptable) |
 | `opacity.interactive.hover` | `0.10` | Hover overlay fill opacity |
 

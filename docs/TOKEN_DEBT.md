@@ -2,7 +2,7 @@
 
 Gaps between the current semantic token layer and actual component usage, discovered during Figma component builds (Feedback group, 2026-06-15) and the Token Cleanup Audit (2026-06-15).
 
-Items marked **[RESOLVED v1.7.0]** have been fixed and are retained for audit trail only.
+Items marked **[RESOLVED v1.7.0]** or **[RESOLVED v1.8.0]** have been fixed and are retained for audit trail only.
 
 ---
 
@@ -31,45 +31,68 @@ Three Badge variants previously referenced product-domain tokens directly. This 
 
 ---
 
-## Missing Success Semantic Tokens
+## [RESOLVED v1.8.0] Missing Success Semantic Tokens
 
-The `FeedbackMessage --success` variant uses raw Teal 500 opacity composites with no semantic alias. These values are derived from the same primitive as `Color/Accent/Default` but at different opacities, so a distinct Success token family is needed.
+Three semantic tokens created for FeedbackMessage success state.
 
-| CSS property | Current value | Needed token |
-|---|---|---|
-| `.feedback--success` `border-color` | `rgba(53, 184, 168, 0.3)` | `Color/Success/Border` → `Color/Teal 500` × `Opacity/30` |
-| `.feedback--success` `background` | `rgba(53, 184, 168, 0.08)` | `Color/Success/Surface` → `Color/Teal 500` × `Opacity/8` |
+**Fix applied in v1.8.0:**
+- `color.success.surface` → `rgba(53,184,168,0.08)` (Teal 500 × 8%)
+- `color.success.border` → `rgba(53,184,168,0.30)` (Teal 500 × 30%)
+- `color.success.text` → `{color.accent.default}` (Teal 500 fully opaque)
+- `opacity.primitive.30` added to primitive scale for Figma binding
+- `opacity.success.surface` and `opacity.success.border` added for Figma binding
 
-**Note:** `.feedback--success` `color` currently uses `var(--color-accent-default)` (Teal 500 fully opaque), which is correct and already semantic. Only border and background need new tokens.
-
----
-
-## Hardcoded Color Values
-
-Values in component CSS that should reference tokens but are written as literals.
-
-| Location | Property | Hardcoded value | Correct token |
-|---|---|---|---|
-| `App.css` `.icon-button--complete` | `color` | `#d7d7dc` | Needs `Color/IconButton/Complete` semantic token (no equivalent exists yet) |
-| `forms.css` `select.form-control` `background-image` | SVG `stroke` | `%23a1a1a6` (`#a1a1a6`) | Should reference `--color-text-muted` (#a1a1a6 matches exactly — cosmetic fix) |
-| `App.css` `.form-control:disabled` | `opacity` | `0.65` | `Opacity/Disabled/Default` variable exists (VariableID:44:9) but CSS doesn't reference it — update to `var(--opacity-disabled-default)` |
+`App.css .feedback--success` now references `var(--color-success-border)`, `var(--color-success-surface)`, `var(--color-success-text)`.
 
 ---
 
-## Missing Neutral Surface Opacity Tokens
+## [RESOLVED v1.8.0] Disabled Opacity Not Wired
 
-Two components use white or black at opacity values that fall outside the established opacity scale (8 / 10 / 20 / 28 / 40 / 52 / 74 / 78).
+`opacity.disabled.default` token existed at 0.4 but CSS used hardcoded 0.65 — a discrepancy between the token value and the current rendered appearance.
 
-| Component | Property | Current value | Issue |
+**Fix applied in v1.8.0:**
+- Updated `opacity.disabled.default` from 0.4 → 0.65 to match the current visual appearance.
+- Added `opacity.primitive.65` to the primitive scale.
+- Wired `opacity: var(--opacity-disabled-default)` in: `forms.css .form-control:disabled`, `App.css .auth-form button:disabled`, `App.css .button:disabled`, `App.css .icon-button:disabled`.
+
+---
+
+## [RESOLVED v1.8.0] Missing Neutral Surface Opacity Tokens
+
+Two off-scale opacity values had no semantic aliases. Chose to tokenize at actual values (not snap to scale) to preserve visual output.
+
+**Fix applied in v1.8.0:**
+- `color.surface.badge` → `rgba(0,0,0,0.22)` (Black × 22%) + `opacity.primitive.22` + `opacity.surface.badge`
+- `color.surface.feedback-neutral` → `rgba(255,255,255,0.05)` (White × 5%) + `opacity.primitive.5` + `opacity.surface.feedback-neutral`
+- `badge.css` updated: `background: var(--color-surface-badge)`
+- `App.css .feedback` updated: `background: var(--color-surface-feedback-neutral)`, `border-color: var(--color-border-glass)`
+
+**Decision:** Added off-scale primitives (5, 22, 30) intentionally rather than snapping to scale neighbors. Snapping would have changed the visual appearance, which was out of scope for v1.8.0.
+
+---
+
+## [RESOLVED v1.8.0] Muted Color Inconsistency
+
+`#a1a1a6` hardcoded in 5 App.css selectors. All replaced with `var(--color-text-muted)`.
+
+**Remaining:** `forms.css select.form-control background-image` SVG stroke (`%23a1a1a6`) cannot use a CSS variable — it is URL-encoded inside a `data:image/svg+xml` value. This is a known browser limitation; the hardcoded value is retained intentionally.
+
+| Location | Status |
+|---|---|
+| `App.css .trip-intel-card dt` | Fixed |
+| `App.css .trip-dashboard .day-tile__icon` | Fixed |
+| `App.css .trip-dashboard .day-tile__summary` | Fixed |
+| `App.css .screen-header__meta, .muted, .day-tile__summary, .planner-item-card p` | Fixed |
+| `App.css .day-tile__icon` | Fixed |
+| `forms.css select.form-control background-image SVG stroke` | **Cannot fix** — data URL limitation |
+
+---
+
+## Hardcoded Color Values (Remaining)
+
+| Location | Property | Hardcoded value | Status |
 |---|---|---|---|
-| `Badge` | `background` | `rgba(0, 0, 0, 0.22)` | 22% black not in opacity scale; no semantic alias |
-| `FeedbackMessage --neutral` | `background` | `rgba(255, 255, 255, 0.05)` | 5% white not in opacity scale; no semantic alias |
-
-**Options when fixing:**
-- Add `Opacity/22` and `Opacity/5` to the primitive opacity scale, then create semantic aliases (`Color/Surface/Badge`, `Color/Surface/FeedbackNeutral`).
-- Or: snap Badge background to the nearest scale value (`Opacity/20` = rgba(0,0,0,0.20)) and FeedbackMessage neutral to `Opacity/8` (rgba(255,255,255,0.08)) and adjust visual in code.
-
-**Recommendation:** Snap to nearest scale value + update code, rather than expanding the scale for two components. Verify visual delta is acceptable before merging.
+| `App.css` `.icon-button--complete` | `color` | `#d7d7dc` | Open — needs `Color/IconButton/Complete` semantic token (no equivalent exists yet) |
 
 ---
 
@@ -82,18 +105,6 @@ ScreenHeader `h1` uses `font-size: clamp(1.8rem, 6vw, 2.55rem)` — a fluid/resp
 | `.screen-header h1` `font-size` | `clamp(1.8rem, 6vw, 2.55rem)` | `Typography/Title` (28px) | `Typography/Display` — fluid, viewport-relative |
 
 **Impact:** Figma representation is static (28px); actual rendered size varies from ~29px to ~41px depending on viewport width. This is a visual parity gap on larger screens.
-
----
-
-## Navigation: Muted Color Inconsistency
-
-`.muted` class color is hardcoded as `#a1a1a6` in some CSS selectors instead of referencing the token via CSS variable.
-
-| Location | Property | Hardcoded value | Correct token |
-|---|---|---|---|
-| Various `.muted` selectors | `color` | `#a1a1a6` | Should be `var(--color-text-muted)` (already `VariableID:8:12`) |
-
-**Fix:** Find all `.muted { color: #a1a1a6 }` instances and replace with `var(--color-text-muted)`.
 
 ---
 

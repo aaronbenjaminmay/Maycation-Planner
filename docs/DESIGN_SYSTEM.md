@@ -109,13 +109,19 @@ Key semantic tokens:
 | Token | Value | Use |
 |-------|-------|-----|
 | `--color-surface-glass` | `rgba(28, 28, 30, 0.74)` | Card/surface backgrounds |
+| `--color-surface-badge` | `rgba(0, 0, 0, 0.22)` | Badge background (v1.8.0) |
+| `--color-surface-feedback-neutral` | `rgba(255, 255, 255, 0.05)` | FeedbackMessage neutral background (v1.8.0) |
 | `--color-border-glass` | `rgba(255, 255, 255, 0.08)` | Card/surface borders |
 | `--color-overlay-default` | `rgba(0, 0, 0, 0.78)` | Modal backdrop |
 | `--color-info-border` | `#3483fa` | Badge --info tone border (v1.7.0) |
 | `--color-warning-border` | `#f2a93b` | Badge --warning / ProgressPill --attention border (v1.7.0) |
 | `--color-secondary-border` | `#9b8cff` | Badge --secondary tone border (v1.7.0) |
+| `--color-success-surface` | `rgba(53, 184, 168, 0.08)` | FeedbackMessage --success background (v1.8.0) |
+| `--color-success-border` | `rgba(53, 184, 168, 0.30)` | FeedbackMessage --success border (v1.8.0) |
+| `--color-success-text` | `#35b8a8` | FeedbackMessage --success text (v1.8.0) |
 | `--color-text-primary` | `#f5f7fb` | Body / label text |
-| `--color-text-muted` | — | Use `.muted` utility class |
+| `--color-text-muted` | `#a1a1a6` | Muted metadata text; use `.muted` utility class |
+| `--opacity-disabled-default` | `0.65` | Disabled component state (v1.8.0) |
 | `--radius-lg` | `20px` | Card radius |
 | `--radius-full` | `999px` | Pill radius |
 | `--shadow-md` | `0 12px 34px 0 rgba(0,0,0,0.36)` | Modal/sheet elevation |
@@ -185,17 +191,20 @@ Maycation models opacity as a design-system primitive, but Figma and CSS express
 
 ## Known Token Migration Debt
 
-**v1.7.0 Token Architecture Phase 1** resolved the highest-priority item: Badge no longer depends on product-domain tokens (`color.role.editor`, `color.role.viewer`, `color.kind.reservation`). Three semantic token families were added: `color.info.border`, `color.warning.border`, `color.secondary.border`. See `docs/TOKEN_DEBT.md` for the resolved entry.
+**v1.8.0 Token Architecture Phase 2** resolved: FeedbackMessage success tokens, disabled opacity wiring, neutral surface opacity tokens (Badge + FeedbackMessage neutral), and muted color cleanup. See `docs/TOKEN_DEBT.md` for all resolved entries.
+
+**v1.7.0 Token Architecture Phase 1** resolved the highest-priority item: Badge no longer depends on product-domain tokens. See `docs/TOKEN_DEBT.md`.
 
 These hardcoded values remain in `App.css` and are candidates for future token migration:
 
 | Value | Location | Notes |
 |-------|----------|-------|
 | `#35b8a8` | Early passes | Old accent color; superseded by `--accent` in newer passes |
-| `#a1a1a6` | `.muted`, `.day-tile__icon`, `.trip-intel-card dt` | Should become `var(--color-text-muted)` once token is confirmed |
+| `#a1a1a6` (SVG only) | `forms.css select.form-control background-image` | URL-encoded SVG stroke in data URI; cannot use CSS variable — browser limitation |
 | `rgba(255, 255, 255, 0.08)` | Early passes (15+ occurrences) | Now superseded by `var(--color-border-glass)` in §7 |
 | `rgba(0, 0, 0, 0.52)` | `.dashboard-shell.has-trip-bg::after` | Trip image overlay; use `var(--opacity-header-image-overlay)` when migrating (pseudo-element, so element opacity is acceptable) |
 | Button/icon-button hover backgrounds | `rgba(255, 255, 255, 0.08–0.14)` | Use as fill overlay layer per Opacity Handling Rule; `var(--opacity-interactive-hover)` available |
+| `#d7d7dc` | `App.css .icon-button--complete` | Needs `Color/IconButton/Complete` semantic token (no equivalent exists yet) |
 
 Inline `rgba()` values in CSS for glass surfaces (`rgba(28,28,30,0.74)`, `rgba(255,255,255,0.08)`, etc.) are **intentional** per the Opacity Handling Rule — do not replace them with `var(--color-surface-glass)` (which is now opaque) without also applying the rgba composition. Each composite rgba in CSS should have a comment in the format:
 ```css

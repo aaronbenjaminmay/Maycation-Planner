@@ -110,7 +110,7 @@
 
 .auth-form button:disabled {
   cursor: not-allowed;
-  opacity: 0.65;
+  opacity: var(--opacity-disabled-default);
 }
 
 .auth-form,
@@ -520,7 +520,7 @@ button.dashboard-card {
 }
 
 .trip-intel-card dt {
-  color: #a1a1a6;
+  color: var(--color-text-muted);
   font-size: 13px;
   font-weight: 900;
   letter-spacing: 0.16em;
@@ -560,7 +560,7 @@ button.dashboard-card {
 
 .trip-dashboard .day-tile__icon {
   flex: 0 0 auto;
-  color: #a1a1a6;
+  color: var(--color-text-muted);
   font-size: 28px;
   line-height: 1;
 }
@@ -585,7 +585,7 @@ button.dashboard-card {
 
 .trip-dashboard .day-tile__summary {
   margin-top: 6px;
-  color: #a1a1a6;
+  color: var(--color-text-muted);
   font-size: 16px;
   font-weight: 800;
 }
@@ -791,9 +791,9 @@ button.dashboard-card {
 }
 
 .feedback {
-  border-color: rgba(255, 255, 255, 0.08);
+  border-color: var(--color-border-glass);
   border-radius: 14px;
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--color-surface-feedback-neutral);
   font-size: 13px;
   font-weight: 700;
 }
@@ -804,9 +804,9 @@ button.dashboard-card {
 }
 
 .feedback--success {
-  border-color: rgba(53, 184, 168, 0.3);
-  background: rgba(53, 184, 168, 0.08);
-  color: var(--color-accent-default);
+  border-color: var(--color-success-border);
+  background: var(--color-success-surface);
+  color: var(--color-success-text);
 }
 
 .system-icon {
@@ -1099,7 +1099,7 @@ button.dashboard-card {
 .muted,
 .day-tile__summary,
 .planner-item-card p {
-  color: #a1a1a6;
+  color: var(--color-text-muted);
   font-size: 13px;
   font-weight: 700;
   line-height: 1.35;
@@ -1177,7 +1177,7 @@ button.dashboard-card {
 }
 
 .day-tile__icon {
-  color: #a1a1a6;
+  color: var(--color-text-muted);
 }
 
 .trip-dashboard .day-tile__summary,
@@ -1505,7 +1505,7 @@ button.dashboard-card {
 
 .button:disabled {
   cursor: not-allowed;
-  opacity: 0.65;
+  opacity: var(--opacity-disabled-default);
 }
 
 .button--primary {
@@ -1583,7 +1583,7 @@ button.dashboard-card {
 
 .icon-button:disabled {
   cursor: not-allowed;
-  opacity: 0.65;
+  opacity: var(--opacity-disabled-default);
 }
 
 .icon-button--primary {

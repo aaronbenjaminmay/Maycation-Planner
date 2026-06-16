@@ -121,6 +121,16 @@
         "$type": "color",
         "$value": "rgba(28, 28, 30, 0.74)",
         "$description": "Glass morphism background for cards, panels, modals. CSS composite: color.primitive.neutral-800 × opacity.primitive.74. Do not use element-level opacity — use rgba() directly so child text remains fully opaque. Figma: bind fill color to Color/Neutral 800, fill opacity to Opacity/Surface/Glass."
+      },
+      "badge": {
+        "$type": "color",
+        "$value": "rgba(0, 0, 0, 0.22)",
+        "$description": "Badge background fill. CSS composite: color.primitive.black × opacity.primitive.22. Intentionally off-scale (not 20 or 28) — value chosen for correct Badge visual weight. Do not use element-level opacity. Figma: bind fill color to Color/Black, fill opacity to Opacity/Surface/Badge."
+      },
+      "feedback-neutral": {
+        "$type": "color",
+        "$value": "rgba(255, 255, 255, 0.05)",
+        "$description": "FeedbackMessage neutral background fill. CSS composite: color.primitive.white × opacity.primitive.5. Intentionally off-scale — 5% is the minimum effective opacity for a visible white surface on a near-black background. Do not use element-level opacity. Figma: bind fill color to Color/White, fill opacity to Opacity/Surface/FeedbackNeutral."
       }
     },
 
@@ -188,6 +198,24 @@
         "$type": "color",
         "$value": "{color.primitive.red-100}",
         "$description": "Danger state text; readable on dark surfaces"
+      }
+    },
+
+    "success": {
+      "surface": {
+        "$type": "color",
+        "$value": "rgba(53, 184, 168, 0.08)",
+        "$description": "Success state background fill. CSS composite: color.primitive.teal-500 × opacity.primitive.8. Do not use element-level opacity — use rgba() directly so child text remains fully opaque. Figma: bind fill color to Color/Teal 500, fill opacity to Opacity/Success/Surface."
+      },
+      "border": {
+        "$type": "color",
+        "$value": "rgba(53, 184, 168, 0.30)",
+        "$description": "Success state border. CSS composite: color.primitive.teal-500 × opacity.primitive.30. Figma: bind stroke color to Color/Teal 500, stroke opacity to Opacity/Success/Border."
+      },
+      "text": {
+        "$type": "color",
+        "$value": "{color.accent.default}",
+        "$description": "Success state text. Teal 500 fully opaque — same hue as accent. Used for text inside FeedbackMessage --success."
       }
     },
 
