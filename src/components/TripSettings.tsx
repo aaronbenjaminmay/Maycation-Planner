@@ -26,13 +26,13 @@ import {
   Badge,
   Button,
   CardSurface,
-  DetailHeader,
   EmptyState,
   FeedbackMessage,
   FormActions,
   FormGrid,
   IconButton,
   ModalSheet,
+  PageControls,
   SelectInput,
   TextInput,
   type BadgeTone,
@@ -496,10 +496,7 @@ export function TripSettings({
       style={backgroundUrl ? ({ '--trip-bg-image': `url(${backgroundUrl})` } as React.CSSProperties) : undefined}
     >
       <section className="page-shell trips-panel">
-        <DetailHeader
-          onBack={onBack}
-          title="Settings"
-        />
+        <PageControls leading={<IconButton icon="back" label="Back" onClick={onBack} />} />
 
         {isInviteOpen ? (
           <ModalSheet

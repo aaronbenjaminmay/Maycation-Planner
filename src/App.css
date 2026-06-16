@@ -438,11 +438,6 @@ button.dashboard-card {
   .form-actions {
     grid-template-columns: 1fr;
   }
-
-  .member-actions {
-    display: grid;
-    grid-template-columns: 1fr;
-  }
 }
 
 /* ─── 3. Trip dashboard screen ───────────────────────────────────────────────
@@ -1385,10 +1380,6 @@ button.dashboard-card {
     align-items: start;
   }
 
-  .member-row {
-    grid-template-columns: 1fr;
-    align-items: stretch;
-  }
 }
 
 /* ─── 9. Login screen wordmark and mobile fixes ──────────────────────────────
