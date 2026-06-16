@@ -421,7 +421,7 @@ button.dashboard-card {
   justify-content: space-between;
   gap: 16px;
   padding-bottom: 16px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: 1px solid var(--color-border-glass);
 }
 
 .dashboard-card:focus-visible,
@@ -477,7 +477,7 @@ button.dashboard-card {
 .trip-intel-card {
   min-height: 220px;
   padding: 22px 24px;
-  border-color: rgba(255, 255, 255, 0.08);
+  border-color: var(--color-border-glass);
   border-radius: 24px;
   background: rgba(28, 28, 30, 0.68);
 }
@@ -516,7 +516,7 @@ button.dashboard-card {
   grid-template-columns: auto 1fr;
   gap: 18px;
   padding: 14px 0;
-  border-top: 1px solid rgba(255, 255, 255, 0.07);
+  border-top: 1px solid var(--color-border-glass);
 }
 
 .trip-intel-card dt {
@@ -546,7 +546,7 @@ button.dashboard-card {
   display: flex;
   align-items: center;
   padding: 24px;
-  border-color: rgba(255, 255, 255, 0.08);
+  border-color: var(--color-border-glass);
   border-radius: 22px;
   background: rgba(28, 28, 30, 0.72);
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
@@ -771,7 +771,7 @@ button.dashboard-card {
 .dashboard-panel,
 .card-surface,
 .modal-sheet {
-  border-color: rgba(255, 255, 255, 0.08);
+  border-color: var(--color-border-glass);
   border-radius: 20px;
   background: rgba(28, 28, 30, 0.72);
   box-shadow: 0 18px 50px rgba(0, 0, 0, 0.26);
@@ -815,7 +815,7 @@ button.dashboard-card {
 }
 
 .mode-toggle {
-  border-color: rgba(255, 255, 255, 0.08);
+  border-color: var(--color-border-glass);
   border-radius: 999px;
   background: rgba(0, 0, 0, 0.22);
 }
@@ -890,7 +890,7 @@ button.dashboard-card {
 .screen-header,
 .detail-header {
   padding-bottom: 18px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: 1px solid var(--color-border-glass);
 }
 
 .detail-header .screen-header {
@@ -977,7 +977,7 @@ button.dashboard-card {
   align-items: center;
   min-height: 92px;
   padding: 16px 18px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--color-border-glass);
   border-radius: var(--radius-card);
   background: rgba(28, 28, 30, 0.76);
 }
@@ -1051,7 +1051,7 @@ button.dashboard-card {
 .detail-header {
   gap: 12px;
   padding-bottom: 16px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: 1px solid var(--color-border-glass);
 }
 
 .detail-header .screen-header {
@@ -1201,7 +1201,7 @@ button.dashboard-card {
   gap: 16px;
   min-height: 92px;
   padding: 16px 18px;
-  border-left: 1px solid rgba(255, 255, 255, 0.08);
+  border-left: 1px solid var(--color-border-glass);
 }
 
 .day-detail-screen .planner-item-card__content,
@@ -1277,7 +1277,7 @@ button.dashboard-card {
 .page-shell > .screen-header,
 .page-shell > .detail-header {
   padding-bottom: 18px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: 1px solid var(--color-border-glass);
 }
 
 .page-shell .screen-header__actions {
@@ -1301,7 +1301,7 @@ button.dashboard-card {
   display: block;
   min-height: 112px;
   padding: 18px 154px 18px 20px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--color-border-glass);
   border-radius: var(--radius-card);
   background: rgba(28, 28, 30, 0.76);
 }
@@ -1352,7 +1352,7 @@ button.dashboard-card {
 }
 .day-detail-screen .planner-item-card.completed,
 .day-detail-screen .planner-item-card.completed:hover {
-  border-color: rgba(255, 255, 255, 0.08);
+  border-color: var(--color-border-glass);
   background: rgba(28, 28, 30, 0.76);
 }
 
@@ -1379,7 +1379,7 @@ button.dashboard-card {
   align-items: center;
   gap: 12px;
   padding: 13px 0;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  border-top: 1px solid var(--color-border-glass);
 }
 
 .member-row:first-child {
@@ -1617,7 +1617,7 @@ button.dashboard-card {
 }
 
 .icon-button--complete {
-  color: #d7d7dc;
+  color: var(--color-icon-complete);
 }
 
 .icon-button--complete.icon-button--selected {

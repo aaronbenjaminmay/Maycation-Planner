@@ -27,6 +27,7 @@ export const colorSuccessText = "#35b8a8"; // Success state text. Teal 500 fully
 export const colorInfoBorder = "#3483fa"; // Info UI state border. Semantic alias for Blue 500. Used by Badge --info tone. Do not use color.role.editor for component UI states — role tokens carry product-domain meaning.
 export const colorWarningBorder = "#f2a93b"; // Warning UI state border. Semantic alias for Amber 500. Used by Badge --warning and ProgressPill --attention tones. Do not use color.kind.reservation for component UI states — kind tokens carry product-domain meaning.
 export const colorSecondaryBorder = "#9b8cff"; // Secondary UI state border. Semantic alias for Purple 500. Used by Badge --secondary tone. Do not use color.role.viewer for component UI states — role tokens carry product-domain meaning.
+export const colorIconComplete = "#d7d7dc"; // Icon color for the IconButton --complete variant in its unselected (resting) state. Distinct from text.primary (#f5f7fb) and text.secondary (#b6bfcc) — the intermediate silver signals 'checkable but not yet checked'. Do not use text.* tokens for this; icon state color is a separate semantic concern.
 export const colorKindActivity = "#35b8a8"; // Activity planner item kind badge border; shares the brand accent color
 export const colorKindTravel = "#3483fa"; // Travel planner item kind badge border
 export const colorKindReservation = "#f2a93b"; // Reservation planner item kind badge border
