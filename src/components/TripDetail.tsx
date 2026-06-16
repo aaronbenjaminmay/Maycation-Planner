@@ -213,7 +213,7 @@ export function TripDetail({ trip, onBack, onTripDeleted, onTripUpdated }: TripD
   }, [trip.header_image_path])
 
   function getItemsForDay(dayId: string) {
-    return plannerItems.filter((item) => item.trip_day_id === dayId)
+    return sortItemsByPlanOrder(plannerItems.filter((item) => item.trip_day_id === dayId))
   }
 
   const activeDayIndex = tripDays.findIndex((day) => day.id === activeDayId)
