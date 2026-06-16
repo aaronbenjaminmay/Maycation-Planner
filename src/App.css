@@ -1146,6 +1146,22 @@ button.dashboard-card {
   margin-top: 4px;
 }
 
+.trip-dashboard .day-tile,
+.day-tile {
+  position: relative;
+}
+
+.day-tile__stats {
+  position: absolute;
+  top: var(--spacing-lg);
+  right: var(--spacing-lg);
+}
+
+/* Reserves space so title text does not run under the absolute ProgressPill */
+.day-tile__header {
+  padding-right: 68px;
+}
+
 .day-detail-screen .detail-header {
   margin-bottom: 4px;
 }
