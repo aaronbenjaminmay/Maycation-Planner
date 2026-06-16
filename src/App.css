@@ -772,7 +772,7 @@ button.dashboard-card {
 
 .feedback {
   border-color: var(--color-border-glass);
-  border-radius: 14px;
+  border-radius: var(--radius-input);
   background: var(--color-surface-feedback-neutral);
   font-size: 13px;
   font-weight: 700;

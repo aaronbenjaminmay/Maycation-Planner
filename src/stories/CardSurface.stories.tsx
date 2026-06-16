@@ -28,7 +28,7 @@ export const Static: Story = {
 }
 
 export const Interactive: Story = {
-  name: 'Interactive (div with hover)',
+  name: 'Interactive (div — cursor only)',
   render: () => (
     <CardSurface interactive style={{ width: 280 }}>
       {cardContent}
@@ -46,7 +46,7 @@ export const AsButton: Story = {
 }
 
 export const WithClassName: Story = {
-  name: 'With additional className',
+  name: 'With className — intentional variant (trip-intel-card 0.68)',
   render: () => (
     <CardSurface className="trip-intel-card" style={{ width: 280 }}>
       <div className="trip-intel-card__header">

@@ -1,6 +1,6 @@
 # Maycation Figma Foundations
 
-Last updated: v1.8.0
+Last updated: v1.15.0
 
 This document defines the token architecture, variable collection structure, naming conventions, and implementation path for Maycation's Figma design system. It is the source of truth for how code tokens map to Figma Variables, Tokens Studio, and future Code Connect work.
 
@@ -135,7 +135,7 @@ All primitives are opaque. No alpha-composited colors in the primitive layer.
 | `opacity.primitive.40` | `0.40` | Scale step (reserved) |
 | `opacity.primitive.52` | `0.52` | Header image overlay |
 | `opacity.primitive.65` *(v1.8.0)* | `0.65` | Disabled component state |
-| `opacity.primitive.74` | `0.74` | Glass surface (neutral-800 × 74%) |
+| `opacity.primitive.72` *(v1.13.0)* | `0.72` | Glass surface (neutral-800 × 72%) |
 | `opacity.primitive.78` | `0.78` | Overlay backdrop (black × 78%) |
 
 **Semantic color tokens**
@@ -148,7 +148,7 @@ Tokens marked † contain an inline `rgba()` CSS composite value (not a primitiv
 | `color.surface.default` | `#121316` | `Color/Neutral 900` | — |
 | `color.surface.elevated` | `#1a1c20` | `Color/Neutral 850` | — |
 | `color.surface.input` † | `rgba(0,0,0,0.28)` | `Color/Black` | `Opacity/Surface/Input` |
-| `color.surface.glass` † | `rgba(28,28,30,0.74)` | `Color/Neutral 800` | `Opacity/Surface/Glass` |
+| `color.surface.glass` † *(v1.13.0: 0.72)* | `rgba(28,28,30,0.72)` | `Color/Neutral 800` | `Opacity/Surface/Glass` |
 | `color.surface.badge` † *(v1.8.0)* | `rgba(0,0,0,0.22)` | `Color/Black` | `Opacity/Surface/Badge` |
 | `color.surface.feedback-neutral` † *(v1.8.0)* | `rgba(255,255,255,0.05)` | `Color/White` | `Opacity/Surface/FeedbackNeutral` |
 | `color.border.default` | `#2b2d32` | `Color/Neutral 700` | — |
@@ -174,12 +174,12 @@ Tokens marked † contain an inline `rgba()` CSS composite value (not a primitiv
 
 **Semantic opacity tokens (`opacity.*`)**
 
-CSS variables generated for these (e.g., `--opacity-surface-glass: 0.74`). Primarily used to document the design system; in CSS, prefer inline rgba() composites. Element-level `opacity:` is acceptable only for disabled state and pseudo-element overlays.
+CSS variables generated for these (e.g., `--opacity-surface-glass: 0.72`). Primarily used to document the design system; in CSS, prefer `var(--color-surface-glass)` (which outputs the full rgba composite) over inline rgba literals for the canonical glass surface. Element-level `opacity:` is acceptable only for disabled state and pseudo-element overlays.
 
 | Token | Value | Use |
 |-------|-------|-----|
 | `opacity.overlay.default` | `0.78` | Modal backdrop opacity |
-| `opacity.surface.glass` | `0.74` | Glass surface fill opacity |
+| `opacity.surface.glass` *(v1.13.0: 0.72)* | `0.72` | Glass surface fill opacity |
 | `opacity.surface.input` | `0.28` | Input surface fill opacity |
 | `opacity.border.glass` | `0.08` | Glass border stroke opacity |
 | `opacity.border.control` | `0.10` | Control border stroke opacity |
@@ -191,7 +191,7 @@ CSS variables generated for these (e.g., `--opacity-surface-glass: 0.74`). Prima
 | `opacity.countdown.border` | `0.28` | Countdown/completed border opacity |
 | `opacity.disabled.default` *(updated v1.8.0)* | `0.65` | Disabled state (element-level opacity is acceptable here) |
 | `opacity.header-image.overlay` | `0.52` | Trip bg image dim (pseudo-element, element opacity acceptable) |
-| `opacity.interactive.hover` | `0.10` | Hover overlay fill opacity |
+| `opacity.interactive.hover` *(v1.10.0: 0.08)* | `0.08` | Hover overlay fill opacity |
 
 **Product color tokens** (kind/role — planner-item and member badges)
 
@@ -244,7 +244,7 @@ Ordinal primitives (backward-compatible CSS output) plus semantic aliases added 
 | Token | CSS output | Figma effect style | Use |
 |-------|------------|-------------------|-----|
 | `shadow.sm` / `shadow.surface.card` | `0 10px 28px 0 rgba(0,0,0,0.34)` | `Shadow/Surface/Card` | Component cards |
-| `shadow.md` / `shadow.surface.panel` | `0 12px 34px 0 rgba(0,0,0,0.36)` | `Shadow/Surface/Panel` | Panel surfaces (card-surface, modal-sheet) |
+| `shadow.md` / `shadow.surface.panel` *(v1.13.0)* | `0 18px 50px 0 rgba(0,0,0,0.26)` | `Shadow/Surface/Panel` | Panel surfaces (card-surface, modal-sheet) |
 | `shadow.lg` / `shadow.surface.overlay` | `0 18px 50px 0 rgba(0,0,0,0.28)` | `Shadow/Surface/Overlay` | Ambient / legacy `--shadow` bridge |
 
 ---
@@ -413,13 +413,17 @@ Primitives/
     Neutral 900     #121316
     Neutral 950     #0d0f12
   Opacity/
+    5               0.05   (v1.8.0 — FeedbackMessage neutral bg)
     8               0.08
     10              0.10
     20              0.20
+    22              0.22   (v1.8.0 — Badge bg)
     28              0.28
+    30              0.30   (v1.8.0 — Success border)
     40              0.40
     52              0.52
-    74              0.74
+    65              0.65   (v1.8.0 — Disabled state)
+    72              0.72   (v1.13.0 — Glass surface, was 74)
     78              0.78
   Spacing/
     2xs    (4px)
@@ -465,15 +469,19 @@ Semantic/
     Overlay/Default†
   Opacity/
     Overlay/Default          → Opacity/78
-    Surface/Glass            → Opacity/74
+    Surface/Glass            → Opacity/72   (v1.13.0 — was 74)
     Surface/Input            → Opacity/28
+    Surface/Badge            → Opacity/22   (v1.8.0)
+    Surface/FeedbackNeutral  → Opacity/5    (v1.8.0)
     Border/Glass             → Opacity/8
     Border/Control           → Opacity/10
     Danger/Surface           → Opacity/20
+    Success/Surface          → Opacity/8    (v1.8.0)
+    Success/Border           → Opacity/30   (v1.8.0)
     Countdown/Border         → Opacity/28
-    Disabled/Default         → Opacity/40
+    Disabled/Default         → Opacity/65   (v1.8.0 — was 40)
     HeaderImage/Overlay      → Opacity/52
-    Interactive/Hover        → Opacity/10
+    Interactive/Hover        → Opacity/8    (v1.10.0 — was 10)
   Radius/
     Card    → Radius/lg (20px)
     Input   → Radius/md (14px)
@@ -535,7 +543,7 @@ Component/
 
 | Figma variable (Semantic) | CSS custom property | CSS value | Figma value |
 |---------------------------|---------------------|-----------|-------------|
-| `Semantic/Color/Surface/Glass` | `--color-surface-glass` | `rgba(28,28,30,0.74)` | `Color/Neutral 800` + fill opacity `Opacity/Surface/Glass` |
+| `Semantic/Color/Surface/Glass` | `--color-surface-glass` | `rgba(28,28,30,0.72)` | `Color/Neutral 800` + fill opacity `Opacity/Surface/Glass` |
 | `Semantic/Color/Border/Glass` | `--color-border-glass` | `rgba(255,255,255,0.08)` | `Color/White` + stroke opacity `Opacity/Border/Glass` |
 | `Semantic/Color/Surface/Input` | `--color-surface-input` | `rgba(0,0,0,0.28)` | `Color/Black` + fill opacity `Opacity/Surface/Input` |
 | `Semantic/Color/Overlay/Default` | `--color-overlay-default` | `rgba(0,0,0,0.78)` | `Color/Black` + fill opacity `Opacity/Overlay/Default` |
@@ -543,12 +551,12 @@ Component/
 | `Semantic/Color/Accent/Default` | `--color-accent-default` | `#35b8a8` | `Color/Teal 500` |
 | `Semantic/Color/Countdown/Default` | `--color-countdown-default` | `#0a84ff` | `Color/Blue Vivid` |
 | `Semantic/Color/Countdown/Border` | `--color-countdown-border` | `rgba(10,132,255,0.28)` | `Color/Blue Vivid` + stroke opacity `Opacity/Countdown/Border` |
-| `Semantic/Opacity/Surface/Glass` | `--opacity-surface-glass` | `0.74` | `Opacity/74` |
-| `Semantic/Opacity/Disabled/Default` | `--opacity-disabled-default` | `0.40` | `Opacity/40` |
+| `Semantic/Opacity/Surface/Glass` | `--opacity-surface-glass` | `0.72` | `Opacity/72` |
+| `Semantic/Opacity/Disabled/Default` | `--opacity-disabled-default` | `0.65` | `Opacity/65` |
 | `Semantic/Radius/Card` | `--radius-card` | `20px` | `Radius/lg` |
 | `Semantic/Radius/Pill` | `--radius-pill` | `999px` | `Radius/full` |
 | `Primitives/Spacing/lg` | `--spacing-lg` | `18px` | — |
-| Effect style `Shadow/Surface/Panel` | `--shadow-surface-panel` / `--shadow-md` | `0 12px 34px 0 rgba(0,0,0,0.36)` | Effect style (not a variable) |
+| Effect style `Shadow/Surface/Panel` | `--shadow-surface-panel` / `--shadow-md` | `0 18px 50px 0 rgba(0,0,0,0.26)` | Effect style (not a variable) |
 
 ---
 
@@ -570,15 +578,14 @@ Component/
 | `Docs/Component Classification` | Figma file organization README |
 | `Docs/Design Principles` | Figma file README or cover page |
 
-### Storybook cleanup recommended before Figma work
+### Storybook status (v1.15.0)
 
-**Fix `Components/FeedbackMessage` group placement.**
-FeedbackMessage sits at the top level (`Components/FeedbackMessage`) while the other feedback components are grouped (`Components/Feedback/*`). This is a one-line title change in `FeedbackMessage.stories.tsx` and should be done before Figma component mapping begins.
+**`FeedbackMessage` group placement — resolved.** `FeedbackMessage.stories.tsx` title is `Components/Feedback/FeedbackMessage`. All feedback components are correctly grouped under `Components/Feedback/`.
+
+**`CardSurface` interactive story name — resolved (v1.15.0).** The "Interactive (div with hover)" story was renamed to "Interactive (div — cursor only)" to reflect that `interactive` on a div only adds `cursor: pointer` with no hover visual state. The `WithClassName` story was retitled to clarify it demonstrates the intentional `trip-intel-card` opacity variant (0.68).
 
 **Consider adding a `CardSurface` story that uses countdown blue.**
-The CardSurface story currently uses `trip-intel-card` class styling but the countdown label is a static string. A story showing the countdown label with the correct color would validate the token end-to-end in Storybook.
-
-**No other Storybook changes are required before Figma work begins.**
+A story showing the countdown label color would validate the token end-to-end in Storybook. Not required before Figma work begins.
 
 ---
 
@@ -634,10 +641,16 @@ For Code Connect to work well, the Figma and React systems need to share:
 |-----------|-------------|-------------|----------------------|
 | `Button` | Not yet built | ✅ | Need Figma component first |
 | `IconButton` | Not yet built | ✅ | Need Figma component first |
-| `Badge` | Not yet built | ✅ | Need Figma component first |
 | `CardSurface` | Not yet built | ✅ | Polymorphic `as` prop — will need custom mapping |
-| `ModalSheet` | Not yet built | ✅ | — |
-| Form components | Not yet built | ✅ | — |
+| `ModalSheet` | Not yet built | ✅ | Need Figma component first |
+| `DashboardCard` | Not yet built | ✅ | Need Figma component first |
+| `Badge` | ✅ *(v1.8.0)* | ✅ | Ready for Code Connect |
+| `FeedbackMessage` | ✅ *(v1.8.0)* | ✅ | Ready for Code Connect |
+| `EmptyState` | ✅ *(v1.8.0)* | ✅ | Surface fill opacity hardcoded at 0.72 (Figma API constraint — cannot bind fill opacity to variable) |
+| `ProgressPill` | ✅ *(v1.8.0)* | ✅ | Ready for Code Connect |
+| `StatusButton` | ✅ *(v1.8.0)* | ✅ | Ready for Code Connect |
+| Form components | ✅ *(v1.8.0)* | ✅ | Ready for Code Connect |
+| Navigation (`ScreenHeader`, `PageControls`) | ✅ *(v1.8.0)* | ✅ | Ready for Code Connect |
 
 ### Naming alignment to preserve
 
@@ -679,7 +692,7 @@ Use opaque color primitives. Apply opacity as a **separate `Opacity/*` variable 
 ```
 CardSurface fill:
   Color  → Color/Neutral 800    (opaque #1c1c1e)
-  Opacity → Opacity/Surface/Glass  (0.74)
+  Opacity → Opacity/Surface/Glass  (0.72)
 
 Glass border stroke:
   Color  → Color/White           (opaque #ffffff)
@@ -693,16 +706,16 @@ Never set element-level opacity on a component in Figma to simulate surface tran
 Do **not** use `opacity:` on container components (cards, modals, buttons, inputs). Use composited `rgba()` values directly so text and child elements remain fully opaque.
 
 ```css
-/* Correct — rgba() on the background property */
+/* Correct — token variable outputs the rgba() composite directly */
 .card-surface {
-  background: rgba(28, 28, 30, 0.74); /* Color/Neutral 800 × Opacity/Surface/Glass */
-  border: 1px solid rgba(255, 255, 255, 0.08); /* Color/White × Opacity/Border/Glass */
+  background: var(--color-surface-glass); /* rgba(28,28,30,0.72) — Color/Neutral 800 × Opacity/Surface/Glass */
+  border: 1px solid var(--color-border-glass); /* rgba(255,255,255,0.08) — Color/White × Opacity/Border/Glass */
 }
 
 /* Wrong — element opacity dims child text */
 .card-surface {
-  background: var(--color-surface-glass); /* Now outputs #1c1c1e — use rgba() instead */
-  opacity: 0.74; /* ❌ affects all children */
+  background: #1c1c1e; /* Color/Neutral 800 opaque */
+  opacity: 0.72; /* ❌ affects all children — text becomes translucent */
 }
 ```
 
@@ -710,21 +723,23 @@ Do **not** use `opacity:` on container components (cards, modals, buttons, input
 
 | Case | Reason |
 |------|--------|
-| Disabled state (`opacity: 0.4` on whole component) | Disabled components uniformly dim all visual properties; no live text interaction expected |
+| Disabled state (`opacity: 0.65` on whole component — `--opacity-disabled-default`) | Disabled components uniformly dim all visual properties; no live text interaction expected |
 | `::before` / `::after` pseudo-element overlays | Pseudo-elements have no children |
 | `.modal-backdrop` (separate element, no text children) | rgba() is preferred but element opacity is also safe |
 
-### CSS variable output note
+### CSS variable output note *(updated v1.13.0)*
 
-The CSS token `--color-surface-glass` now outputs `#1c1c1e` (opaque), not `rgba(28,28,30,0.74)`. **Do not use `var(--color-surface-glass)` as a background for glass surfaces in CSS.** Use the inline `rgba()` value with a documentation comment instead. The token exists in Figma for variable binding; in CSS it serves as the primitive base reference.
+The CSS token `--color-surface-glass` outputs `rgba(28,28,30,0.72)` — the fully composited value. **Use `var(--color-surface-glass)` directly in CSS for standard glass surfaces.** The §7 `:where()` canonical blocks use it this way. Do not repeat the raw `rgba()` literal for the canonical value — use the token.
 
-CSS opacity tokens (`--opacity-surface-glass: 0.74`, etc.) are generated and available as documentation references and for non-container opacity contexts (pseudo-elements, standalone overlays).
+Intentional surface variants that deviate from the canonical value (`trip-intel-card` 0.68, `planner-item-card` 0.76) continue to use inline `rgba()` with a documentation comment because no semantic token exists for those specific alpha values yet.
+
+CSS opacity tokens (`--opacity-surface-glass: 0.72`, etc.) are generated and available for Figma variable binding references and non-container opacity contexts (pseudo-elements, standalone overlays).
 
 ### Summary table
 
 | Token | Figma expression | CSS expression |
 |-------|-----------------|----------------|
-| `color.surface.glass` | `Color/Neutral 800` + `Opacity/Surface/Glass` fill | `rgba(28, 28, 30, 0.74)` |
+| `color.surface.glass` | `Color/Neutral 800` + `Opacity/Surface/Glass` fill | `rgba(28, 28, 30, 0.72)` / `var(--color-surface-glass)` |
 | `color.surface.input` | `Color/Black` + `Opacity/Surface/Input` fill | `rgba(0, 0, 0, 0.28)` |
 | `color.border.glass` | `Color/White` + `Opacity/Border/Glass` stroke | `rgba(255, 255, 255, 0.08)` |
 | `color.border.control` | `Color/White` + `Opacity/Border/Control` stroke | `rgba(255, 255, 255, 0.10)` |

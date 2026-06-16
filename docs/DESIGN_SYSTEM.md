@@ -1,6 +1,6 @@
 # Maycation Design System
 
-Last updated: v1.13.0
+Last updated: v1.15.0
 
 ## Component Classification
 
@@ -27,11 +27,11 @@ Domain-agnostic components with no imports from `lib/`. All are Storybook-docume
 |-----------|------|----------|----------------|
 | `Badge` | `Badge.tsx` | `badge.css` | `Components/Badge` |
 | `Button` | `Button.tsx` | `App.css §10` | `Components/Button` |
-| `CardSurface` | `CardSurface.tsx` | `App.css §5–7` | `Components/CardSurface` |
-| `FeedbackMessage` | `FeedbackMessage.tsx` | `App.css §5` | `Components/FeedbackMessage` |
+| `CardSurface` | `CardSurface.tsx` | `App.css §1, §7` | `Components/CardSurface` |
+| `FeedbackMessage` | `FeedbackMessage.tsx` | `App.css §1, §5` | `Components/Feedback/FeedbackMessage` |
 | `Icon` | `Icon.tsx` | (inline SVG) | `Components/Icon` |
 | `IconButton` | `IconButton.tsx` | `App.css §11` | `Components/IconButton` |
-| `ModalSheet` | `ModalSheet.tsx` | `App.css §7–8` | `Components/ModalSheet` |
+| `ModalSheet` | `ModalSheet.tsx` | `App.css §1, §7` | `Components/ModalSheet` |
 
 ### Forms
 
@@ -55,7 +55,7 @@ Domain-agnostic components with no imports from `lib/`. All are Storybook-docume
 
 | Component | File | CSS home | Storybook path |
 |-----------|------|----------|----------------|
-| `EmptyState` | `EmptyState.tsx` | `App.css` | `Components/Feedback/EmptyState` |
+| `EmptyState` | `EmptyState.tsx` | `App.css §1, §6, §7` | `Components/Feedback/EmptyState` |
 | `ProgressPill` | `ProgressPill.tsx` | (via Badge) | `Components/Feedback/ProgressPill` |
 | `StatusButton` | `StatusButton.tsx` | (via IconButton) | `Components/Feedback/StatusButton` |
 
@@ -67,7 +67,7 @@ Opinionated compositions of Components. Domain-agnostic but encode Maycation lay
 
 | Component | File | CSS home | Storybook path | Composes |
 |-----------|------|----------|----------------|----------|
-| `DashboardCard` | `DashboardCard.tsx` | `App.css §3` | `Patterns/DashboardCard` | `CardSurface` |
+| `DashboardCard` | `DashboardCard.tsx` | `App.css §1, §3, §6, §7` | `Patterns/DashboardCard` | `CardSurface` |
 | `DetailHeader` | `DetailHeader.tsx` | `App.css §4, §8` | `Patterns/DetailHeader` | `PageControls` + `ScreenHeader` |
 
 ---
@@ -154,7 +154,7 @@ Maycation models opacity as a design-system primitive, but Figma and CSS express
 *In Figma:*
 - Use opaque color primitives (`Color/Neutral 800`, `Color/White`, `Color/Black`).
 - Apply opacity as a separate `Opacity/*` variable at the paint/fill/stroke layer (not element-level opacity).
-- Example: `CardSurface` fill = `Color/Neutral 800` + fill opacity = `Opacity/Surface/Glass` (0.74).
+- Example: `CardSurface` fill = `Color/Neutral 800` + fill opacity = `Opacity/Surface/Glass` (0.72).
 
 *In CSS:*
 - Do **not** use `opacity:` on container components (cards, modals, buttons, inputs) to simulate surface transparency — it affects all children and dims text.
@@ -177,7 +177,7 @@ Maycation models opacity as a design-system primitive, but Figma and CSS express
 | 2 | Auth screen | `.auth-panel`, login form layout |
 | 3 | Trip dashboard screen | `.trip-dashboard`, `.dashboard-card`, `.trip-destination-grid` |
 | 4 | Day detail screen | `.day-detail-screen`, `.planner-item-card` |
-| 5 | Visual system v1 | Original `:where()` glass-surface definitions |
+| 5 | Visual system v1 | FeedbackMessage surface overrides, mode-toggle (glass-surface blocks removed v1.14.0) |
 | 6 | Disney Mayhem production-aligned visual system | Full visual overhaul pass |
 | 7 | Visual system consolidation | Canonical `:where()` blocks using tokens |
 | 8 | Shared authenticated page shell (canonical) | `.page-shell`, `.dashboard-shell` |
@@ -209,7 +209,7 @@ These hardcoded values remain in `App.css` and are candidates for future token m
 
 **Resolved in v1.9.0:** `#d7d7dc` in `.icon-button--complete` — replaced with `var(--color-icon-complete)`. See `docs/TOKEN_DEBT.md`.
 
-Inline `rgba()` values in CSS for glass surfaces are **intentional** per the Opacity Handling Rule. `--color-surface-glass` is itself the rgba composite (`rgba(28,28,30,0.74)`), so `var(--color-surface-glass)` can be used directly where the §7 `:where()` specificity issue is resolved. Each composite rgba in CSS should have a comment in the format:
+Inline `rgba()` values in CSS for **intentional surface variants** are **intentional** per the Opacity Handling Rule. `--color-surface-glass` is itself the rgba composite (`rgba(28,28,30,0.72)`) and is used directly in §7 `:where()` blocks. Intentional variants (`trip-intel-card` 0.68, `planner-item-card` 0.76, `.trip-dashboard .day-tile` contextual shadow) remain as inline `rgba()` with documentation comments. Each composite rgba in CSS should have a comment in the format:
 ```css
 /* Color/[primitive] × Opacity/[semantic] */
 background: rgba(...);
