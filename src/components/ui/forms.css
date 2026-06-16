@@ -27,6 +27,7 @@
   box-sizing: border-box;
   width: 100%;
   min-width: 0;
+  min-inline-size: 0;
   min-height: 46px;
   padding: 10px var(--spacing-sm);
   border: 1px solid var(--color-border-control);
@@ -55,6 +56,15 @@ select.form-control {
   background-repeat: no-repeat;
   background-position: right var(--spacing-sm) center;
   padding-right: calc(var(--spacing-sm) + 24px);
+}
+
+/* ─── Native date/time: strip UA chrome, keep logical-size contained ────── */
+
+.form-control[type="date"],
+.form-control[type="time"],
+.form-control[type="datetime-local"] {
+  appearance: none;
+  -webkit-appearance: none;
 }
 
 /* ─── Textarea variant ───────────────────────────────────────────────────── */
