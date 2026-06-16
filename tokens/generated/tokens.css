@@ -55,7 +55,7 @@
   --opacity-countdown-border: 0.28; /** Opacity component for Color/Countdown/Border (Blue Vivid × 28%). Figma: bind stroke opacity. CSS: use rgba(10,132,255,0.28) directly. */
   --opacity-disabled-default: 0.65; /** Opacity for disabled component state. Applied as element-level opacity on the full component — disabled state dims all visual properties uniformly. Value matches current rendered CSS (0.65). */
   --opacity-header-image-overlay: 0.52; /** Opacity for trip header background image dim overlay. Applied via ::before/::after pseudo-element, not on the container, so child elements remain fully opaque. */
-  --opacity-interactive-hover: 0.1; /** Opacity for interactive hover overlay fills. Applied as an additional paint layer on the component fill stack, not as element-level opacity. */
+  --opacity-interactive-hover: 0.08; /** Opacity for interactive hover overlay fills (Button, IconButton). Applied as an additional paint layer on the component fill stack, not as element-level opacity. Value matches current rendered CSS: rgba(255,255,255,0.08) on hover background. */
   --radius-sm: 8px; /** Small surface radius; account-strip */
   --radius-md: 14px; /** Input fields and feedback messages */
   --radius-lg: 20px; /** Dominant radius for all card and panel surfaces; card-surface, dashboard-card, trip-card, day-tile, planner-item-card, modal-sheet */

@@ -985,15 +985,6 @@ button.dashboard-card {
 .day-detail-screen .planner-item-card strong {
   font-size: 1.05rem;
 }
-.icon-button--primary {
-  width: 44px;
-  min-width: 44px;
-  height: 44px;
-  min-height: 44px;
-  background: var(--accent);
-}
-
-
 @media (max-width: 720px) {
   .dashboard-panel,
   .auth-panel {
@@ -1089,7 +1080,7 @@ button.dashboard-card {
 .screen-header h1 {
   margin: 0;
   color: var(--text-h);
-  font-size: clamp(1.8rem, 6vw, 2.55rem);
+  font-size: var(--typography-title-font-size);
   font-weight: 900;
   letter-spacing: 0;
   line-height: 0.98;

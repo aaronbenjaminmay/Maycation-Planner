@@ -88,23 +88,27 @@ Two off-scale opacity values had no semantic aliases. Chose to tokenize at actua
 
 ---
 
-## Hardcoded Color Values (Remaining)
+## [RESOLVED v1.9.0] Hardcoded Color in icon-button--complete
 
-| Location | Property | Hardcoded value | Status |
-|---|---|---|---|
-| `App.css` `.icon-button--complete` | `color` | `#d7d7dc` | Open — needs `Color/IconButton/Complete` semantic token (no equivalent exists yet) |
+`App.css .icon-button--complete` previously used `color: #d7d7dc` (hardcoded).
+
+**Fix applied in v1.9.0:**
+- Added `color.primitive.neutral-250` primitive (`#d7d7dc`) to `color.tokens.json`
+- Added `color.icon.complete` semantic token aliasing neutral-250
+- Rebuilt token pipeline — `--color-icon-complete: #d7d7dc` emitted in `tokens/generated/tokens.css`
+- `App.css .icon-button--complete` updated: `color: var(--color-icon-complete)`
+
+All 14 `rgba(255,255,255,0.08)` and one `rgba(255,255,255,0.07)` border instances were also replaced with `var(--color-border-glass)` in the same release.
 
 ---
 
-## Navigation: Missing Fluid Type Token
+## [RESOLVED v1.10.0] Fluid Type Token
 
-ScreenHeader `h1` uses `font-size: clamp(1.8rem, 6vw, 2.55rem)` — a fluid/responsive size that has no equivalent in the token system. `Typography/Title` (28px Black) was used as the closest static match.
+`--typography-title-font-size: clamp(1.8rem, 6vw, 2.55rem)` now exists in the token pipeline. The token was already present in `tokens/generated/tokens.css` at the time of the v1.10.0 audit.
 
-| CSS property | Current value | Used in Figma | Needed token |
-|---|---|---|---|
-| `.screen-header h1` `font-size` | `clamp(1.8rem, 6vw, 2.55rem)` | `Typography/Title` (28px) | `Typography/Display` — fluid, viewport-relative |
-
-**Impact:** Figma representation is static (28px); actual rendered size varies from ~29px to ~41px depending on viewport width. This is a visual parity gap on larger screens.
+**Fix applied in v1.10.0:**
+- `App.css §7 .screen-header h1` updated: `font-size: var(--typography-title-font-size)` (no visual change — same clamp value)
+- Figma parity gap (static 28px vs. fluid render) remains a CSS-only effect; cannot be represented as a variable binding. This is an accepted parity limitation documented in Navigation: CSS-Only Effects below.
 
 ---
 

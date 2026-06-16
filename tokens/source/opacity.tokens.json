@@ -107,8 +107,8 @@
     "interactive": {
       "hover": {
         "$type": "number",
-        "$value": 0.10,
-        "$description": "Opacity for interactive hover overlay fills. Applied as an additional paint layer on the component fill stack, not as element-level opacity."
+        "$value": 0.08,
+        "$description": "Opacity for interactive hover overlay fills (Button, IconButton). Applied as an additional paint layer on the component fill stack, not as element-level opacity. Value matches current rendered CSS: rgba(255,255,255,0.08) on hover background."
       }
     }
   }

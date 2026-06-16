@@ -1,6 +1,6 @@
 # Maycation Design System
 
-Last updated: v1.6.0
+Last updated: v1.10.0
 
 ## Component Classification
 
@@ -28,7 +28,7 @@ Domain-agnostic components with no imports from `lib/`. All are Storybook-docume
 | `Badge` | `Badge.tsx` | `badge.css` | `Components/Badge` |
 | `Button` | `Button.tsx` | `App.css §10` | `Components/Button` |
 | `CardSurface` | `CardSurface.tsx` | `App.css §5–7` | `Components/CardSurface` |
-| `FeedbackMessage` | `FeedbackMessage.tsx` | `forms.css` | `Components/FeedbackMessage` |
+| `FeedbackMessage` | `FeedbackMessage.tsx` | `App.css §5` | `Components/FeedbackMessage` |
 | `Icon` | `Icon.tsx` | (inline SVG) | `Components/Icon` |
 | `IconButton` | `IconButton.tsx` | `App.css §11` | `Components/IconButton` |
 | `ModalSheet` | `ModalSheet.tsx` | `App.css §7–8` | `Components/ModalSheet` |
@@ -202,11 +202,14 @@ These hardcoded values remain in `App.css` and are candidates for future token m
 | `#35b8a8` | Early passes | Old accent color; superseded by `--accent` in newer passes |
 | `#a1a1a6` (SVG only) | `forms.css select.form-control background-image` | URL-encoded SVG stroke in data URI; cannot use CSS variable — browser limitation |
 | `rgba(255, 255, 255, 0.08)` | Early passes (15+ occurrences) | Now superseded by `var(--color-border-glass)` in §7 |
-| `rgba(0, 0, 0, 0.52)` | `.dashboard-shell.has-trip-bg::after` | Trip image overlay; use `var(--opacity-header-image-overlay)` when migrating (pseudo-element, so element opacity is acceptable) |
-| Button/icon-button hover backgrounds | `rgba(255, 255, 255, 0.08–0.14)` | Use as fill overlay layer per Opacity Handling Rule; `var(--opacity-interactive-hover)` available |
-| `#d7d7dc` | `App.css .icon-button--complete` | Needs `Color/IconButton/Complete` semantic token (no equivalent exists yet) |
+| `rgba(0, 0, 0, 0.52)` | `.dashboard-shell.has-trip-bg::after` | Trip image overlay; `var(--opacity-header-image-overlay)` token exists (pseudo-element, element opacity is acceptable) |
+| Button/icon-button border | `rgba(255, 255, 255, 0.12)` | No semantic token yet — see v1.13.0 roadmap |
+| Button/icon-button hover backgrounds | `rgba(255, 255, 255, 0.08)` / `rgba(255,255,255,0.14)` | `var(--opacity-interactive-hover)` token exists at 0.08; direct wiring deferred to v1.13.0 |
+| `#fff` | `.icon-button--primary`, `.icon-button--complete.icon-button--selected` | Primary icon-button text color; see v1.13.0 roadmap (H3) |
 
-Inline `rgba()` values in CSS for glass surfaces (`rgba(28,28,30,0.74)`, `rgba(255,255,255,0.08)`, etc.) are **intentional** per the Opacity Handling Rule — do not replace them with `var(--color-surface-glass)` (which is now opaque) without also applying the rgba composition. Each composite rgba in CSS should have a comment in the format:
+**Resolved in v1.9.0:** `#d7d7dc` in `.icon-button--complete` — replaced with `var(--color-icon-complete)`. See `docs/TOKEN_DEBT.md`.
+
+Inline `rgba()` values in CSS for glass surfaces are **intentional** per the Opacity Handling Rule. `--color-surface-glass` is itself the rgba composite (`rgba(28,28,30,0.74)`), so `var(--color-surface-glass)` can be used directly where the §7 `:where()` specificity issue is resolved. Each composite rgba in CSS should have a comment in the format:
 ```css
 /* Color/[primitive] × Opacity/[semantic] */
 background: rgba(...);
