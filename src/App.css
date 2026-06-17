@@ -1398,10 +1398,12 @@ button.dashboard-card {
 
 }
 
-/* ─── 9. Login screen wordmark and mobile fixes ──────────────────────────────
+/* ─── 9. Login screen wordmark and mobile fixes ─────────────────────────── */
 .auth-wordmark {
   display: block;
   width: 160px;
+  max-width: 100%;
+  height: auto;
   margin: 0 auto;
 }
 
