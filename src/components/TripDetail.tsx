@@ -84,21 +84,37 @@ function getTripPhase(trip: Trip) {
   return 'during'
 }
 
-function getPreTripCountdown(startsOn: string) {
-  const start = parseDateInput(startsOn)
-  const today = getTodayStart()
-
-  if (start <= today) {
-    return null
-  }
-
-  const millisecondsPerDay = 24 * 60 * 60 * 1000
-  const days = Math.ceil((start.getTime() - today.getTime()) / millisecondsPerDay)
-
+function computeCountdownDiff(diffMs: number) {
+  const d = Math.max(0, diffMs)
   return {
-    days,
-    label: days === 1 ? 'Starts tomorrow' : `Starts in ${days} days`,
+    days:      Math.floor(d / 86_400_000),
+    hours:     Math.floor((d % 86_400_000) / 3_600_000),
+    minutes:   Math.floor((d % 3_600_000)  / 60_000),
+    seconds:   Math.floor((d % 60_000)     / 1_000),
+    isStarted: d === 0,
   }
+}
+
+function useLiveCountdown(startsOn: string) {
+  const [remaining, setRemaining] = useState(() => {
+    const target = parseDateInput(startsOn)
+    return computeCountdownDiff(target.getTime() - Date.now())
+  })
+
+  useEffect(() => {
+    const target = parseDateInput(startsOn)
+
+    const id = setInterval(() => {
+      const diff = target.getTime() - Date.now()
+      const next = computeCountdownDiff(diff)
+      setRemaining(next)
+      if (next.isStarted) clearInterval(id)
+    }, 1000)
+
+    return () => clearInterval(id)
+  }, [startsOn])
+
+  return remaining
 }
 
 function sortItemsByPlanOrder(items: PlannerItem[]) {
@@ -244,7 +260,7 @@ export function TripDetail({ trip, onBack, onTripDeleted, onTripUpdated }: TripD
     }) ?? reservationItems[0] ?? null
   const tripDayCount =
     tripDays.length > 0 ? tripDays.length : getTripDayCount(trip.starts_on, trip.ends_on)
-  const countdown = getPreTripCountdown(trip.starts_on)
+  const remaining = useLiveCountdown(trip.starts_on)
 
   const bgStyle = backgroundUrl
     ? ({ '--trip-bg-image': `url(${backgroundUrl})` } as React.CSSProperties)
@@ -349,13 +365,26 @@ export function TripDetail({ trip, onBack, onTripDeleted, onTripUpdated }: TripD
 
         {!isLoadingDays && !error ? (
           <CardSurface className="trip-intel-card">
-            {tripPhase === 'before' && countdown ? (
-              <div className="trip-intel-card__header">
-                <div>
-                  <span>Trip starts in</span>
-                  <strong>
-                    {countdown.days} {countdown.days === 1 ? 'day' : 'days'}
-                  </strong>
+            {tripPhase === 'before' ? (
+              <div className="pretrip-countdown">
+                <span className="pretrip-countdown__eyebrow">Trip starts in</span>
+                <div className="pretrip-countdown__grid">
+                  <div className="pretrip-countdown__unit">
+                    <span className="pretrip-countdown__value">{remaining.days}</span>
+                    <span className="pretrip-countdown__label">Days</span>
+                  </div>
+                  <div className="pretrip-countdown__unit">
+                    <span className="pretrip-countdown__value">{String(remaining.hours).padStart(2, '0')}</span>
+                    <span className="pretrip-countdown__label">Hours</span>
+                  </div>
+                  <div className="pretrip-countdown__unit">
+                    <span className="pretrip-countdown__value">{String(remaining.minutes).padStart(2, '0')}</span>
+                    <span className="pretrip-countdown__label">Minutes</span>
+                  </div>
+                  <div className="pretrip-countdown__unit">
+                    <span className="pretrip-countdown__value">{String(remaining.seconds).padStart(2, '0')}</span>
+                    <span className="pretrip-countdown__label">Seconds</span>
+                  </div>
                 </div>
               </div>
             ) : null}
