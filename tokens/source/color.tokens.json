@@ -194,6 +194,11 @@
         "$value": "rgba(168, 75, 75, 0.20)",
         "$description": "Danger action background fill. CSS composite: color.primitive.red-500 × opacity.primitive.20. Figma: bind fill color to Color/Red 500, fill opacity to Opacity/Danger/Surface."
       },
+      "surface-hover": {
+        "$type": "color",
+        "$value": "rgba(168, 75, 75, 0.30)",
+        "$description": "Danger action hover background fill. CSS composite: color.primitive.red-500 × opacity.primitive.30. Applied on :hover over destructive Button and IconButton. 1.5× multiplier on danger.surface (20% → 30%), consistent with success surface/border ratio. Figma: bind fill color to Color/Red 500, fill opacity to Opacity/Danger/SurfaceHover."
+      },
       "border": {
         "$type": "color",
         "$value": "{color.primitive.red-500}",
@@ -253,6 +258,11 @@
         "$type": "color",
         "$value": "{color.primitive.neutral-250}",
         "$description": "Icon color for the IconButton --complete variant in its unselected (resting) state. Distinct from text.primary (#f5f7fb) and text.secondary (#b6bfcc) — the intermediate silver signals 'checkable but not yet checked'. Do not use text.* tokens for this; icon state color is a separate semantic concern."
+      },
+      "on-accent": {
+        "$type": "color",
+        "$value": "{color.primitive.white}",
+        "$description": "Icon fill color for icon buttons rendered on accent-colored surfaces (IconButton --primary, IconButton --complete selected state). White icon on teal — intentionally distinct from color.accent.text (#061312) which is for text characters. Do not use color.accent.text for icon fills on accent backgrounds."
       }
     },
 

@@ -20,6 +20,7 @@
   --color-accent-default: #35b8a8; /** Brand accent; used on eyebrows, interactive focus rings, hover borders */
   --color-accent-text: #061312; /** Text color for use on accent-colored backgrounds */
   --color-danger-surface: rgba(168, 75, 75, 0.2); /** Danger action background fill. CSS composite: color.primitive.red-500 × opacity.primitive.20. Figma: bind fill color to Color/Red 500, fill opacity to Opacity/Danger/Surface. */
+  --color-danger-surface-hover: rgba(168, 75, 75, 0.3); /** Danger action hover background fill. CSS composite: color.primitive.red-500 × opacity.primitive.30. Applied on :hover over destructive Button and IconButton. 1.5× multiplier on danger.surface (20% → 30%), consistent with success surface/border ratio. Figma: bind fill color to Color/Red 500, fill opacity to Opacity/Danger/SurfaceHover. */
   --color-danger-border: #a84b4b; /** Danger action border */
   --color-danger-text: #ffd7d7; /** Danger state text; readable on dark surfaces */
   --color-success-surface: rgba(53, 184, 168, 0.08); /** Success state background fill. CSS composite: color.primitive.teal-500 × opacity.primitive.8. Do not use element-level opacity — use rgba() directly so child text remains fully opaque. Figma: bind fill color to Color/Teal 500, fill opacity to Opacity/Success/Surface. */
@@ -29,6 +30,7 @@
   --color-warning-border: #f2a93b; /** Warning UI state border. Semantic alias for Amber 500. Used by Badge --warning and ProgressPill --attention tones. Do not use color.kind.reservation for component UI states — kind tokens carry product-domain meaning. */
   --color-secondary-border: #9b8cff; /** Secondary UI state border. Semantic alias for Purple 500. Used by Badge --secondary tone. Do not use color.role.viewer for component UI states — role tokens carry product-domain meaning. */
   --color-icon-complete: #d7d7dc; /** Icon color for the IconButton --complete variant in its unselected (resting) state. Distinct from text.primary (#f5f7fb) and text.secondary (#b6bfcc) — the intermediate silver signals 'checkable but not yet checked'. Do not use text.* tokens for this; icon state color is a separate semantic concern. */
+  --color-icon-on-accent: #ffffff; /** Icon fill color for icon buttons rendered on accent-colored surfaces (IconButton --primary, IconButton --complete selected state). White icon on teal — intentionally distinct from color.accent.text (#061312) which is for text characters. Do not use color.accent.text for icon fills on accent backgrounds. */
   --color-kind-activity: #35b8a8; /** Activity planner item kind badge border; shares the brand accent color */
   --color-kind-travel: #3483fa; /** Travel planner item kind badge border */
   --color-kind-reservation: #f2a93b; /** Reservation planner item kind badge border */
@@ -50,6 +52,7 @@
   --opacity-border-glass: 0.08; /** Opacity component for Color/Border/Glass (White × 8%). Figma: bind stroke opacity. CSS: use rgba(255,255,255,0.08) directly. */
   --opacity-border-control: 0.1; /** Opacity component for Color/Border/Control (White × 10%). Figma: bind stroke opacity. CSS: use rgba(255,255,255,0.10) directly. */
   --opacity-danger-surface: 0.2; /** Opacity component for Color/Danger/Surface (Red 500 × 20%). Figma: bind fill opacity. CSS: use rgba(168,75,75,0.20) directly. */
+  --opacity-danger-surface-hover: 0.3; /** Opacity component for Color/Danger/SurfaceHover (Red 500 × 30%). Figma: bind fill opacity on hover paint. CSS: use rgba(168,75,75,0.30) directly. */
   --opacity-success-surface: 0.08; /** Opacity component for Color/Success/Surface (Teal 500 × 8%). Figma: bind fill opacity. CSS: use rgba(53,184,168,0.08) directly. */
   --opacity-success-border: 0.3; /** Opacity component for Color/Success/Border (Teal 500 × 30%). Figma: bind stroke opacity. CSS: use rgba(53,184,168,0.30) directly. */
   --opacity-countdown-border: 0.28; /** Opacity component for Color/Countdown/Border (Blue Vivid × 28%). Figma: bind stroke opacity. CSS: use rgba(10,132,255,0.28) directly. */

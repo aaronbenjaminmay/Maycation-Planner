@@ -3,7 +3,7 @@ import { Badge } from '../components/ui/Badge'
 import type { BadgeTone } from '../components/ui/Badge'
 
 const meta = {
-  title: 'Components/Badge',
+  title: 'Components/Feedback/Badge',
   component: Badge,
   parameters: { layout: 'centered' },
   argTypes: {

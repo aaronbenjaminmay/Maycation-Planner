@@ -1548,13 +1548,13 @@ button.dashboard-card {
 .button--destructive {
   color: var(--color-danger-text);
   border-color: var(--color-danger-border);
-  background: rgba(255, 69, 58, 0.08);
+  background: var(--color-danger-surface);
 }
 
 .button--destructive:hover:not(:disabled) {
   color: var(--color-danger-text);
   border-color: var(--color-danger-text);
-  background: rgba(255, 69, 58, 0.14);
+  background: var(--color-danger-surface-hover);
 }
 
 /* ─── 11. IconButton component styles ──────────────────────────────────── */
@@ -1612,13 +1612,13 @@ button.dashboard-card {
   height: 44px;
   min-height: 44px;
   max-height: 44px;
-  color: #fff;
+  color: var(--color-icon-on-accent);
   border-color: var(--color-accent-default);
   background: var(--color-accent-default);
 }
 
 .icon-button--primary:hover:not(:disabled) {
-  color: #fff;
+  color: var(--color-icon-on-accent);
   border-color: var(--color-accent-default);
   background: color-mix(in srgb, var(--color-accent-default) 86%, white 14%);
 }
@@ -1626,13 +1626,13 @@ button.dashboard-card {
 .icon-button--destructive {
   color: var(--color-danger-text);
   border-color: var(--color-danger-border);
-  background: rgba(255, 69, 58, 0.08);
+  background: var(--color-danger-surface);
 }
 
 .icon-button--destructive:hover:not(:disabled) {
   color: var(--color-danger-text);
   border-color: var(--color-danger-text);
-  background: rgba(255, 69, 58, 0.14);
+  background: var(--color-danger-surface-hover);
 }
 
 .icon-button--complete {
@@ -1640,13 +1640,13 @@ button.dashboard-card {
 }
 
 .icon-button--complete.icon-button--selected {
-  color: #fff;
+  color: var(--color-icon-on-accent);
   border-color: var(--color-accent-default);
   background: var(--color-accent-default);
 }
 
 .icon-button--complete.icon-button--selected:hover:not(:disabled) {
-  color: #fff;
+  color: var(--color-icon-on-accent);
   border-color: var(--color-accent-default);
   background: var(--color-accent-default);
 }

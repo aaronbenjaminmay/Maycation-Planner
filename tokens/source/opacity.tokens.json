@@ -64,6 +64,11 @@
         "$type": "number",
         "$value": 0.20,
         "$description": "Opacity component for Color/Danger/Surface (Red 500 × 20%). Figma: bind fill opacity. CSS: use rgba(168,75,75,0.20) directly."
+      },
+      "surface-hover": {
+        "$type": "number",
+        "$value": 0.30,
+        "$description": "Opacity component for Color/Danger/SurfaceHover (Red 500 × 30%). Figma: bind fill opacity on hover paint. CSS: use rgba(168,75,75,0.30) directly."
       }
     },
 
