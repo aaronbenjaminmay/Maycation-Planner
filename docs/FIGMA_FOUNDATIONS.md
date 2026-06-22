@@ -1,6 +1,6 @@
 # Maycation Figma Foundations
 
-Last updated: v1.15.0
+Last updated: v1.20.0
 
 This document defines the token architecture, variable collection structure, naming conventions, and implementation path for Maycation's Figma design system. It is the source of truth for how code tokens map to Figma Variables, Tokens Studio, and future Code Connect work.
 
@@ -637,20 +637,23 @@ For Code Connect to work well, the Figma and React systems need to share:
 
 ### Current readiness
 
-| Component | Figma ready | React ready | Code Connect blockers |
-|-----------|-------------|-------------|----------------------|
-| `Button` | Not yet built | ✅ | Need Figma component first |
-| `IconButton` | Not yet built | ✅ | Need Figma component first |
-| `CardSurface` | Not yet built | ✅ | Polymorphic `as` prop — will need custom mapping |
-| `ModalSheet` | Not yet built | ✅ | Need Figma component first |
-| `DashboardCard` | Not yet built | ✅ | Need Figma component first |
-| `Badge` | ✅ *(v1.8.0)* | ✅ | Ready for Code Connect |
-| `FeedbackMessage` | ✅ *(v1.8.0)* | ✅ | Ready for Code Connect |
-| `EmptyState` | ✅ *(v1.8.0)* | ✅ | Surface fill opacity hardcoded at 0.72 (Figma API constraint — cannot bind fill opacity to variable) |
-| `ProgressPill` | ✅ *(v1.8.0)* | ✅ | Ready for Code Connect |
-| `StatusButton` | ✅ *(v1.8.0)* | ✅ | Ready for Code Connect |
-| Form components | ✅ *(v1.8.0)* | ✅ | Ready for Code Connect |
-| Navigation (`ScreenHeader`, `PageControls`) | ✅ *(v1.8.0)* | ✅ | Ready for Code Connect |
+| Component | Figma | React | Code Connect |
+|-----------|-------|-------|-------------|
+| `Button` | ✅ | ✅ | ✅ |
+| `IconButton` | ✅ | ✅ | ✅ |
+| `CardSurface` | ✅ | ✅ | ✅ — `as` prop not mapped; `Variant=Interactive` maps to `interactive` boolean only |
+| `ModalSheet` | ✅ | ✅ | ✅ |
+| `DashboardCard` | ✅ `04 Patterns` — component set `208:16` | ✅ | ❌ not yet wired |
+| `DetailHeader` | ✅ `04 Patterns` — component set `236:81`; PageControls (`position: fixed`) + ScreenHeader (in-flow); 3 variants (Default / WithAction / Full) | ✅ | ❌ not yet wired |
+| `DayTile` | ❌ pending — T3→T2 promotion candidate; needs Storybook stories before Figma pattern | ✅ | ❌ pending |
+| `Badge` | ✅ *(v1.8.0)* | ✅ | ✅ *(v1.8.0)* |
+| `FeedbackMessage` | ✅ *(v1.8.0)* | ✅ | ✅ *(v1.8.0)* |
+| `EmptyState` | ✅ *(v1.8.0)* | ✅ | ❌ not yet wired (Figma node 69:79; fill opacity Figma API constraint documented) |
+| `ProgressPill` | ✅ *(v1.8.0)* | ✅ | ✅ *(v1.8.0)* |
+| `StatusButton` | ✅ *(v1.8.0)* | ✅ | ❌ not yet wired (Figma node 76:93) |
+| Form controls (`TextInput`, `TextArea`, `SelectInput`, `FormRow`) | ✅ *(v1.8.0)* | ✅ | ✅ |
+| Form layout (`FormGrid`, `FormActions`) | ✅ *(v1.8.0)* | ✅ | ❌ not yet wired (Figma nodes 86:54, 92:65) |
+| Navigation (`ScreenHeader`, `PageControls`) | ✅ *(v1.8.0)* | ✅ | ❌ not yet wired (Figma nodes 111:115, 111:158) |
 
 ### Naming alignment to preserve
 

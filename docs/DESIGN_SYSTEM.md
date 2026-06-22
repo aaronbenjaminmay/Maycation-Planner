@@ -65,10 +65,24 @@ Domain-agnostic components with no imports from `lib/`. All are Storybook-docume
 
 Opinionated compositions of Components. Domain-agnostic but encode Maycation layout conventions.
 
-| Component | File | CSS home | Storybook path | Composes |
-|-----------|------|----------|----------------|----------|
-| `DashboardCard` | `DashboardCard.tsx` | `App.css §1, §3, §6, §7` | `Patterns/DashboardCard` | `CardSurface` |
-| `DetailHeader` | `DetailHeader.tsx` | `App.css §4, §8` | `Patterns/DetailHeader` | `PageControls` + `ScreenHeader` |
+| Component | File | CSS home | Storybook path | Composes | Figma |
+|-----------|------|----------|----------------|----------|-------|
+| `DashboardCard` | `DashboardCard.tsx` | `App.css §1, §3, §6, §7` | `Patterns/DashboardCard` | `CardSurface` | ✅ `04 Patterns` · Code Connect not wired |
+| `DetailHeader` | `DetailHeader.tsx` | `App.css §4, §8` | `Patterns/DetailHeader` | `PageControls` (fixed overlay) + `ScreenHeader` (in-flow) | ✅ `04 Patterns` · Code Connect not wired |
+
+### DetailHeader composition note
+
+`DetailHeader` has two structurally independent layers:
+
+**PageControls** — `position: fixed`, rendered at `top: env(safe-area-inset-top) + var(--spacing-md)`, spanning the full viewport width. The inner pill is `max-width: 900px`, centered. It is not part of the `detail-header` document flow — the `gap` property on `.detail-header` has no effect on PageControls.
+
+**ScreenHeader (in-flow)** — the only in-flow child of `header.detail-header`. Contains eyebrow, h1, and optional meta block. The `border-bottom` on `.detail-header` acts as the section divider and appears under the ScreenHeader content.
+
+**Screen padding bridges the two layers.** `.dashboard-shell` applies `padding-top: calc(env(safe-area-inset-top) + var(--spacing-md) + var(--spacing-xs) * 2 + 40px + var(--spacing-md))` (~88px) to push the in-flow content below the fixed pill. DetailHeader itself does not control this gap.
+
+**`action` prop routes to the pill, not to ScreenHeader.** The `action?: ReactNode` is passed to `PageControls trailing` — it appears in the top pill alongside the back button. `ScreenHeader.actions` is never used by DetailHeader.
+
+**TripSettings uses `PageControls` directly** without DetailHeader — no ScreenHeader, no divider. PageControls is independently composable.
 
 ---
 
@@ -78,7 +92,7 @@ Components that carry Maycation domain knowledge. Not in Storybook.
 
 | Component | File | Notes |
 |-----------|------|-------|
-| `DayTile` | `DayTile.tsx` | Icon-to-day-type mapping lives in `TripDetail.tsx` |
+| `DayTile` | `DayTile.tsx` | Icon-to-day-type mapping lives in `TripDetail.tsx`. **T3→T2 promotion candidate** — needs Storybook stories before Figma pattern build. |
 
 Product screens and sub-components (`TripCard`, `ReservationCard`) live in `src/components/` and are not exported from `ui/index.ts`.
 
