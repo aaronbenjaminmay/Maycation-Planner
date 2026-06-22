@@ -12,7 +12,7 @@ figma.connect(
     },
     example: ({ interactive }) => (
       <CardSurface interactive={interactive}>
-        {/* card content */}
+        <p>Card content</p>
       </CardSurface>
     ),
   }

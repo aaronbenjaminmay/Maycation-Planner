@@ -7,7 +7,7 @@ figma.connect(
   {
     example: () => (
       <FormRow label="Label">
-        {/* form control */}
+        <input className="form-control" type="text" />
       </FormRow>
     ),
   }

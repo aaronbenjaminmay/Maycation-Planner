@@ -18,7 +18,7 @@ figma.connect(
         ariaLabel="Modal"
         onClose={() => {}}
       >
-        {/* modal content */}
+        <p>Modal body content</p>
       </ModalSheet>
     ),
   }

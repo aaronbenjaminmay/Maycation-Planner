@@ -11,6 +11,7 @@ figma.connect(
       }),
       hint: figma.boolean('Show Hint', {
         true: 'Hint text here',
+        false: undefined,
       }),
     },
     example: ({ disabled, hint }) => (
