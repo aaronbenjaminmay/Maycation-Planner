@@ -1,6 +1,6 @@
 # Maycation Design System
 
-Last updated: v1.15.0
+Last updated: v1.22.0
 
 ## Component Classification
 
@@ -69,6 +69,7 @@ Opinionated compositions of Components. Domain-agnostic but encode Maycation lay
 |-----------|------|----------|----------------|----------|-------|
 | `DashboardCard` | `DashboardCard.tsx` | `App.css §1, §3, §6, §7` | `Patterns/DashboardCard` | `CardSurface` | ✅ `04 Patterns` · Code Connect not wired |
 | `DetailHeader` | `DetailHeader.tsx` | `App.css §4, §8` | `Patterns/DetailHeader` | `PageControls` (fixed overlay) + `ScreenHeader` (in-flow) | ✅ `04 Patterns` · Code Connect not wired |
+| `DayTile` | `DayTile.tsx` | `App.css §3, §6, §7` | `Patterns/DayTile` | `CardSurface` + `Icon` + `ProgressPill` | ⬜ Not started |
 
 ### DetailHeader composition note
 
@@ -89,10 +90,6 @@ Opinionated compositions of Components. Domain-agnostic but encode Maycation lay
 ## Product Component Inventory (T3)
 
 Components that carry Maycation domain knowledge. Not in Storybook.
-
-| Component | File | Notes |
-|-----------|------|-------|
-| `DayTile` | `DayTile.tsx` | Icon-to-day-type mapping lives in `TripDetail.tsx`. **T3→T2 promotion candidate** — needs Storybook stories before Figma pattern build. |
 
 Product screens and sub-components (`TripCard`, `ReservationCard`) live in `src/components/` and are not exported from `ui/index.ts`.
 
@@ -277,6 +274,7 @@ Components/
 Patterns/
   DashboardCard          — Static, subtitle, eyebrow, interactive, meta, gallery
   DetailHeader           — Back+title, eyebrow, trailing action, settings, all slots
+  DayTile                — With date, with subtitle, no progress, complete, icon gallery
 
 Docs/
   Design Principles      — 7 principles from PROJECT_CONSTITUTION.md
@@ -285,7 +283,6 @@ Docs/
 
 ### What's intentionally excluded
 
-- `DayTile` — T3 Product Component; icon-to-day-type mapping is product-specific
 - All product screens (trip flows, dashboard, reservations, planner items)
 - All Supabase-connected components
 

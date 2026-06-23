@@ -89,6 +89,7 @@ export const Page = {
           <ul style={{ marginTop: 8, paddingLeft: 20 }}>
             <li><code>DashboardCard</code> — composes <code>CardSurface</code> with an opinionated content layout</li>
             <li><code>DetailHeader</code> — composes <code>PageControls</code> + <code>ScreenHeader</code> for the canonical detail-screen header</li>
+            <li><code>DayTile</code> — composes <code>CardSurface</code> + <code>Icon</code> + <code>ProgressPill</code>; callers supply the icon name and progress values</li>
           </ul>
         </div>
 
@@ -101,7 +102,6 @@ export const Page = {
           <p className="muted" style={{ marginBottom: 12 }}>Rules: Can import product logic. Not documented in Storybook. Should migrate toward Components if coupling decreases.</p>
           <p><strong>Examples from Maycation:</strong></p>
           <ul style={{ marginTop: 8, paddingLeft: 20 }}>
-            <li><code>DayTile</code> — accepts <code>iconName?: IconName</code>; icon-to-day-type mapping lives in the screen</li>
             <li>Trip cards, reservation cards, planner item cards (in <code>src/components/</code>)</li>
           </ul>
         </div>
