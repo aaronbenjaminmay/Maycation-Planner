@@ -195,8 +195,8 @@
 }
 
 .planner-item-card.completed {
-  border-left-color: #35b8a8;
-  background: color-mix(in srgb, var(--control-bg) 88%, #35b8a8);
+  border-left-color: var(--color-accent-default);
+  background: color-mix(in srgb, var(--control-bg) 88%, var(--color-accent-default));
 }
 
 .planner-item-card__content {
@@ -446,7 +446,7 @@ button.dashboard-card {
   display: block;
   min-height: 100svh;
   padding: 72px 24px 96px;
-  background: #000;
+  background: var(--color-background-default);
 }
 
 .trip-dashboard {
@@ -878,7 +878,7 @@ button.dashboard-card {
 .app-shell,
 .trip-dashboard-screen,
 .day-detail-screen {
-  background: #000;
+  background: var(--color-background-default);
 }
 
 .dashboard-panel,
@@ -1287,7 +1287,7 @@ button.dashboard-card {
   display: block;
   min-height: 100svh;
   padding: calc(env(safe-area-inset-top, 0px) + var(--spacing-md) + var(--spacing-xs) * 2 + 40px + var(--spacing-md)) var(--spacing-xl) 84px;
-  background: #000;
+  background: var(--color-background-default);
 }
 
 .trip-dashboard-screen,
@@ -1509,8 +1509,8 @@ button.dashboard-card {
 }
 
 .button:hover:not(:disabled) {
-  border-color: rgba(255, 255, 255, 0.22);
-  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, var(--opacity-interactive-hover-border));
+  background: rgba(255, 255, 255, var(--opacity-interactive-hover));
 }
 
 .button:active:not(:disabled) {
@@ -1572,7 +1572,7 @@ button.dashboard-card {
   place-items: center;
   padding: 0;
   border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   color: var(--color-text-primary);
   background: rgba(28, 28, 30, 0.84);
   box-shadow: none;
@@ -1587,8 +1587,8 @@ button.dashboard-card {
 }
 
 .icon-button:hover:not(:disabled) {
-  border-color: rgba(255, 255, 255, 0.22);
-  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, var(--opacity-interactive-hover-border));
+  background: rgba(255, 255, 255, var(--opacity-interactive-hover));
 }
 
 .icon-button:active:not(:disabled) {
@@ -1678,7 +1678,7 @@ button.dashboard-card {
   position: fixed;
   inset: 0;
   z-index: 1;
-  background: rgba(0, 0, 0, 0.52);
+  background: rgba(0, 0, 0, var(--opacity-header-image-overlay));
   pointer-events: none;
 }
 

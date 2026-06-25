@@ -1,8 +1,8 @@
 # Maycation Design System — Roadmap
 
-Current release: **v1.25.0 — Token Architecture Refinement**
+Current release: **v1.26.0 — CSS Token Parity**
 
-v1.25.0 resolved all 36 deferred Tranche B token binding decisions from v1.24.0. 3 new primitive variables added (`Color/Black/Opacity 34`, `Color/White/Opacity 14`, `Color/White/Opacity 22`). 28 nodes bound; 5 COMPONENT_SET canvas fills left unchanged by intent (not production-rendered). 5 values corrected before binding (4× `rgba(0,0,0,0.36)` → 0.34, 3× `rgba(255,255,255,0.04)` → 0.05, 1× `rgba(53,184,168,0.12)` → 0.08). All 18 T1 Components and 3 T2 Patterns now have zero unbound production fills, strokes, or shadow colors except those explicitly documented as canvas artifacts.
+v1.26.0 eliminated 11 hardcoded CSS values in App.css that already had generated design tokens. No new tokens, no Figma changes, no visual changes. v1.25.0 resolved all 36 deferred Tranche B token binding decisions from v1.24.0, adding 3 new primitive variables and binding 28 nodes.
 
 ---
 
@@ -133,13 +133,16 @@ Active maintenance work identified during previous audits. Complete this before 
 
 **Why it matters:** These values bypass the token pipeline, cannot be updated via Style Dictionary, and are invisible to Figma. They are tracked in [`TOKEN_DEBT.md`](./TOKEN_DEBT.md) and in `DESIGN_SYSTEM.md` under Known Token Migration Debt.
 
-**Outstanding items:**
-- `Button` and `IconButton` border (`rgba(255,255,255,0.12)`) — no semantic token yet
-- `Button` and `IconButton` hover backgrounds — `var(--opacity-interactive-hover)` exists but is not yet wired
-- `Button` and `IconButton` hover border — `var(--opacity-interactive-hover-border)` now exists (added v1.25.0); `App.css` still uses hardcoded `rgba(255,255,255,0.22)`; CSS migration pending
-- `Button` primary hover overlay — `var(--opacity-interactive-primary-hover)` now exists (added v1.25.0); `App.css` still uses `color-mix()`; CSS migration pending
-- `#fff` in `.icon-button--primary` text color — no semantic token yet
-- `#35b8a8` old accent color persisting in early `App.css` passes — superseded by `var(--accent)` in later passes but not cleaned up
+**Outstanding items (post v1.26.0):**
+- `Button` and `IconButton` base border (`rgba(255,255,255,0.12)`) — no semantic token yet
+- `Button` and `IconButton` base background (`rgba(28,28,30,0.84)`) — no semantic token yet
+- `Button` primary hover overlay — `var(--opacity-interactive-primary-hover)` exists (v1.25.0); `color-mix()` usage is already clean; no simpler token-driven form possible
+- `#fff` text on trip intel card and day tiles — no pure-white text token; `--color-text-primary` is `#f5f7fb` (near-white, not exact)
+- `rgba(53,184,168,0.08)` ambient gradient in `.app-shell` — value matches `--color-success-surface` but semantic context (decorative glow) differs
+- `rgba(0,0,0,0.22)` mode-toggle background — value matches `--color-surface-badge` but semantic context differs
+- `rgba(28,28,30,0.68/0.76/0.62)` card backgrounds — intentional variants; no tokens exist for these off-scale glass opacities
+- `rgba(255,255,255,0.04)` header-img-preview — closest is `--color-surface-feedback-neutral` (0.05), not exact
+- `rgba(0,0,0,0.4)` day-tile shadow — intentional contextual variant; no matching token
 - `tokens-bridge.css` shorthand aliases remain active — new code must use full token names; the bridge itself should eventually be removed
 
 **Expected outcome:** No hardcoded color or opacity values in component CSS. `tokens-bridge.css` removal plan drafted.

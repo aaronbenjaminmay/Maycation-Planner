@@ -148,6 +148,32 @@ The CSS counterparts for the new hover tokens (`--opacity-interactive-hover-bord
 
 ---
 
+## [RESOLVED v1.26.0] CSS Token Parity — App.css Hardcoded Values
+
+11 hardcoded values in `App.css` replaced with generated CSS variables. No new tokens, no Figma changes, no visual changes. CSS-only release.
+
+| Was | Now | Location |
+|---|---|---|
+| `#35b8a8` | `var(--color-accent-default)` | `.planner-item-card.completed` border-left-color (×1) |
+| `#35b8a8` in `color-mix()` | `var(--color-accent-default)` | `.planner-item-card.completed` background (×1, dead code cleanup) |
+| `#000` | `var(--color-background-default)` | `.trip-dashboard-screen`, `.app-shell` group, `.dashboard-shell` (×3) |
+| `rgba(255,255,255,0.22)` | `rgba(255,255,255,var(--opacity-interactive-hover-border))` | `.button:hover`, `.icon-button:hover` border-color (×2) |
+| `rgba(255,255,255,0.08)` | `rgba(255,255,255,var(--opacity-interactive-hover))` | `.button:hover`, `.icon-button:hover` background (×2) |
+| `999px` | `var(--radius-pill)` | `.icon-button` border-radius (×1) |
+| `rgba(0,0,0,0.52)` | `rgba(0,0,0,var(--opacity-header-image-overlay))` | `.dashboard-shell.has-trip-bg::after` background (×1) |
+
+**Intentionally left unchanged** (no matching token or architectural decision required):
+- `rgba(28,28,30,0.68/0.76/0.62/0.84)` — intentional variants; no off-scale glass opacity tokens exist
+- `rgba(255,255,255,0.12)` base border — documented open debt (no token)
+- `rgba(0,0,0,0.22)` mode-toggle — semantic mismatch with `--color-surface-badge`
+- `rgba(53,184,168,0.08)` ambient glow — semantic mismatch with `--color-success-surface`
+- `rgba(255,255,255,0.04)` header preview — no exact token (closest is 0.05)
+- `rgba(0,0,0,0.4)` day-tile shadow — intentional variant; no token
+- `#fff` text — no pure-white text semantic token; `--color-text-primary` is `#f5f7fb`
+- `color-mix()` primary hover — already optimal; opacity token not directly applicable
+
+---
+
 ## Navigation: CSS-Only Effects (Figma Parity Gaps)
 
 Two PageControls properties cannot be represented in Figma variables and are approximated visually.
