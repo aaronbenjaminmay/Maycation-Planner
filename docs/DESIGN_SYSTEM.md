@@ -1,6 +1,6 @@
 # Maycation Design System
 
-Last updated: v1.22.0
+Last updated: v1.24.0
 
 ## Component Classification
 
@@ -69,7 +69,7 @@ Opinionated compositions of Components. Domain-agnostic but encode Maycation lay
 |-----------|------|----------|----------------|----------|-------|
 | `DashboardCard` | `DashboardCard.tsx` | `App.css §1, §3, §6, §7` | `Patterns/DashboardCard` | `CardSurface` | ✅ `04 Patterns` · Code Connect not wired |
 | `DetailHeader` | `DetailHeader.tsx` | `App.css §4, §8` | `Patterns/DetailHeader` | `PageControls` (fixed overlay) + `ScreenHeader` (in-flow) | ✅ `04 Patterns` · Code Connect not wired |
-| `DayTile` | `DayTile.tsx` | `App.css §3, §6, §7` | `Patterns/DayTile` | `CardSurface` + `Icon` + `ProgressPill` | ⬜ Not started |
+| `DayTile` | `DayTile.tsx` | `App.css §3, §6, §7` | `Patterns/DayTile` | `CardSurface` + `Icon` + `ProgressPill` | ✅ `04 Patterns` · Code Connect not wired |
 
 ### DetailHeader composition note
 

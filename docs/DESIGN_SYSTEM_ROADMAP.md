@@ -1,8 +1,8 @@
 # Maycation Design System — Roadmap
 
-Current release: **v1.23.0 — DayTile Figma Parity**
+Current release: **v1.24.0 — Production Token Binding Phase 1**
 
-v1.23.0 promoted `DayTile` from T3 Product to T2 Pattern: Storybook stories added (`Patterns/DayTile`), component classification updated, `DESIGN_SYSTEM.md` updated, and the Figma pattern built in `04 Patterns` with five variants (WithDate, WithSubtitle, NoProgress × Default/Complete/None progress tones), Icon INSTANCE_SWAP property, and full instance composition (no detached layers).
+v1.24.0 completed a full token-binding audit across all 18 T1 Components and 3 T2 Patterns, then bound every instance where an existing semantic variable was a confirmed match. 34 hardcoded values eliminated across DayTile (fills, strokes, text), DashboardCard (fills), FormActions (danger fill), Button (secondary hover fill), CardSurface (shadow), and ModalSheet (shadow). 36 instances deferred to a future architecture release (Tranche B) pending new semantic variables or value-parity investigation.
 
 ---
 
