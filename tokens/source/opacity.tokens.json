@@ -8,6 +8,7 @@
       "22": { "$type": "number", "$value": 0.22, "$description": "Badge surface alpha — black at 22%. Intentionally off-scale; validated against scale neighbors (20/28) and chosen for correct Badge visual weight." },
       "28": { "$type": "number", "$value": 0.28, "$description": "Input surface alpha — black at 28%; countdown border alpha — blue-vivid at 28%" },
       "30": { "$type": "number", "$value": 0.30, "$description": "Success border alpha — teal-500 at 30%. Intentionally off-scale; sits between 28 and 40." },
+      "34": { "$type": "number", "$value": 0.34, "$description": "Card shadow alpha — black at 34%. Color component of --shadow-surface-card and --shadow-sm." },
       "40": { "$type": "number", "$value": 0.40, "$description": "Opacity scale step (reserved)" },
       "52": { "$type": "number", "$value": 0.52, "$description": "Header image overlay alpha" },
       "65": { "$type": "number", "$value": 0.65, "$description": "Disabled component state alpha. Applied as element-level opacity on the full component — disabled state dims all visual properties uniformly." },
@@ -114,6 +115,16 @@
         "$type": "number",
         "$value": 0.08,
         "$description": "Opacity for interactive hover overlay fills (Button, IconButton). Applied as an additional paint layer on the component fill stack, not as element-level opacity. Value matches current rendered CSS: rgba(255,255,255,0.08) on hover background."
+      },
+      "hover-border": {
+        "$type": "number",
+        "$value": 0.22,
+        "$description": "Opacity for interactive control hover border (Button, IconButton). Border brightens from 10% rest state to 22% on hover. CSS: border-color rgba(255,255,255,0.22) on :hover. Figma: bind stroke color to Color/White, stroke opacity to Color/White/Opacity 22."
+      },
+      "primary-hover": {
+        "$type": "number",
+        "$value": 0.14,
+        "$description": "Opacity for primary button hover brightening overlay. White fill at 14% layered over accent fill — visually equivalent to color-mix(in srgb, accent 86%, white 14%). Figma: bind fill color to Color/White, fill opacity to Color/White/Opacity 14."
       }
     }
   }

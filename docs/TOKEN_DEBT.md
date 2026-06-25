@@ -112,6 +112,42 @@ All 14 `rgba(255,255,255,0.08)` and one `rgba(255,255,255,0.07)` border instance
 
 ---
 
+## [RESOLVED v1.25.0] Tranche B — Deferred Figma Token Bindings
+
+Remaining 36 hardcoded production Figma values from the v1.24.0 audit, resolved by deliberate architecture decisions. 28 bound; 5 left unchanged by intent; 3 already in CSS, closed without new tokens.
+
+**New primitives added to `opacity.tokens.json` and Figma Primitives collection:**
+
+| Variable | Value | Figma ID |
+|---|---|---|
+| `Color/Black/Opacity 34` | `rgba(0,0,0,0.34)` | `VariableID:292:3` |
+| `Color/White/Opacity 14` | `rgba(255,255,255,0.14)` | `VariableID:292:4` |
+| `Color/White/Opacity 22` | `rgba(255,255,255,0.22)` | `VariableID:292:5` |
+
+Corresponding opacity semantics added: `--opacity-interactive-hover-border: 0.22`, `--opacity-interactive-primary-hover: 0.14`.
+
+**Bindings applied (28 nodes):**
+
+| Value | Action | Variable | Affected |
+|---|---|---|---|
+| `rgba(0,0,0,0.34)` | Bound | `Color/Black/Opacity 34` | PageControls ×5, DashboardCard ×4, DayTile ×5 |
+| `rgba(0,0,0,0.36)` | Corrected → 0.34, bound | `Color/Black/Opacity 34` | EmptyState ×4 |
+| `#757a8a` | Corrected → `Color/Text/Muted` (#a1a1a6) | `Color/Text/Muted` | CardSurface ×2, ModalSheet ×2 |
+| `rgba(255,255,255,0.04)` | Corrected → 0.05, bound | `Color/White/Opacity 5` | CardSurface ×1, ModalSheet ×2 |
+| `rgba(255,255,255,0.14)` | Bound | `Color/White/Opacity 14` | Button Primary Hover ×1 |
+| `rgba(255,255,255,0.22)` | Bound | `Color/White/Opacity 22` | Button Secondary Hover stroke ×1 |
+| `rgba(53,184,168,0.12)` | Corrected → 0.08, bound | `Color/Success/Surface` | DashboardCard ProgressPill slot ×1 |
+
+**Left unchanged by intent (5 nodes):**
+
+`#171a1d` on COMPONENT_SET frames (Button, IconButton, CardSurface, ModalSheet, Icon). These are canvas background fills visible only in the Figma editor — not rendered in production. Closest token is `Color/Surface/Elevated` (#1a1c20), but the values differ by 3 units per channel and binding would have no production effect.
+
+**CSS migration still open:**
+
+The CSS counterparts for the new hover tokens (`--opacity-interactive-hover-border`, `--opacity-interactive-primary-hover`) are now defined in `tokens/generated/tokens.css`. App.css still uses hardcoded `rgba(255,255,255,0.22)` and `color-mix(...)` for button hover states. CSS migration is tracked under "Remaining Token Migration Debt" in DESIGN_SYSTEM_ROADMAP.md.
+
+---
+
 ## Navigation: CSS-Only Effects (Figma Parity Gaps)
 
 Two PageControls properties cannot be represented in Figma variables and are approximated visually.

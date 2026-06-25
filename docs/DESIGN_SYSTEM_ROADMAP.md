@@ -1,8 +1,8 @@
 # Maycation Design System — Roadmap
 
-Current release: **v1.24.0 — Production Token Binding Phase 1**
+Current release: **v1.25.0 — Token Architecture Refinement**
 
-v1.24.0 completed a full token-binding audit across all 18 T1 Components and 3 T2 Patterns, then bound every instance where an existing semantic variable was a confirmed match. 34 hardcoded values eliminated across DayTile (fills, strokes, text), DashboardCard (fills), FormActions (danger fill), Button (secondary hover fill), CardSurface (shadow), and ModalSheet (shadow). 36 instances deferred to a future architecture release (Tranche B) pending new semantic variables or value-parity investigation.
+v1.25.0 resolved all 36 deferred Tranche B token binding decisions from v1.24.0. 3 new primitive variables added (`Color/Black/Opacity 34`, `Color/White/Opacity 14`, `Color/White/Opacity 22`). 28 nodes bound; 5 COMPONENT_SET canvas fills left unchanged by intent (not production-rendered). 5 values corrected before binding (4× `rgba(0,0,0,0.36)` → 0.34, 3× `rgba(255,255,255,0.04)` → 0.05, 1× `rgba(53,184,168,0.12)` → 0.08). All 18 T1 Components and 3 T2 Patterns now have zero unbound production fills, strokes, or shadow colors except those explicitly documented as canvas artifacts.
 
 ---
 
@@ -136,6 +136,8 @@ Active maintenance work identified during previous audits. Complete this before 
 **Outstanding items:**
 - `Button` and `IconButton` border (`rgba(255,255,255,0.12)`) — no semantic token yet
 - `Button` and `IconButton` hover backgrounds — `var(--opacity-interactive-hover)` exists but is not yet wired
+- `Button` and `IconButton` hover border — `var(--opacity-interactive-hover-border)` now exists (added v1.25.0); `App.css` still uses hardcoded `rgba(255,255,255,0.22)`; CSS migration pending
+- `Button` primary hover overlay — `var(--opacity-interactive-primary-hover)` now exists (added v1.25.0); `App.css` still uses `color-mix()`; CSS migration pending
 - `#fff` in `.icon-button--primary` text color — no semantic token yet
 - `#35b8a8` old accent color persisting in early `App.css` passes — superseded by `var(--accent)` in later passes but not cleaned up
 - `tokens-bridge.css` shorthand aliases remain active — new code must use full token names; the bridge itself should eventually be removed
