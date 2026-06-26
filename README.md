@@ -21,21 +21,22 @@ Complete
 * Planner item completion
 * Mobile-friendly responsive layouts
 
-### Design System Foundation
+### Design System
 
-Complete
+Complete — Phase 1 Foundation
 
-* DTCG token structure
-* Style Dictionary token pipeline
-* Semantic token ownership
-* Generated CSS and TypeScript token outputs
-* Shared component primitives
-* Lucide icon standardization
+* DTCG three-layer token architecture (Primitive → Semantic → Component)
+* Style Dictionary pipeline → `tokens/generated/tokens.css` and `tokens.ts`
+* Full semantic token system: color, opacity, spacing, radius, shadow, typography, icon
+* Figma variable collections: Primitives and Semantic collections established
+* 18 T1 components — code-complete and Storybook-documented; 11 of 18 Code Connect–wired
+* 3 T2 patterns — DashboardCard, DetailHeader, DayTile; Figma complete; Code Connect pending
+* Storybook — 99 stories across Foundation, Components, Patterns, and Docs groups
 * Dark-mode-first interface
 
 ### Current Focus
 
-Disney Mayhem visual parity and UX refinement.
+Design System Phase 2: Code Connect for patterns, remaining T1 Code Connect, component token layer, CSS co-location migration.
 
 ## Design Philosophy
 
@@ -85,42 +86,33 @@ Core principles:
 
 * DashboardCard
 * DetailHeader
-
-### Forms
-
-* TextInput
-* SelectInput
-* TextArea
-* FormRow
-* FormGrid
-* FormActions
+* DayTile
 
 ## Roadmap
 
-### v1.0.0 — Design System Foundation
+### Phase 1 — Design System Foundation
 
-Complete
+Complete (v1.26.0)
 
-* Design token pipeline
-* Shared component primitives
-* CSS consolidation
-* GitHub Pages deployment
-* Design system ownership model
+* Design token pipeline (DTCG, Style Dictionary)
+* 18 T1 components — code, Storybook, and partial Code Connect
+* 3 T2 patterns — code, Storybook, and Figma
+* Figma variable collections (Primitives and Semantic)
+* Visual refinement to Disney Mayhem benchmark
+* Shared card, form, modal, and navigation systems
 
-### v1.1.0 — Disney Mayhem Visual Parity
+### Phase 2 — System Health
 
-In Progress
+Active
 
-* Visual refinement
-* Interaction polish
-* Shared card system
-* Shared typography system
-* Shared modal system
+* Code Connect for T2 Patterns (DashboardCard, DetailHeader, DayTile)
+* Code Connect for remaining T1 Components (EmptyState, StatusButton, FormActions, FormGrid, ScreenHeader, PageControls)
+* Component Token Layer (DTCG Layer 2)
+* CSS Co-location Migration (component CSS out of App.css)
 
 ### Future
 
-* Storybook documentation
-* Figma MCP parity
+* Light mode (token architecture already supports it)
 * Expanded trip planning workflows
 * Additional collaboration features
 
@@ -136,7 +128,7 @@ npm run storybook
 
 Opens at `http://localhost:6006`.
 
-**Coverage (v1.5.0):**
+**Coverage:**
 - `Foundation/` — Color tokens, typography scale, spacing and radius scale
 - `Components/` — All T1 components: buttons, surfaces, forms, navigation, feedback
 - `Patterns/` — T2 compositions: DashboardCard, DetailHeader
@@ -199,7 +191,7 @@ Primary development occurs on feature branches and is merged into main.
 
 Current development focus:
 
-* Disney Mayhem visual parity
-* Design system refinement
-* Shared component ownership
-* Collaborative trip planning workflows
+* Code Connect for T2 Patterns and remaining T1 Components
+* Component Token Layer (DTCG Layer 2)
+* CSS Co-location Migration
+* Product feature development on the stable design system foundation

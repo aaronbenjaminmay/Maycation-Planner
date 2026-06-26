@@ -1,6 +1,6 @@
 # Maycation Design System
 
-Last updated: v1.24.0
+Last updated: v1.26.0
 
 ## Component Classification
 
@@ -133,6 +133,10 @@ Key semantic tokens:
 | `--color-text-primary` | `#f5f7fb` | Body / label text |
 | `--color-text-muted` | `#a1a1a6` | Muted metadata text; use `.muted` utility class |
 | `--opacity-disabled-default` | `0.65` | Disabled component state (v1.8.0) |
+| `--opacity-interactive-hover` | `0.08` | Hover overlay fill — Button, IconButton (v1.10.0) |
+| `--opacity-interactive-hover-border` | `0.22` | Hover border opacity — Button, IconButton (v1.25.0) |
+| `--opacity-interactive-primary-hover` | `0.14` | Primary button hover brightening overlay (v1.25.0) |
+| `--opacity-header-image-overlay` | `0.52` | Trip header background image dim overlay |
 | `--radius-lg` | `20px` | Card radius |
 | `--radius-full` | `999px` | Pill radius |
 | `--shadow-md` | `0 18px 50px 0 rgba(0,0,0,0.26)` | Panel elevation |
@@ -144,39 +148,19 @@ Key semantic tokens:
 
 ## Design Principles
 
-**1. One canonical definition per class.**
-Every selector must have exactly one source-of-truth file. Duplication across `App.css` and component CSS is a bug, not a convention.
+See [DESIGN_SYSTEM_PRINCIPLES.md](./DESIGN_SYSTEM_PRINCIPLES.md) for the full set of design and implementation principles. The CSS-specific rules are summarized below for inline reference.
 
-**2. Primitives have no domain imports.**
-A component in `src/components/ui/` must not import from `src/lib/`. Domain mappings (e.g., `dayTypeIconMap`) belong in the product screen that uses the component.
+**One canonical definition per class.** Every selector must have exactly one source-of-truth file.
 
-**3. Tokens before hardcoded values.**
-Before writing any color, shadow, spacing, or radius value, check `tokens/generated/tokens.css`. Use the token. Only hardcode if a token genuinely does not exist and you are prepared to add one.
+**Primitives have no domain imports.** A component in `src/components/ui/` must not import from `src/lib/`.
 
-**4. App.css is layered by design.**
-`App.css` has multiple refinement passes (§1–13). Later passes override earlier ones. This is intentional for the current migration phase. Do not remove an early-pass definition without verifying the later-pass override covers all the same selectors.
+**Tokens before hardcoded values.** Check `tokens/generated/tokens.css` before writing any color, shadow, spacing, or radius value.
 
-**5. No feature flags or compatibility shims.**
-When a class or component is removed, delete all its CSS. Do not leave commented-out rules or `.old-*` aliases.
+**App.css is layered by design.** `App.css` has multiple refinement passes (§1–13). Later passes override earlier ones. Do not remove an early-pass definition without verifying the later-pass override covers all the same selectors.
 
-**6. Opacity Handling Rule.**
-Maycation models opacity as a design-system primitive, but Figma and CSS express it differently.
+**No feature flags or compatibility shims.** Delete CSS completely when a class or component is removed.
 
-*In Figma:*
-- Use opaque color primitives (`Color/Neutral 800`, `Color/White`, `Color/Black`).
-- Apply opacity as a separate `Opacity/*` variable at the paint/fill/stroke layer (not element-level opacity).
-- Example: `CardSurface` fill = `Color/Neutral 800` + fill opacity = `Opacity/Surface/Glass` (0.72).
-
-*In CSS:*
-- Do **not** use `opacity:` on container components (cards, modals, buttons, inputs) to simulate surface transparency — it affects all children and dims text.
-- Use composited `rgba()` values directly so text and child elements remain fully opaque.
-- Document any composited `rgba()` value with the primitive color and opacity token it represents.
-- Example:
-  ```css
-  /* Color/Neutral 800 × Opacity/Surface/Glass (0.72) */
-  background: rgba(28, 28, 30, 0.72);
-  ```
-- Element-level `opacity:` is acceptable for: disabled state (entire component dims uniformly), pseudo-element overlays, and standalone backdrop elements with no text children.
+**Opacity Handling Rule.** Primitive colors are always opaque. Use composited `rgba()` in CSS, not element-level `opacity:` on containers. Use opaque primitives + separate `Opacity/*` variable in Figma. Element-level opacity is acceptable only for: disabled state, pseudo-element overlays, and standalone backdrop elements with no text children. See [FIGMA_FOUNDATIONS.md §8](./FIGMA_FOUNDATIONS.md) for the full implementation table.
 
 ---
 
@@ -206,19 +190,16 @@ Maycation models opacity as a design-system primitive, but Figma and CSS express
 
 **v1.7.0 Token Architecture Phase 1** resolved the highest-priority item: Badge no longer depends on product-domain tokens. See `docs/TOKEN_DEBT.md`.
 
-These hardcoded values remain in `App.css` and are candidates for future token migration:
+These hardcoded values remain in `App.css` as of v1.26.0. See [TOKEN_DEBT.md](./TOKEN_DEBT.md) for the full resolution history.
 
-| Value | Location | Notes |
-|-------|----------|-------|
-| `#35b8a8` | Early passes | Old accent color; superseded by `--accent` in newer passes |
-| `#a1a1a6` (SVG only) | `forms.css select.form-control background-image` | URL-encoded SVG stroke in data URI; cannot use CSS variable — browser limitation |
-| `rgba(255, 255, 255, 0.08)` | Early passes (15+ occurrences) | Now superseded by `var(--color-border-glass)` in §7 |
-| `rgba(0, 0, 0, 0.52)` | `.dashboard-shell.has-trip-bg::after` | Trip image overlay; `var(--opacity-header-image-overlay)` token exists (pseudo-element, element opacity is acceptable) |
-| Button/icon-button border | `rgba(255, 255, 255, 0.12)` | No semantic token yet — see v1.13.0 roadmap |
-| Button/icon-button hover backgrounds | `rgba(255, 255, 255, 0.08)` / `rgba(255,255,255,0.14)` | `var(--opacity-interactive-hover)` token exists at 0.08; direct wiring deferred to v1.13.0 |
-| `#fff` | `.icon-button--primary`, `.icon-button--complete.icon-button--selected` | Primary icon-button text color; see v1.13.0 roadmap (H3) |
-
-**Resolved in v1.9.0:** `#d7d7dc` in `.icon-button--complete` — replaced with `var(--color-icon-complete)`. See `docs/TOKEN_DEBT.md`.
+| Value | Location | Status |
+|-------|----------|--------|
+| `#a1a1a6` (SVG only) | `forms.css select.form-control background-image` | Cannot fix — URL-encoded SVG stroke in data URI; browser limitation |
+| `rgba(255, 255, 255, 0.12)` | `.button`, `.icon-button` base border | No semantic token yet |
+| `rgba(28, 28, 30, 0.84)` | `.button`, `.icon-button` base background | No semantic token yet |
+| `rgba(28, 28, 30, 0.68/0.76/0.62)` | `.trip-intel-card`, `.planner-item-card` backgrounds | Intentional variants; no tokens for these off-scale glass opacities |
+| `#fff` | Trip intel card and day tile text | No pure-white text semantic token; `--color-text-primary` is `#f5f7fb` |
+| `color-mix()` primary hover | `.button--primary:hover`, `.icon-button--primary:hover` | `var(--opacity-interactive-primary-hover)` exists; no simpler token-driven form available |
 
 Inline `rgba()` values in CSS for **intentional surface variants** are **intentional** per the Opacity Handling Rule. `--color-surface-glass` is itself the rgba composite (`rgba(28,28,30,0.72)`) and is used directly in §7 `:where()` blocks. Intentional variants (`trip-intel-card` 0.68, `planner-item-card` 0.76, `.trip-dashboard .day-tile` contextual shadow) remain as inline `rgba()` with documentation comments. Each composite rgba in CSS should have a comment in the format:
 ```css
@@ -296,6 +277,6 @@ Components with co-located CSS (`badge.css`, `forms.css`) load automatically whe
 
 ### Future Storybook phases
 
-**v1.6.0 — Figma Foundations:** Token architecture, variable collection structure, Figma-to-code mapping, and Accent Blue decision. See [docs/FIGMA_FOUNDATIONS.md](./FIGMA_FOUNDATIONS.md) for the full specification.
+**v1.x.0 — Code Connect for remaining T1 Components:** Wire Code Connect for EmptyState, StatusButton, FormActions, FormGrid, ScreenHeader, and PageControls. These 6 components have Figma components and stable APIs; they are the last T1 components without a `.figma.tsx` mapping.
 
-**v1.x.0 — CSS Migration:** Migrate component styles from `App.css` to co-located CSS files. This removes the `App.css` dependency from Storybook's global imports and makes each component self-contained.
+**v1.x.0 — CSS Co-location Migration:** Migrate component styles from `App.css` to co-located CSS files. This removes the `App.css` dependency from Storybook's global imports and makes each component self-contained. See [DESIGN_SYSTEM_ROADMAP.md](./DESIGN_SYSTEM_ROADMAP.md) for scope.

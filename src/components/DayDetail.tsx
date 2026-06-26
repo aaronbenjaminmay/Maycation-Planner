@@ -19,6 +19,7 @@ import {
   AddPlannerItemForm,
   type PlannerItemFormValues,
 } from './AddPlannerItemForm'
+import type { PlaceValue } from '../lib/places'
 import {
   Button,
   CardSurface,
@@ -411,6 +412,35 @@ function isPlannerItemCompleted(item: PlannerItem) {
 }
 
 function getPlannerItemFormValues(item: PlannerItem): PlannerItemFormValues {
+  let origin: PlaceValue | null = null
+  let destination: PlaceValue | null = null
+
+  if (item.kind === 'travel') {
+    const startName = typeof item.metadata.start_place_name === 'string'
+      ? item.metadata.start_place_name : null
+    const startAddr = typeof item.metadata.start_place_address === 'string'
+      ? item.metadata.start_place_address : null
+
+    if (startName) {
+      const startLat = typeof item.metadata.start_place_lat === 'number' ? item.metadata.start_place_lat : undefined
+      const startLng = typeof item.metadata.start_place_lng === 'number' ? item.metadata.start_place_lng : undefined
+      origin = {
+        name: startName,
+        address: startAddr ?? '',
+        coordinates: startLat !== undefined && startLng !== undefined ? { lat: startLat, lng: startLng } : undefined,
+      }
+    }
+    if (item.location_name) {
+      const destLat = typeof item.metadata.destination_place_lat === 'number' ? item.metadata.destination_place_lat : undefined
+      const destLng = typeof item.metadata.destination_place_lng === 'number' ? item.metadata.destination_place_lng : undefined
+      destination = {
+        name: item.location_name,
+        address: item.location_address ?? '',
+        coordinates: destLat !== undefined && destLng !== undefined ? { lat: destLat, lng: destLng } : undefined,
+      }
+    }
+  }
+
   return {
     endTime: formatPlannerItemTimeInput(item.ends_at),
     kind: item.kind,
@@ -422,5 +452,7 @@ function getPlannerItemFormValues(item: PlannerItem): PlannerItemFormValues {
     address: item.location_address ?? '',
     externalUrl: item.external_url ?? '',
     reservationType: item.reservation_type,
+    origin,
+    destination,
   }
 }

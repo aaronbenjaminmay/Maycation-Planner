@@ -110,6 +110,7 @@ export type CreatePlannerItemInput = {
   address?: string
   externalUrl?: string
   reservationType?: ReservationType
+  metadata?: Record<string, unknown>
 }
 
 export type UpdateTripDayInput = {
@@ -386,6 +387,7 @@ export async function createPlannerItem(input: CreatePlannerItemInput) {
     item_address: input.address?.trim() || null,
     item_url: input.externalUrl?.trim() || null,
     item_reservation_type: input.reservationType ?? 'activity',
+    item_metadata: input.metadata ?? {},
   })
 
   if (error) {
@@ -421,6 +423,7 @@ export async function updatePlannerItem(input: UpdatePlannerItemInput) {
     item_address: input.address?.trim() || null,
     item_url: input.externalUrl?.trim() || null,
     item_reservation_type: input.reservationType ?? 'activity',
+    item_metadata: input.metadata ?? {},
   })
 
   if (error) {

@@ -42,9 +42,9 @@ The foundational layer is established and stable. See [FIGMA_FOUNDATIONS.md](./F
 
 ## 3. Components
 
-**Status: Complete**
+**Status: Complete (Code Connect partially wired)**
 
-All T1 Components are code-complete, Storybook-documented, and Code Connect–wired. See [DESIGN_SYSTEM.md — Component Inventory](./DESIGN_SYSTEM.md#component-inventory-t1) for the full list.
+All 18 T1 Components are code-complete and Storybook-documented. 11 of 18 have Code Connect wired. 7 are not yet wired: EmptyState, StatusButton, FormActions, FormGrid, ScreenHeader, PageControls, Icon. See [DESIGN_SYSTEM.md — Component Inventory](./DESIGN_SYSTEM.md#component-inventory-t1) for the full list and Code Connect status.
 
 **Summary (18 components across 4 groups):**
 
@@ -95,7 +95,17 @@ Interactive card tile for trip days. Composes `CardSurface` + `Icon` + `Progress
 
 ## 5. System Health
 
-Active maintenance work identified during previous audits. Complete this before introducing new patterns or components.
+Active maintenance work. Complete this before introducing new patterns or components.
+
+### Code Connect for Remaining T1 Components
+
+**Goal:** Wire Code Connect for EmptyState, StatusButton, FormActions, FormGrid, ScreenHeader, and PageControls.
+
+**Why it matters:** 7 T1 Components have Figma components and stable APIs but no `.figma.tsx` Code Connect file. Without it, the Figma ↔ code link for those components is visual-only. This work mirrors what is already done for the 11 wired components.
+
+**Expected outcome:** 6 new `.figma.tsx` files. All 18 T1 Components fully wired.
+
+---
 
 ### Code Connect for Patterns
 
@@ -149,14 +159,20 @@ Active maintenance work identified during previous audits. Complete this before 
 
 ---
 
-## 6. Future
+## 6. Phase 2 — Product Evolution
 
-Intentionally deferred. These are opportunities, not commitments. Do not pursue until System Health work is complete.
+The Design System Foundation (Phase 1) is complete as of v1.26.0. Phase 2 begins once System Health work is done. Phase 2 shifts focus from building the design system to using it for product development.
 
-**Light mode.** The token architecture supports a second mode in Figma variable collections. No product requirement for light mode currently exists. If product requirements change, the Semantic token layer is the correct starting point.
+In Phase 2 the design system is a stable, maintained foundation — not an active construction site. Changes are additive, not architectural. New product features use existing components and patterns.
 
-**Additional patterns.** Candidates would emerge from product screens that stabilize around a reusable layout composition (e.g., a list item row, a settings section). No current candidates are ready for promotion.
+**Planned work for Phase 2:**
 
-**Expanded component library.** The T1 Component set covers current product needs. New components should only be added when a pattern or product screen cannot be built from existing components without duplication.
+**Light mode.** The token architecture supports a second mode in Figma variable collections. No product requirement for light mode currently exists. The Semantic token layer is the correct starting point when this changes.
 
-**Icon library expansion.** The current icon set covers active product usage. Additional icons should be added alongside the Code Connect wiring work so new icons enter the system with full tooling support from the start.
+**Additional patterns.** Candidates emerge from product screens that stabilize around a reusable layout composition. No current candidates are ready for promotion.
+
+**Expanded component library.** New components are added only when a pattern or product screen cannot be built from existing components without duplication.
+
+**Icon library expansion.** Add alongside Code Connect wiring work so new icons enter the system with full tooling support from day one.
+
+**Product feature development.** Trip planning workflows, collaboration features, and UX refinement on the stable design system foundation.

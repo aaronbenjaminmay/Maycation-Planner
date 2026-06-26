@@ -828,6 +828,39 @@ button.dashboard-card {
   color: var(--color-success-text);
 }
 
+/* ─── Travel estimate ─────────────────────────────────────────────────────── */
+
+.travel-estimate {
+  display: grid;
+  gap: 2px;
+  padding: var(--spacing-sm);
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-input);
+  background: var(--color-surface-elevated);
+}
+
+.travel-estimate__duration {
+  color: var(--color-text-primary);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.travel-estimate__arrival {
+  color: var(--color-text-muted);
+  font-size: 0.875rem;
+}
+
+.travel-estimate--calculating,
+.travel-estimate--unavailable {
+  color: var(--color-text-muted);
+  font-size: 0.875rem;
+  padding: 0;
+  border: none;
+  background: transparent;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────── */
+
 .system-icon {
   display: block;
   flex: 0 0 auto;

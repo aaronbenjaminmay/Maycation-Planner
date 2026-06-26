@@ -1,6 +1,6 @@
 # Maycation Figma Foundations
 
-Last updated: v1.20.0
+Last updated: v1.26.0
 
 This document defines the token architecture, variable collection structure, naming conventions, and implementation path for Maycation's Figma design system. It is the source of truth for how code tokens map to Figma Variables, Tokens Studio, and future Code Connect work.
 
@@ -132,6 +132,7 @@ All primitives are opaque. No alpha-composited colors in the primitive layer.
 | `opacity.primitive.22` *(v1.8.0)* | `0.22` | Badge background (black × 22%); intentionally off-scale |
 | `opacity.primitive.28` | `0.28` | Input surface (black × 28%); countdown border (blue-vivid × 28%) |
 | `opacity.primitive.30` *(v1.8.0)* | `0.30` | Success border (teal-500 × 30%); intentionally off-scale |
+| `opacity.primitive.34` *(v1.25.0)* | `0.34` | Card shadow alpha — black at 34% |
 | `opacity.primitive.40` | `0.40` | Scale step (reserved) |
 | `opacity.primitive.52` | `0.52` | Header image overlay |
 | `opacity.primitive.65` *(v1.8.0)* | `0.65` | Disabled component state |
@@ -192,6 +193,8 @@ CSS variables generated for these (e.g., `--opacity-surface-glass: 0.72`). Prima
 | `opacity.disabled.default` *(updated v1.8.0)* | `0.65` | Disabled state (element-level opacity is acceptable here) |
 | `opacity.header-image.overlay` | `0.52` | Trip bg image dim (pseudo-element, element opacity acceptable) |
 | `opacity.interactive.hover` *(v1.10.0: 0.08)* | `0.08` | Hover overlay fill opacity |
+| `opacity.interactive.hover-border` *(v1.25.0)* | `0.22` | Hover border opacity — Button, IconButton |
+| `opacity.interactive.primary-hover` *(v1.25.0)* | `0.14` | Primary button hover brightening overlay |
 
 **Product color tokens** (kind/role — planner-item and member badges)
 
@@ -420,6 +423,7 @@ Primitives/
     22              0.22   (v1.8.0 — Badge bg)
     28              0.28
     30              0.30   (v1.8.0 — Success border)
+    34              0.34   (v1.25.0 — Card shadow)
     40              0.40
     52              0.52
     65              0.65   (v1.8.0 — Disabled state)
@@ -482,6 +486,8 @@ Semantic/
     Disabled/Default         → Opacity/65   (v1.8.0 — was 40)
     HeaderImage/Overlay      → Opacity/52
     Interactive/Hover        → Opacity/8    (v1.10.0 — was 10)
+    Interactive/HoverBorder  → Opacity/22   (v1.25.0)
+    Interactive/PrimaryHover → 0.14         (v1.25.0 — direct value; no opacity primitive; Figma: Color/White/Opacity 14 in Primitives/Color)
   Radius/
     Card    → Radius/lg (20px)
     Input   → Radius/md (14px)
@@ -578,7 +584,7 @@ Component/
 | `Docs/Component Classification` | Figma file organization README |
 | `Docs/Design Principles` | Figma file README or cover page |
 
-### Storybook status (v1.15.0)
+### Storybook status (v1.26.0)
 
 **`FeedbackMessage` group placement — resolved.** `FeedbackMessage.stories.tsx` title is `Components/Feedback/FeedbackMessage`. All feedback components are correctly grouped under `Components/Feedback/`.
 
@@ -645,7 +651,7 @@ For Code Connect to work well, the Figma and React systems need to share:
 | `ModalSheet` | ✅ | ✅ | ✅ |
 | `DashboardCard` | ✅ `04 Patterns` — component set `208:16` | ✅ | ❌ not yet wired |
 | `DetailHeader` | ✅ `04 Patterns` — component set `236:81`; PageControls (`position: fixed`) + ScreenHeader (in-flow); 3 variants (Default / WithAction / Full) | ✅ | ❌ not yet wired |
-| `DayTile` | ❌ pending — T3→T2 promotion candidate; needs Storybook stories before Figma pattern | ✅ | ❌ pending |
+| `DayTile` | ✅ `04 Patterns` *(v1.23.0)* | ✅ | ❌ not yet wired |
 | `Badge` | ✅ *(v1.8.0)* | ✅ | ✅ *(v1.8.0)* |
 | `FeedbackMessage` | ✅ *(v1.8.0)* | ✅ | ✅ *(v1.8.0)* |
 | `EmptyState` | ✅ *(v1.8.0)* | ✅ | ❌ not yet wired (Figma node 69:79; fill opacity Figma API constraint documented) |
@@ -680,7 +686,7 @@ The three-layer architecture (Primitive → Semantic → Component) supports MCP
 
 ---
 
-## 8. Opacity Handling Rule
+## 9. Opacity Handling Rule
 
 Maycation models opacity as a design-system primitive, but Figma and CSS express it differently. This rule is the single source of truth for how transparency is applied.
 

@@ -1,0 +1,173 @@
+/* ─── PlaceInput ──────────────────────────────────────────────────────────── */
+
+/* Input row: input + spinner overlay */
+
+.place-input__input-row {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+/* Spinner sits inside the input on the trailing edge */
+
+.place-input__spinner {
+  position: absolute;
+  right: var(--spacing-sm);
+  width: 18px;
+  height: 18px;
+  border: 2px solid var(--color-border-default);
+  border-top-color: var(--color-accent-default);
+  border-radius: 50%;
+  animation: place-input-spin 0.7s linear infinite;
+  pointer-events: none;
+  flex-shrink: 0;
+}
+
+@keyframes place-input-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Pad input so text doesn't overlap the spinner */
+
+.place-input__input-row .form-control {
+  padding-right: calc(var(--spacing-sm) + 26px);
+}
+
+/* ─── Suggestion list ─────────────────────────────────────────────────────── */
+
+.place-input__results {
+  list-style: none;
+  margin: 4px 0 0;
+  padding: 0;
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-input);
+  background: var(--color-surface-elevated);
+  overflow: hidden;
+}
+
+.place-input__result {
+  display: grid;
+  gap: 2px;
+  padding: 10px var(--spacing-sm);
+  cursor: pointer;
+  border-bottom: 1px solid var(--color-border-default);
+  transition: background 0.1s;
+}
+
+.place-input__result:last-child {
+  border-bottom: none;
+}
+
+.place-input__result:hover,
+.place-input__result--active {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.place-input__result-name {
+  color: var(--color-text-primary);
+  font-size: 0.9rem;
+  font-weight: 500;
+  line-height: 1.3;
+}
+
+.place-input__result-address {
+  color: var(--color-text-muted);
+  font-size: 0.78rem;
+  line-height: 1.3;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ─── No-results state ────────────────────────────────────────────────────── */
+
+.place-input__empty {
+  display: grid;
+  gap: var(--spacing-xs);
+  margin-top: 4px;
+  padding: var(--spacing-sm);
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-input);
+  background: var(--color-surface-elevated);
+}
+
+.place-input__empty-message {
+  color: var(--color-text-muted);
+  font-size: 0.875rem;
+}
+
+/* ─── Error state ─────────────────────────────────────────────────────────── */
+
+.place-input__error-state {
+  display: grid;
+  gap: var(--spacing-xs);
+  margin-top: 6px;
+}
+
+/* ─── Manual-entry fallback button ───────────────────────────────────────── */
+
+.place-input__use-text-btn {
+  all: unset;
+  cursor: pointer;
+  color: var(--color-accent-default);
+  font-size: 0.875rem;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.place-input__use-text-btn:hover {
+  opacity: 0.8;
+}
+
+.place-input__use-text-btn:focus-visible {
+  outline: 2px solid var(--color-accent-default);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* ─── Selected state ──────────────────────────────────────────────────────── */
+
+.place-input__selected-content {
+  box-sizing: border-box;
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-sm);
+  width: 100%;
+  min-height: 46px;
+  padding: 10px var(--spacing-sm);
+  border: 1px solid var(--color-border-control);
+  border-radius: var(--radius-input);
+  background: var(--color-surface-input);
+}
+
+.place-input__selected-text {
+  flex: 1;
+  min-width: 0;
+  display: grid;
+  gap: 2px;
+  padding-top: 1px; /* optical alignment with icon button */
+}
+
+.place-input__selected-name {
+  color: var(--color-text-primary);
+  font-size: 0.9rem;
+  font-weight: 500;
+  line-height: 1.4;
+  word-break: break-word;
+}
+
+.place-input__selected-address {
+  color: var(--color-text-muted);
+  font-size: 0.78rem;
+  line-height: 1.3;
+  word-break: break-word;
+}
+
+.place-input__manual-badge {
+  color: var(--color-text-muted);
+  font-size: 0.75rem;
+  font-style: italic;
+  line-height: 1.4;
+}
