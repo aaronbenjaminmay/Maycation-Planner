@@ -66,18 +66,15 @@ const reservationTypeLabels: Record<ReservationType, string> = {
   transportation: 'Transportation',
 }
 
-function addMinutesToTime(timeStr: string, minutes: number): string {
-  const [h, m] = timeStr.split(':').map(Number)
-  const total = h * 60 + m + minutes
-  const hrs = Math.floor(total / 60) % 24
-  const mins = total % 60
-  return `${String(hrs).padStart(2, '0')}:${String(mins).padStart(2, '0')}`
+function computeArrivalMinutes(startTimeStr: string, durationMins: number): number {
+  const [h, m] = startTimeStr.split(':').map(Number)
+  return h * 60 + m + durationMins
 }
 
-function formatTimeForDisplay(timeStr: string): string {
-  const [h, m] = timeStr.split(':').map(Number)
+function formatMinutesAsClockDisplay(totalMinutes: number): string {
+  const clockMins = totalMinutes % 1440
   const d = new Date()
-  d.setHours(h, m, 0, 0)
+  d.setHours(Math.floor(clockMins / 60), clockMins % 60, 0, 0)
   return new Intl.DateTimeFormat(undefined, {
     hour: 'numeric',
     minute: '2-digit',
@@ -199,16 +196,17 @@ export function AddPlannerItemForm({
     }
 
     if (kind === 'travel') {
-      const derivedEndTime =
+      const endTimeMinutes =
         durationMinutes !== null && startTime
-          ? addMinutesToTime(startTime, durationMinutes)
-          : ''
+          ? computeArrivalMinutes(startTime, durationMinutes)
+          : null
 
       await onSubmit({
         kind,
         title,
         startTime,
-        endTime: derivedEndTime,
+        endTime: '',
+        endTimeMinutes,
         location: destination?.name ?? '',
         address: destination?.address ?? '',
         notes,
@@ -307,14 +305,17 @@ export function AddPlannerItemForm({
                 <p className="travel-estimate__duration">
                   ≈ {formatDuration(durationMinutes)} drive
                 </p>
-                {startTime ? (
-                  <p className="travel-estimate__arrival">
-                    Arrive around{' '}
-                    {formatTimeForDisplay(
-                      addMinutesToTime(startTime, durationMinutes),
-                    )}
-                  </p>
-                ) : null}
+                {startTime ? (() => {
+                  const arrivalMins = computeArrivalMinutes(startTime, durationMinutes)
+                  const nextDay = arrivalMins >= 1440
+                  return (
+                    <p className="travel-estimate__arrival">
+                      Arrive around{' '}
+                      {formatMinutesAsClockDisplay(arrivalMins)}
+                      {nextDay ? ' next day' : ''}
+                    </p>
+                  )
+                })() : null}
               </div>
             ) : showUnavailable ? (
               <p className="travel-estimate travel-estimate--unavailable">

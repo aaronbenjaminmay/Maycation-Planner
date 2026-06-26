@@ -99,6 +99,7 @@ export type UpdateTripInput = CreateTripInput & {
 
 export type CreatePlannerItemInput = {
   endTime: string
+  endTimeMinutes?: number | null
   kind: PlannerItemKind
   location: string
   notes: string
@@ -246,6 +247,11 @@ export function formatTripDayDate(date: string) {
   }).format(parseDateInput(date))
 }
 
+export function isPlannerItemEndNextDay(item: PlannerItem): boolean {
+  if (!item.starts_at || !item.ends_at) return false
+  return new Date(item.ends_at).toDateString() !== new Date(item.starts_at).toDateString()
+}
+
 export function formatPlannerItemTimeRange(item: PlannerItem) {
   if (!item.starts_at && !item.ends_at) {
     return ''
@@ -257,9 +263,8 @@ export function formatPlannerItemTimeRange(item: PlannerItem) {
   })
 
   if (item.starts_at && item.ends_at) {
-    return `${formatter.format(new Date(item.starts_at))} - ${formatter.format(
-      new Date(item.ends_at),
-    )}`
+    const range = `${formatter.format(new Date(item.starts_at))} - ${formatter.format(new Date(item.ends_at))}`
+    return isPlannerItemEndNextDay(item) ? `${range} · Next day` : range
   }
 
   return formatter.format(new Date(item.starts_at ?? item.ends_at ?? ''))
@@ -362,6 +367,13 @@ export async function loadPlannerItems(tripId: string) {
   return ((data ?? []) as PlannerItemRow[]).map(mapPlannerItemRow)
 }
 
+function timeStringToMinutes(timeStr: string): number | null {
+  if (!timeStr) return null
+  const [h, m] = timeStr.split(':').map(Number)
+  if (isNaN(h) || isNaN(m)) return null
+  return h * 60 + m
+}
+
 export async function createPlannerItem(input: CreatePlannerItemInput) {
   const client = getSupabaseClient()
   const trimmedTitle = input.title.trim()
@@ -370,9 +382,9 @@ export async function createPlannerItem(input: CreatePlannerItemInput) {
     throw new Error('Title is required.')
   }
 
-  if (input.startTime && input.endTime && input.endTime < input.startTime) {
-    throw new Error('End time must be on or after start time.')
-  }
+  const endMinutes = input.endTimeMinutes != null
+    ? input.endTimeMinutes
+    : timeStringToMinutes(input.endTime)
 
   const { data: itemId, error } = await client.rpc('create_planner_item', {
     target_trip_id: input.tripId,
@@ -380,7 +392,7 @@ export async function createPlannerItem(input: CreatePlannerItemInput) {
     item_kind: input.kind,
     item_title: trimmedTitle,
     start_time: input.startTime || null,
-    end_time: input.endTime || null,
+    end_time_minutes: endMinutes,
     item_location: input.location.trim(),
     item_notes: input.notes.trim(),
     item_confirmation_code: input.confirmationCode?.trim() || null,
@@ -406,9 +418,9 @@ export async function updatePlannerItem(input: UpdatePlannerItemInput) {
     throw new Error('Title is required.')
   }
 
-  if (input.startTime && input.endTime && input.endTime < input.startTime) {
-    throw new Error('End time must be on or after start time.')
-  }
+  const endMinutes = input.endTimeMinutes != null
+    ? input.endTimeMinutes
+    : timeStringToMinutes(input.endTime)
 
   const { data: itemId, error } = await client.rpc('update_planner_item', {
     target_trip_id: input.tripId,
@@ -416,7 +428,7 @@ export async function updatePlannerItem(input: UpdatePlannerItemInput) {
     item_kind: input.kind,
     item_title: trimmedTitle,
     start_time: input.startTime || null,
-    end_time: input.endTime || null,
+    end_time_minutes: endMinutes,
     item_location: input.location.trim(),
     item_notes: input.notes.trim(),
     item_confirmation_code: input.confirmationCode?.trim() || null,
