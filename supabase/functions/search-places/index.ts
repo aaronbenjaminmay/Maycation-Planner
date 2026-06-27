@@ -5,18 +5,42 @@ const CORS_HEADERS = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
-type MapboxFeature = {
+// ── Geocoding v5 types ──────────────────────────────────────────────────────
+
+type GeocodingFeature = {
   id: string
   text: string
   place_name: string
-  geometry: {
-    coordinates: [number, number]
-  }
+  center: [number, number] // [longitude, latitude]
 }
 
-type MapboxGeocodingResponse = {
-  features: MapboxFeature[]
+type GeocodingResponse = {
+  features: GeocodingFeature[]
 }
+
+// ── Search Box v1 /forward types ────────────────────────────────────────────
+
+type SearchBoxFeatureProperties = {
+  name: string
+  mapbox_id: string
+  place_formatted: string
+  full_address?: string
+}
+
+type SearchBoxFeature = {
+  type: 'Feature'
+  geometry: {
+    type: 'Point'
+    coordinates: [number, number] // [longitude, latitude]
+  }
+  properties: SearchBoxFeatureProperties
+}
+
+type SearchBoxForwardResponse = {
+  features: SearchBoxFeature[]
+}
+
+// ── Shared output type (matches client PlaceSuggestion contract) ─────────────
 
 type PlaceSuggestion = {
   id: string
@@ -24,6 +48,74 @@ type PlaceSuggestion = {
   address: string
   coordinates: { lat: number; lng: number }
 }
+
+// ── Provider implementations ─────────────────────────────────────────────────
+
+async function searchViaGeocoding(query: string, apiKey: string): Promise<PlaceSuggestion[] | null> {
+  const url = new URL(`https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(query)}.json`)
+  url.searchParams.set('access_token', apiKey)
+  url.searchParams.set('autocomplete', 'true')
+  url.searchParams.set('types', 'poi,address,place')
+  url.searchParams.set('limit', '5')
+
+  const res = await fetch(url.toString())
+  if (!res.ok) {
+    let excerpt = ''
+    try { excerpt = (await res.text()).slice(0, 200) } catch (_) { /* no-op */ }
+    console.error('search-places: Mapbox error', { provider: 'geocoding-v5', status: res.status, excerpt })
+    return null
+  }
+
+  const data = await res.json() as GeocodingResponse
+  return (data.features ?? []).map((feature) => {
+    const namePrefix = feature.text + ', '
+    const address = feature.place_name.startsWith(namePrefix)
+      ? feature.place_name.slice(namePrefix.length)
+      : feature.place_name
+    return {
+      id: feature.id,
+      name: feature.text,
+      address,
+      coordinates: { lat: feature.center[1], lng: feature.center[0] },
+    }
+  })
+}
+
+async function searchViaSearchBox(query: string, apiKey: string): Promise<PlaceSuggestion[] | null> {
+  const url = new URL('https://api.mapbox.com/search/searchbox/v1/forward')
+  url.searchParams.set('q', query)
+  url.searchParams.set('access_token', apiKey)
+  url.searchParams.set('types', 'poi,address')
+  url.searchParams.set('limit', '5')
+  url.searchParams.set('language', 'en')
+
+  const res = await fetch(url.toString())
+  if (!res.ok) {
+    let excerpt = ''
+    try { excerpt = (await res.text()).slice(0, 200) } catch (_) { /* no-op */ }
+    console.error('search-places: Mapbox error', { provider: 'searchbox-v1-forward', status: res.status, excerpt })
+    return null
+  }
+
+  const data = await res.json() as SearchBoxForwardResponse
+  return (data.features ?? []).map((feature) => {
+    const p = feature.properties
+    const rawAddress = p.full_address ?? p.place_formatted
+    const namePrefix = p.name + ', '
+    const address = rawAddress.startsWith(namePrefix) ? rawAddress.slice(namePrefix.length) : rawAddress
+    return {
+      id: p.mapbox_id,
+      name: p.name,
+      address,
+      coordinates: {
+        lat: feature.geometry.coordinates[1],
+        lng: feature.geometry.coordinates[0],
+      },
+    }
+  })
+}
+
+// ── Handler ──────────────────────────────────────────────────────────────────
 
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {
@@ -47,6 +139,8 @@ Deno.serve(async (req) => {
         headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
       })
     }
+
+    const provider = Deno.env.get('PLACE_SEARCH_PROVIDER') ?? 'geocoding'
 
     const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? ''
     const anonKey = Deno.env.get('SUPABASE_ANON_KEY') ?? ''
@@ -72,31 +166,16 @@ Deno.serve(async (req) => {
       })
     }
 
-    const url = new URL(`https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(query)}.json`)
-    url.searchParams.set('access_token', mapboxApiKey)
-    url.searchParams.set('autocomplete', 'true')
-    url.searchParams.set('limit', '5')
-    url.searchParams.set('types', 'poi,address,place')
+    const suggestions = provider === 'searchbox'
+      ? await searchViaSearchBox(query, mapboxApiKey)
+      : await searchViaGeocoding(query, mapboxApiKey)
 
-    const mapboxRes = await fetch(url.toString())
-    if (!mapboxRes.ok) {
-      console.error('search-places: Mapbox error', { status: mapboxRes.status })
+    if (suggestions === null) {
       return new Response(JSON.stringify({ error: 'Place search unavailable' }), {
         status: 502,
         headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
       })
     }
-
-    const mapboxData = await mapboxRes.json() as MapboxGeocodingResponse
-    const suggestions: PlaceSuggestion[] = (mapboxData.features ?? []).map((feature) => ({
-      id: feature.id,
-      name: feature.text,
-      address: feature.place_name,
-      coordinates: {
-        lat: feature.geometry.coordinates[1],
-        lng: feature.geometry.coordinates[0],
-      },
-    }))
 
     return new Response(JSON.stringify({ suggestions }), {
       status: 200,

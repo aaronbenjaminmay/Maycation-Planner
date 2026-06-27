@@ -257,6 +257,9 @@ export function AddPlannerItemForm({
     if (place !== null) {
       setLocation(place.name)
       setAddress(place.address)
+      if (!title.trim()) {
+        setTitle(place.name)
+      }
     }
   }
 
@@ -400,12 +403,13 @@ export function AddPlannerItemForm({
 
         {kind === 'reservation' ? (
           <>
-            <TextInput
-              label="Address"
-              value={address}
-              onChange={setAddress}
-              disabled={reservationPlace !== null}
-            />
+            {reservationPlace === null || reservationPlace.coordinates === undefined ? (
+              <TextInput
+                label="Address"
+                value={address}
+                onChange={setAddress}
+              />
+            ) : null}
             <TextInput
               label="Confirmation #"
               value={confirmationCode}

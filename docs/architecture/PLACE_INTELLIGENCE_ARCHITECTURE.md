@@ -293,6 +293,36 @@ None of these require changes to the current `places.ts` contract or Edge Functi
 
 ---
 
+## Search Provider Notes
+
+### Current provider: Mapbox Geocoding v5
+
+`search-places` calls `/geocoding/v5/mapbox.places/{query}.json` with `autocomplete=true`, `types=poi,address,place`, `limit=5`. The address field strips the leading venue-name prefix from `place_name` to avoid duplication in the PlaceInput selected state.
+
+**Known limitation:** Geocoding v5 is address-first. Venue name searches (e.g. "Narcoossee's", "Be Our Guest") return street-name matches rather than the specific restaurants. Exact venue name recall requires a venue-first API.
+
+### Search Box v1 attempt — June 2026
+
+Mapbox Search Box v1 (`/search/searchbox/v1/forward`) was deployed as a replacement (version 2 of the `search-places` function). It returned 502s immediately in production because the `MAPBOX_ACCESS_TOKEN` stored in Supabase secrets does not have access to the Search Box product. The Geocoding v5 token does not automatically grant Search Box access — the two are separate Mapbox offerings.
+
+The production function was reverted to Geocoding v5 (version 3) within the same session. All client-side Reservation Place Intelligence work (PlaceInput in reservation form, title auto-fill, conditional address field, coordinate persistence) is valid and unaffected.
+
+### Safe retry gates for Search Box
+
+Before attempting Search Box again:
+
+1. **Verify token access first.** Call the endpoint directly using the production token before touching the Edge Function:
+   ```bash
+   curl -s "https://api.mapbox.com/search/searchbox/v1/forward?q=Narcoossees&access_token=YOUR_TOKEN&session_token=$(uuidgen)&types=poi,address&limit=1" | jq '.features[0].properties.name // .message // .error'
+   ```
+   If it returns a venue name → token is valid, proceed. If it returns an error → get a scoped token before writing any code.
+
+2. **Deploy behind a `PLACE_SEARCH_PROVIDER` env var.** The Edge Function reads the var and dispatches to the appropriate provider; both implementations live in the same file. Deploy the code change first (env var absent = v5, no behaviour change), then flip the var in the Supabase dashboard to activate Search Box. To roll back: flip the var back — no redeployment.
+
+3. **Validate against a branch or non-production function before flipping production.** Use a Supabase branch or a second Edge Function slug (`search-places-v2`) to run the Playwright validation test suite. Promote to production only after a clean run.
+
+---
+
 ## Implementation Status
 
 | Phase | Description | Status |
@@ -301,5 +331,7 @@ None of these require changes to the current `places.ts` contract or Edge Functi
 | Phase 2 | `PlaceInput` T1 component + Storybook | Complete |
 | Phase 3 | Travel form + live derivation + coordinate persistence | Complete |
 | Phase 3.5 | `PlaceInputQuickPick` + Current Stay quick pick | Complete |
+| Phase A | Reservation Place Intelligence — PlaceInput in reservation form, coordinate storage | Complete |
+| Phase A.1 | Reservation form UX — title auto-fill, conditional address field, manual fallback | Complete |
 | Phase 4 | Travel item card display | Not started |
 | Phase 5 | Figma component | Not started |
