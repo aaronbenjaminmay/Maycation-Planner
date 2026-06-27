@@ -52,6 +52,7 @@ export type PlannerItemFormValues = {
   reservationType: ReservationType
   origin: PlaceValue | null
   destination: PlaceValue | null
+  reservationPlace: PlaceValue | null
 }
 
 const kindLabels: Record<PlannerItemKind, string> = {
@@ -125,6 +126,11 @@ export function AddPlannerItemForm({
   // Travel-specific state
   const [origin, setOrigin] = useState<PlaceValue | null>(initialValues?.origin ?? null)
   const [destination, setDestination] = useState<PlaceValue | null>(initialValues?.destination ?? null)
+
+  // Reservation-specific place state
+  const [reservationPlace, setReservationPlace] = useState<PlaceValue | null>(
+    initialValues?.reservationPlace ?? null,
+  )
   const [durationMinutes, setDurationMinutes] = useState<number | null>(null)
   const [isDeriving, setIsDeriving] = useState(false)
   const [derivationError, setDerivationError] = useState<string | null>(null)
@@ -238,7 +244,19 @@ export function AddPlannerItemForm({
         address,
         externalUrl,
         reservationType,
+        metadata: kind === 'reservation' ? {
+          destination_place_lat: reservationPlace?.coordinates?.lat ?? null,
+          destination_place_lng: reservationPlace?.coordinates?.lng ?? null,
+        } : undefined,
       })
+    }
+  }
+
+  function handleReservationPlaceChange(place: PlaceValue | null) {
+    setReservationPlace(place)
+    if (place !== null) {
+      setLocation(place.name)
+      setAddress(place.address)
     }
   }
 
@@ -367,13 +385,27 @@ export function AddPlannerItemForm({
               />
             </FormGrid>
 
-            <TextInput label="Location" value={location} onChange={setLocation} />
+            {kind === 'reservation' ? (
+              <PlaceInput
+                label="Location"
+                value={reservationPlace}
+                onChange={handleReservationPlaceChange}
+                onSearchPlaces={searchPlaces}
+              />
+            ) : (
+              <TextInput label="Location" value={location} onChange={setLocation} />
+            )}
           </>
         )}
 
         {kind === 'reservation' ? (
           <>
-            <TextInput label="Address" value={address} onChange={setAddress} />
+            <TextInput
+              label="Address"
+              value={address}
+              onChange={setAddress}
+              disabled={reservationPlace !== null}
+            />
             <TextInput
               label="Confirmation #"
               value={confirmationCode}

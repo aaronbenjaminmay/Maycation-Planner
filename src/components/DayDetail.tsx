@@ -417,6 +417,7 @@ function isPlannerItemCompleted(item: PlannerItem) {
 function getPlannerItemFormValues(item: PlannerItem): PlannerItemFormValues {
   let origin: PlaceValue | null = null
   let destination: PlaceValue | null = null
+  let reservationPlace: PlaceValue | null = null
 
   if (item.kind === 'travel') {
     const startName = typeof item.metadata.start_place_name === 'string'
@@ -444,6 +445,16 @@ function getPlannerItemFormValues(item: PlannerItem): PlannerItemFormValues {
     }
   }
 
+  if (item.kind === 'reservation' && item.location_name) {
+    const destLat = typeof item.metadata.destination_place_lat === 'number' ? item.metadata.destination_place_lat : undefined
+    const destLng = typeof item.metadata.destination_place_lng === 'number' ? item.metadata.destination_place_lng : undefined
+    reservationPlace = {
+      name: item.location_name,
+      address: item.location_address ?? '',
+      coordinates: destLat !== undefined && destLng !== undefined ? { lat: destLat, lng: destLng } : undefined,
+    }
+  }
+
   return {
     endTime: formatPlannerItemTimeInput(item.ends_at),
     kind: item.kind,
@@ -457,5 +468,6 @@ function getPlannerItemFormValues(item: PlannerItem): PlannerItemFormValues {
     reservationType: item.reservation_type,
     origin,
     destination,
+    reservationPlace,
   }
 }
