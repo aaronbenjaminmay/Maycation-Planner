@@ -2,7 +2,7 @@ import { useState, useRef, useCallback, useEffect, type ChangeEvent, type Keyboa
 import { FormRow } from './FormRow'
 import { FeedbackMessage } from './FeedbackMessage'
 import { IconButton } from './IconButton'
-import type { PlaceSuggestion, PlaceValue } from '../../lib/places'
+import type { PlaceInputQuickPick, PlaceSuggestion, PlaceValue } from '../../lib/places'
 import './PlaceInput.css'
 
 type PlaceInputProps = {
@@ -14,6 +14,7 @@ type PlaceInputProps = {
   placeholder?: string
   disabled?: boolean
   hint?: string
+  quickPicks?: PlaceInputQuickPick[]
 }
 
 export function PlaceInput({
@@ -25,6 +26,7 @@ export function PlaceInput({
   placeholder = 'Search for a place…',
   disabled,
   hint,
+  quickPicks,
 }: PlaceInputProps) {
   const [query, setQuery] = useState(defaultQuery ?? '')
   const [suggestions, setSuggestions] = useState<PlaceSuggestion[]>([])
@@ -114,6 +116,15 @@ export function PlaceInput({
     setError(null)
   }
 
+  const handleSelectQuickPick = (pick: PlaceInputQuickPick) => {
+    onChange(pick.value)
+    setQuery('')
+    setSuggestions([])
+    setShowResults(false)
+    setActiveIndex(-1)
+    setError(null)
+  }
+
   const handleManualEntry = () => {
     const name = query.trim()
     if (!name) return
@@ -195,6 +206,27 @@ export function PlaceInput({
   return (
     <FormRow label={label} hint={hint}>
       <div className="place-input">
+        {quickPicks && quickPicks.length > 0 ? (
+          <div className="place-input__quick-picks">
+            {quickPicks.map((pick) => (
+              <button
+                key={pick.id}
+                type="button"
+                className="place-input__quick-pick"
+                disabled={disabled}
+                onMouseDown={(e) => {
+                  e.preventDefault()
+                  handleSelectQuickPick(pick)
+                }}
+              >
+                <span className="place-input__quick-pick-label">{pick.label}</span>
+                {pick.sublabel ? (
+                  <span className="place-input__quick-pick-sublabel">{pick.sublabel}</span>
+                ) : null}
+              </button>
+            ))}
+          </div>
+        ) : null}
         <div className="place-input__input-row">
           <input
             ref={inputRef}

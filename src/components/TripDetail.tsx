@@ -13,6 +13,7 @@ import {
   type TripDayType,
   type TripMemberRole,
 } from '../lib/trips'
+import { loadTripStays, type TripStay } from '../lib/stays'
 import { type IconName } from './ui/Icon'
 import { loadTripAccess } from '../lib/tripMembers'
 import {
@@ -26,6 +27,7 @@ import {
 import { DayDetail } from './DayDetail'
 import { TripReservations } from './TripReservations'
 import { TripSettings } from './TripSettings'
+import { TripStays } from './TripStays'
 
 type TripDetailProps = {
   trip: Trip
@@ -146,10 +148,12 @@ const dayTypeIconMap: Record<TripDayType, IconName> = {
 export function TripDetail({ trip, onBack, onTripDeleted, onTripUpdated }: TripDetailProps) {
   const [tripDays, setTripDays] = useState<TripDay[]>([])
   const [plannerItems, setPlannerItems] = useState<PlannerItem[]>([])
+  const [tripStays, setTripStays] = useState<TripStay[]>([])
   const [isLoadingDays, setIsLoadingDays] = useState(true)
   const [activeDayId, setActiveDayId] = useState<string | null>(null)
   const [isSettingsOpen, setIsSettingsOpen] = useState(false)
   const [showReservations, setShowReservations] = useState(false)
+  const [showStays, setShowStays] = useState(false)
   const [currentRole, setCurrentRole] = useState<TripMemberRole | null>(null)
   const [backgroundUrl, setBackgroundUrl] = useState<string | null>(null)
   const [headerImageUrl, setHeaderImageUrl] = useState<string | null>(null)
@@ -161,13 +165,15 @@ export function TripDetail({ trip, onBack, onTripDeleted, onTripUpdated }: TripD
     setError('')
 
     try {
-      const [days, items] = await Promise.all([
+      const [days, items, stays] = await Promise.all([
         loadTripDays(trip.id),
         loadPlannerItems(trip.id),
+        loadTripStays(trip.id),
       ])
       const role = await loadTripAccess(trip.id)
       setTripDays(days)
       setPlannerItems(items)
+      setTripStays(stays)
       setCurrentRole(role)
     } catch (loadError) {
       setError(
@@ -292,6 +298,20 @@ export function TripDetail({ trip, onBack, onTripDeleted, onTripUpdated }: TripD
     )
   }
 
+  if (showStays) {
+    return (
+      <TripStays
+        backgroundUrl={backgroundUrl}
+        canEditStays={canEditPlannerItems}
+        onBack={() => setShowStays(false)}
+        onStaysChanged={loadDays}
+        stays={tripStays}
+        trip={trip}
+        tripDays={tripDays}
+      />
+    )
+  }
+
   if (activeDay) {
     return (
       <DayDetail
@@ -303,6 +323,7 @@ export function TripDetail({ trip, onBack, onTripDeleted, onTripUpdated }: TripD
         onBack={() => setActiveDayId(null)}
         onItemCreated={loadDays}
         trip={trip}
+        tripStays={tripStays}
       />
     )
   }
@@ -479,6 +500,16 @@ export function TripDetail({ trip, onBack, onTripDeleted, onTripUpdated }: TripD
               onOpen={() => setShowReservations(true)}
               subtitle={nextReservation?.title ?? undefined}
               title="Reservations"
+            />
+
+            <DayTile
+              completedCount={0}
+              dayNumber={tripDays.length + 2}
+              iconName="bed"
+              itemCount={tripStays.length}
+              onOpen={() => setShowStays(true)}
+              subtitle={tripStays[0]?.place_name ?? undefined}
+              title="Stays"
             />
           </section>
         ) : null}

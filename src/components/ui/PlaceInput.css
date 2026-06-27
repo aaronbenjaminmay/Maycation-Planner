@@ -35,6 +35,65 @@
   padding-right: calc(var(--spacing-sm) + 26px);
 }
 
+/* ─── Quick Picks ─────────────────────────────────────────────────────────── */
+
+.place-input__quick-picks {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 6px;
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-input);
+  background: var(--color-surface-elevated);
+  overflow: hidden;
+}
+
+.place-input__quick-pick {
+  all: unset;
+  box-sizing: border-box;
+  display: grid;
+  gap: 2px;
+  width: 100%;
+  padding: 10px var(--spacing-sm);
+  cursor: pointer;
+  border-bottom: 1px solid var(--color-border-default);
+  transition: background 0.1s;
+  text-align: left;
+}
+
+.place-input__quick-pick:last-child {
+  border-bottom: none;
+}
+
+.place-input__quick-pick:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.place-input__quick-pick:focus-visible {
+  outline: 2px solid var(--color-accent-default);
+  outline-offset: -2px;
+}
+
+.place-input__quick-pick:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.place-input__quick-pick-label {
+  color: var(--color-text-primary);
+  font-size: 0.9rem;
+  font-weight: 500;
+  line-height: 1.3;
+}
+
+.place-input__quick-pick-sublabel {
+  color: var(--color-text-muted);
+  font-size: 0.78rem;
+  line-height: 1.3;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 /* ─── Suggestion list ─────────────────────────────────────────────────────── */
 
 .place-input__results {

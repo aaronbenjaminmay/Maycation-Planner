@@ -32,6 +32,12 @@ A destination entered during trip creation should appear in navigation context. 
 
 When information is entered in one place but must be re-entered somewhere else, that is a product failure, not a workflow.
 
+### A trip fact entered once should serve the whole trip.
+
+Some information is durable — it belongs to the trip, not to a single day. Where the family is staying. How they are getting there. Who is traveling. When this kind of fact is entered, Maycation should use it wherever it helps: surfacing it as a quick-pick when filling out travel items, suggesting a check-in reminder on the right day, showing accommodation context on the daily itinerary.
+
+The family should not have to re-enter what they already told the app. See the [Derivation Engine](../architecture/DERIVATION_ENGINE.md) for how durable trip facts produce itinerary items without taking control of the plan.
+
 ---
 
 ## 4. Context Over Complexity

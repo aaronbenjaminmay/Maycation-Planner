@@ -1260,7 +1260,6 @@ button.dashboard-card {
 
 .day-detail-screen .planner-item-card__content,
 .planner-item-card__content {
-  order: 1;
   gap: 5px;
 }
 .day-detail-screen .planner-item-card.completed,

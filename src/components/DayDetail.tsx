@@ -20,6 +20,7 @@ import {
   type PlannerItemFormValues,
 } from './AddPlannerItemForm'
 import type { PlaceValue } from '../lib/places'
+import { type TripStay } from '../lib/stays'
 import {
   Button,
   CardSurface,
@@ -44,6 +45,7 @@ type DayDetailProps = {
   onBack: () => void
   onItemCreated: () => Promise<void>
   trip: Trip
+  tripStays: TripStay[]
 }
 
 const dayTypeLabels: Record<TripDayType, string> = {
@@ -75,6 +77,7 @@ export function DayDetail({
   onBack,
   onItemCreated,
   trip,
+  tripStays,
 }: DayDetailProps) {
   const [isItemFormOpen, setIsItemFormOpen] = useState(false)
   const [editingItem, setEditingItem] = useState<PlannerItem | null>(null)
@@ -318,6 +321,7 @@ export function DayDetail({
             submittingLabel="Saving..."
             title={editingItem ? 'Edit Item' : 'Add Item'}
             tripId={trip.id}
+            tripStays={tripStays}
           />
         ) : null}
 

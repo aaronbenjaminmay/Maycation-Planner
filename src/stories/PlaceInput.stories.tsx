@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import type { Meta } from '@storybook/react'
 import { PlaceInput } from '../components/ui/PlaceInput'
-import type { PlaceSuggestion, PlaceValue } from '../lib/places'
+import type { PlaceInputQuickPick, PlaceSuggestion, PlaceValue } from '../lib/places'
 
 const meta = {
   title: 'Components/Forms/PlaceInput',
@@ -143,6 +143,46 @@ export const Error = {
         onSearchPlaces={async () => {
           throw new Error('Place search is currently unavailable.')
         }}
+      />,
+    ),
+}
+
+const currentStayQuickPick: PlaceInputQuickPick = {
+  id: 'stay-abc123',
+  label: 'Current Stay',
+  sublabel: "Disney's Contemporary Resort",
+  value: {
+    name: "Disney's Contemporary Resort",
+    address: '4600 World Drive, Bay Lake, Florida 32830, United States',
+    coordinates: { lat: 28.4152, lng: -81.5737 },
+  },
+}
+
+export const WithQuickPicks = {
+  name: 'With quick picks',
+  render: () =>
+    wrap(
+      <PlaceInputDemo
+        label="From"
+        value={null}
+        onSearchPlaces={async () => mockSuggestions}
+        hint="Where are you leaving from?"
+        quickPicks={[currentStayQuickPick]}
+      />,
+    ),
+}
+
+export const QuickPickWithSearch = {
+  name: 'Quick picks + search results',
+  render: () =>
+    wrap(
+      <PlaceInputDemo
+        label="From"
+        value={null}
+        defaultQuery="Magic"
+        onSearchPlaces={async () => mockSuggestions}
+        hint="Where are you leaving from?"
+        quickPicks={[currentStayQuickPick]}
       />,
     ),
 }

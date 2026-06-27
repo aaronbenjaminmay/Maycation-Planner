@@ -20,6 +20,9 @@ When a family adds a travel leg — a drive, a flight, a transfer — Maycation 
 **Address Intelligence**
 Destinations, hotels, restaurants, and venues already have addresses. Maycation should be able to surface the right address at the right moment without the user re-entering it or remembering where they put it.
 
+**Stay Intelligence**
+Where a family is staying affects nearly everything about a trip day — the departure point for travel items, the check-in reminder on arrival day, the accommodation context visible on each night of the itinerary. Maycation should know where the family is sleeping and use that knowledge across the product without requiring them to enter the same hotel information in multiple places. Implemented via the Derivation Engine pattern: a stay entered once can offer check-in and check-out reminders, pre-populate travel origins, and provide day-level accommodation context.
+
 **Reservation Intelligence**
 Families receive booking confirmations by email. The information in those emails — confirmation numbers, check-in times, addresses, cancellation policies — is exactly what Maycation needs. Bringing that information in should be as low-friction as possible.
 

@@ -13,6 +13,13 @@ export type PlaceValue = {
   coordinates?: { lat: number; lng: number }
 }
 
+export type PlaceInputQuickPick = {
+  id: string
+  label: string
+  sublabel?: string
+  value: PlaceValue
+}
+
 type SearchPlacesResponse = {
   suggestions: PlaceSuggestion[]
 }

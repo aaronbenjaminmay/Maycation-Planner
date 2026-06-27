@@ -140,9 +140,21 @@ type PlaceValue = {
   address: string   // stored: metadata.start_place_address / location_address
   coordinates?: { lat: number; lng: number }  // undefined = manually entered, no geocode result
 }
+
+type PlaceInputQuickPick = {
+  id: string         // unique key for React rendering
+  label: string      // short category label shown above the sublabel ("Current Stay")
+  sublabel?: string  // specific place name shown below the label ("Grand Hyatt Denver")
+  value: PlaceValue  // pre-resolved value; selecting immediately calls onChange
+}
 ```
 
-`PlaceSuggestion` is what the search endpoint returns — it includes `id` for React list keys. `PlaceValue` is what gets stored after a place is selected — the transient search ID is dropped. `coordinates` is optional: when a user types a place name manually without selecting a geocoded suggestion, `coordinates` is `undefined` and no travel time estimate is possible.
+Three distinct types serve three distinct concerns:
+- `PlaceSuggestion` — a search result returned by the endpoint; includes `id` for React list keys and `coordinates` always present
+- `PlaceValue` — the selected place stored in state and persisted; transient search `id` is dropped; `coordinates` optional (absent for manual entries)
+- `PlaceInputQuickPick` — a pre-resolved selection surfaced before search; carries a user-visible `label` category and the resolved `PlaceValue`; the component does not know where quick picks come from
+
+`PlaceSuggestion` is what the search endpoint returns. `PlaceValue` is what gets stored after a place is selected. `PlaceInputQuickPick` is what consumers provide to offer contextual shortcuts before the user begins typing. These are kept separate to preserve optionality: quick picks can be sourced from stays, reservations, user profile, or any other trip fact without changing the `PlaceInput` component's interface.
 
 **Exported functions:**
 
@@ -216,6 +228,56 @@ This naming and scoping decision preserves optionality: future versions of `Plac
 
 ---
 
+## Quick Picks
+
+Quick picks are pre-resolved place selections surfaced above the search input. They allow consumers to offer contextual shortcuts — places the system already knows about — before the user begins typing.
+
+### Component API
+
+```typescript
+<PlaceInput
+  quickPicks={[
+    {
+      id: 'stay-uuid',
+      label: 'Current Stay',
+      sublabel: 'Grand Hyatt Denver',
+      value: {
+        name: 'Grand Hyatt Denver',
+        address: '1750 Welton St, Denver, CO',
+        coordinates: { lat: 39.7437, lng: -104.9874 },
+      },
+    },
+  ]}
+  ...
+/>
+```
+
+### Separation of concerns
+
+`PlaceInput` does not know what a Stay is, what a Reservation is, or how quick picks are derived. It only knows:
+
+1. An array of `PlaceInputQuickPick` was passed in
+2. Each pick has a `label`, an optional `sublabel`, and a pre-resolved `PlaceValue`
+3. Selecting a pick immediately calls `onChange(pick.value)` — no search is performed
+
+The consumer owns derivation. `PlaceInput` owns presentation and selection.
+
+### Stay integration
+
+`getActiveStayForDay(stays, dayDate)` in `src/lib/stays.ts` computes the stay covering a given date using half-open interval semantics (`check_in_date <= dayDate < check_out_date`). See [`STAY_INTELLIGENCE_ARCHITECTURE.md`](./STAY_INTELLIGENCE_ARCHITECTURE.md) for the interval convention.
+
+`AddPlannerItemForm` calls this function and builds a `PlaceInputQuickPick` for the "From" field when the active day has a stay. The quick pick carries the stay's `place_lat`/`place_lng` as coordinates, enabling travel time estimation without the user searching for their hotel.
+
+### Future quick pick sources
+
+The `quickPicks` prop is an open array — any consumer can pass any number of picks from any source. Planned future sources:
+- Airport (from a flight reservation)
+- Previous destination (from a previous day's travel item)
+- Home (from user profile)
+- Saved places
+
+---
+
 ## Future Extension Points
 
 These are not part of the MVP. They are listed here to document known directions without committing to them.
@@ -238,5 +300,6 @@ None of these require changes to the current `places.ts` contract or Edge Functi
 | Phase 1 | Edge Functions + `places.ts` service | Complete |
 | Phase 2 | `PlaceInput` T1 component + Storybook | Complete |
 | Phase 3 | Travel form + live derivation + coordinate persistence | Complete |
+| Phase 3.5 | `PlaceInputQuickPick` + Current Stay quick pick | Complete |
 | Phase 4 | Travel item card display | Not started |
 | Phase 5 | Figma component | Not started |

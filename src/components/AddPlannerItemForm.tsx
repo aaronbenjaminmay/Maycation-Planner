@@ -7,7 +7,8 @@ import {
   type ReservationType,
   type TripDay,
 } from '../lib/trips'
-import { searchPlaces, getTravelDurationMinutes, type PlaceValue } from '../lib/places'
+import { searchPlaces, getTravelDurationMinutes, type PlaceInputQuickPick, type PlaceValue } from '../lib/places'
+import { getActiveStayForDay, type TripStay } from '../lib/stays'
 import {
   Button,
   FeedbackMessage,
@@ -35,6 +36,7 @@ type AddPlannerItemFormProps = {
   submittingLabel?: string
   title?: string
   tripId: string
+  tripStays: TripStay[]
 }
 
 export type PlannerItemFormValues = {
@@ -103,6 +105,7 @@ export function AddPlannerItemForm({
   submittingLabel = 'Saving...',
   title: formTitle = 'Add Item',
   tripId,
+  tripStays,
 }: AddPlannerItemFormProps) {
   const [kind, setKind] = useState<PlannerItemKind>(
     initialValues?.kind ?? 'activity',
@@ -239,6 +242,25 @@ export function AddPlannerItemForm({
     }
   }
 
+  const activeStay = getActiveStayForDay(tripStays, day.date)
+  const fromQuickPicks: PlaceInputQuickPick[] = activeStay
+    ? [
+        {
+          id: `stay-${activeStay.id}`,
+          label: 'Current Stay',
+          sublabel: activeStay.place_name,
+          value: {
+            name: activeStay.place_name,
+            address: activeStay.place_address ?? '',
+            coordinates:
+              activeStay.place_lat !== null && activeStay.place_lng !== null
+                ? { lat: Number(activeStay.place_lat), lng: Number(activeStay.place_lng) }
+                : undefined,
+          },
+        },
+      ]
+    : []
+
   const bothPlacesSet = origin !== null && destination !== null
   const canDerive =
     (origin?.coordinates !== undefined) &&
@@ -286,6 +308,7 @@ export function AddPlannerItemForm({
               onChange={setOrigin}
               onSearchPlaces={searchPlaces}
               hint="Where are you leaving from?"
+              quickPicks={fromQuickPicks}
             />
 
             <PlaceInput
