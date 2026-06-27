@@ -108,30 +108,30 @@ select.form-control {
   gap: 10px;
 }
 
-/* ─── FormActions planner-item-form variant ──────────────────────────────── */
+/* ─── FormActions inside .form-body ─────────────────────────────────────── */
 
-.planner-item-form .form-actions {
+.form-body .form-actions {
   display: flex;
   align-items: center;
   justify-content: flex-end;
   gap: 12px;
 }
 
-.planner-item-form .form-actions--has-leading {
+.form-body .form-actions--has-leading {
   justify-content: space-between;
 }
 
-.planner-item-form .form-actions__main button {
+.form-body .form-actions__main button {
   min-width: 112px;
 }
 
 @media (max-width: 440px) {
-  .planner-item-form .form-actions {
+  .form-body .form-actions {
     align-items: stretch;
     flex-direction: column-reverse;
   }
 
-  .planner-item-form .form-actions--has-leading .form-actions__leading {
+  .form-body .form-actions--has-leading .form-actions__leading {
     align-self: flex-start;
   }
 
@@ -139,7 +139,7 @@ select.form-control {
     justify-content: flex-end;
   }
 
-  .planner-item-form .form-actions__main {
+  .form-body .form-actions__main {
     display: grid;
     grid-template-columns: 1fr 1fr;
   }

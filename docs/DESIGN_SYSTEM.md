@@ -102,7 +102,7 @@ Product screens and sub-components (`TripCard`, `ReservationCard`) live in `src/
 2. **App.css** owns product-screen layout, shell structure, the visual system passes, and product-pattern utilities (`.upload-field`, `.page-controls`).
 3. **Do not duplicate class definitions across files.** If a class appears in both `forms.css` and `App.css`, the `App.css` definition wins in the app but the `forms.css` definition wins in Storybook — a guaranteed conflict.
 4. **Token variables** (`var(--color-*)`, `var(--spacing-*)`, etc.) are defined in `tokens/generated/tokens.css` via Style Dictionary. Use them everywhere; never hardcode color or spacing values.
-5. **tokens-bridge.css** maps legacy shorthand variables (`--text`, `--border`, `--accent`) to token names. This bridge is active. New code must use full token names, not bridge shorthands.
+5. **Use full token names everywhere.** `var(--color-*)`, `var(--spacing-*)`, etc. defined in `tokens/generated/tokens.css`. No compatibility bridge layer exists.
 
 ---
 
@@ -112,7 +112,7 @@ Token source: `tokens/` (DTCG format) → Style Dictionary pipeline → `tokens/
 
 Load order in `main.tsx`:
 ```
-tokens.css → index.css → tokens-bridge.css → App.css
+tokens.css → index.css → App.css
 ```
 Component CSS (`forms.css`, `badge.css`) loads on first import via Vite's module graph.
 
@@ -272,7 +272,7 @@ Docs/
 
 `.storybook/preview.ts` imports CSS in the same order as `main.tsx`:
 ```
-tokens/generated/tokens.css → src/index.css → src/tokens-bridge.css → src/App.css
+tokens/generated/tokens.css → src/index.css → src/App.css
 ```
 Components with co-located CSS (`badge.css`, `forms.css`) load automatically when imported.
 

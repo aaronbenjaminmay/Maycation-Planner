@@ -385,7 +385,7 @@ export function TripStays({
             onClose={closeForm}
             title={editingStay ? editingStay.place_name : trip.name}
           >
-            <form className="planner-item-form" onSubmit={handleSubmit}>
+            <form className="form-body" onSubmit={handleSubmit}>
               <PlaceInput
                 label="Property"
                 value={form.place}
@@ -476,7 +476,7 @@ export function TripStays({
             onClose={dismissOffer}
             title="Add reminders?"
           >
-            <div className="planner-item-form">
+            <div className="form-body">
               <ReminderLine
                 label="Check in"
                 date={pendingOffer.checkInDate}
@@ -544,7 +544,7 @@ function ReminderLine({
   return (
     <p className="muted">
       <strong>{label}:</strong> {formatTripDayDate(date)}{' '}
-      <span style={{ opacity: 0.6 }}>(not in trip — skipped)</span>
+      <span className="muted">(not in trip — skipped)</span>
     </p>
   )
 }
@@ -559,12 +559,12 @@ function StayCard({
   stay: TripStay
 }) {
   return (
-    <CardSurface className="planner-item-card">
-      <div className="planner-item-card__content" style={{ alignSelf: 'start' }}>
+    <CardSurface className="planner-item-card planner-item-card--align-start">
+      <div className="planner-item-card__content">
         <p className="planner-item-time">
           {formatStayDateRange(stay.check_in_date, stay.check_out_date)}
         </p>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+        <div className="icon-label">
           <Icon name="bed" size="small" />
           <strong>{stay.place_name}</strong>
         </div>
@@ -577,7 +577,7 @@ function StayCard({
         {stay.notes ? <p className="muted">{stay.notes}</p> : null}
       </div>
       {canEdit ? (
-        <div className="planner-item-card__controls" style={{ alignSelf: 'start' }}>
+        <div className="planner-item-card__controls">
           <div className="planner-item-card__actions">
             <IconButton icon="edit" label="Edit stay" onClick={onEdit} />
           </div>

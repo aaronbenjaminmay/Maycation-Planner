@@ -227,7 +227,7 @@ export function DayDetail({
       <section className="page-shell trips-panel">
         <DetailHeader
           meta={
-            <p className="muted" style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+            <p className="muted icon-label">
               <Icon name={dayTypeIconMap[day.day_type]} size="small" />
               {formatTripDayDate(day.date)}
             </p>
@@ -235,7 +235,7 @@ export function DayDetail({
           onBack={onBack}
           action={
             canEditPlannerItems ? (
-              <div style={{ display: 'flex', gap: 4 }}>
+              <div className="action-group">
                 <IconButton
                   icon="edit"
                   label="Edit day"
@@ -263,7 +263,7 @@ export function DayDetail({
             onClose={() => setIsDayEditOpen(false)}
             title={day.label || `Day ${dayNumber}`}
           >
-            <form className="planner-item-form" onSubmit={handleDayEditSubmit}>
+            <form className="form-body" onSubmit={handleDayEditSubmit}>
               <SelectInput
                 label="Day type"
                 value={dayEditType}
@@ -362,8 +362,7 @@ export function DayDetail({
                         href={item.external_url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="muted"
-                        style={{ color: 'var(--accent)' }}
+                        className="link-accent"
                       >
                         View booking
                       </a>

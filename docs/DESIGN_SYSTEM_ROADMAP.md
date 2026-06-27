@@ -33,7 +33,7 @@ The foundational layer is established and stable. See [FIGMA_FOUNDATIONS.md](./F
 | Design Tokens (DTCG) | ✅ | Three-layer: Primitive → Semantic → Component (Layer 2 deferred) |
 | Style Dictionary pipeline | ✅ | `tokens/` → `tokens/generated/tokens.css` |
 | Semantic variables | ✅ | Full color, opacity, spacing, radius, shadow, typography scale |
-| Token bridge (`tokens-bridge.css`) | ✅ Active | Legacy shorthand aliases; new code must use full token names |
+| Token bridge (`tokens-bridge.css`) | ✅ Removed | Retired v2.3.0 — all call sites migrated to full semantic token names |
 | Storybook | ✅ | Foundation stories: Colors, Spacing & Radius, Typography |
 | Figma variable collections | ✅ | Primitives and Semantic collections established |
 | Documentation | ✅ | `DESIGN_SYSTEM.md`, `FIGMA_FOUNDATIONS.md`, `TOKEN_DEBT.md` |
@@ -155,9 +155,7 @@ Active maintenance work. Complete this before introducing new patterns or compon
 - `rgba(28,28,30,0.68/0.76/0.62)` card backgrounds — intentional variants; no tokens exist for these off-scale glass opacities
 - `rgba(255,255,255,0.04)` header-img-preview — closest is `--color-surface-feedback-neutral` (0.05), not exact
 - `rgba(0,0,0,0.4)` day-tile shadow — intentional contextual variant; no matching token
-- `tokens-bridge.css` shorthand aliases remain active — new code must use full token names; the bridge itself should eventually be removed
-
-**Expected outcome:** No hardcoded color or opacity values in component CSS. `tokens-bridge.css` removal plan drafted.
+**Expected outcome:** No hardcoded color or opacity values in component CSS.
 
 ---
 

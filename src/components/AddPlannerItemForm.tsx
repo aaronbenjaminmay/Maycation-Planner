@@ -274,7 +274,7 @@ export function AddPlannerItemForm({
       onClose={onCancel}
       title={day.label || 'Trip Day'}
     >
-      <form className="planner-item-form" onSubmit={handleSubmit}>
+      <form className="form-body" onSubmit={handleSubmit}>
         <SelectInput
           label="Kind"
           value={kind}

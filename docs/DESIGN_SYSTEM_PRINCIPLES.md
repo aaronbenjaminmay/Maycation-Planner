@@ -87,7 +87,7 @@ Product colors (kind/role badges) use `color.kind.*` and `color.role.*` namespac
 2. **App.css** owns product-screen layout, shell structure, the visual system passes, and product-pattern utilities.
 3. **No duplicates.** A class in both a component file and `App.css` is a guaranteed conflict between app and Storybook.
 4. **Token variables everywhere.** `var(--color-*)`, `var(--spacing-*)`, etc. are defined in `tokens/generated/tokens.css`. Use them.
-5. **tokens-bridge.css** maps legacy shorthand variables to token names. New code must use full token names, not bridge shorthands.
+5. **Use full token names everywhere.** `var(--color-*)`, `var(--spacing-*)`, etc. from `tokens/generated/tokens.css`. No bridge layer exists.
 
 **App.css is layered by design.**
 `App.css` has multiple refinement passes (§1–13). Later passes override earlier ones. Do not remove an early-pass definition without verifying the later-pass override covers all the same selectors.

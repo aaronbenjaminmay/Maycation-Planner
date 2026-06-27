@@ -504,7 +504,7 @@ export function TripSettings({
             onClose={closeInviteModal}
             title="Invite User"
           >
-            <form className="invite-form" onSubmit={handleInvite}>
+            <form className="form-body" onSubmit={handleInvite}>
               <TextInput
                 label="Email"
                 type="email"
@@ -550,7 +550,7 @@ export function TripSettings({
             onClose={closeDeleteModal}
             title="Delete Trip"
           >
-            <form className="trip-form" onSubmit={handleDeleteTrip}>
+            <form className="form-body" onSubmit={handleDeleteTrip}>
               <p className="muted">
                 This will permanently delete <strong>{trip.name}</strong> and all associated days, activities, and members. This cannot be undone.
               </p>
@@ -653,7 +653,7 @@ export function TripSettings({
             onClose={closeEditModal}
             title="Edit Trip"
           >
-            <form className="trip-form" onSubmit={handleTripUpdate}>
+            <form className="form-body" onSubmit={handleTripUpdate}>
               <TextInput
                 label="Trip Name"
                 value={editName}
@@ -712,7 +712,7 @@ export function TripSettings({
                 {headerImgError ? (
                   <FeedbackMessage tone="error">{headerImgError}</FeedbackMessage>
                 ) : null}
-                <div style={{ display: 'flex', gap: 8 }}>
+                <div className="action-group">
                   {trip.header_image_path ? (
                     <Button
                       variant="destructive"

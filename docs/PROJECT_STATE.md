@@ -181,8 +181,6 @@ Core rules:
 
 **Opacity rule**: Always use `rgba()` composites on CSS surfaces. Never apply element-level `opacity` to containers. Figma: use opaque color + paint-layer opacity float.
 
-`tokens-bridge.css` provides legacy shorthand aliases. New code must use full token names. The bridge is a known migration target (see Outstanding Cleanup).
-
 Pipeline: `tokens/*.json` → Style Dictionary (`sd.config.mjs`) → `tokens/generated/tokens.css`
 
 ### Component Classification
@@ -302,7 +300,7 @@ Objective: audit every screen, component composition, modal, card, empty state, 
 - **Mapbox token**: Only accessible via `Deno.env.get('MAPBOX_ACCESS_TOKEN')` in Edge Functions. Zero references in `src/`.
 - **Opacity**: Use `rgba()` in CSS. Never element-level `opacity` on containers.
 - **Storybook is canonical**: Figma mirrors Storybook. If they disagree, Storybook wins.
-- **Token names**: Use full token names (e.g., `--color-surface-glass`). `tokens-bridge.css` shorthand aliases are legacy — do not add new code that uses them.
+- **Token names**: Use full token names (e.g., `--color-surface-glass`). No bridge layer exists — all token calls resolve directly from `tokens/generated/tokens.css`.
 - **Component ownership**: Components own all visual styling. Screens own data, state, and logic only. Screens do not own visual styling.
 - **planner-item-card composition**: Non-day-detail cards use `display: grid; grid-template-columns: minmax(0, 1fr) auto`. Content in column 1 (wide), controls in column 2 (narrow). Controls go in `__controls > __actions`. Use `IconButton`, not raw `Icon`, for interactive controls.
 - **ModalSheet placement**: ModalSheet must not be a direct child of `<main class="dashboard-shell has-trip-bg">` — the `.dashboard-shell.has-trip-bg > *` CSS rule overrides `position: fixed`, collapsing the modal. Always render ModalSheet inside the `<section class="page-shell">`.
@@ -346,7 +344,6 @@ maycation-planner/
 ├── src/
 │   ├── App.tsx                       — Auth state, top-level navigation
 │   ├── App.css                       — All component and product CSS (§1–§13)
-│   ├── tokens-bridge.css             — Legacy shorthand aliases (migration target)
 │   ├── components/
 │   │   ├── DesignSystem.tsx          — Re-export barrel for all design system components
 │   │   ├── AddPlannerItemForm.tsx    — Add/edit planner items; Place + Temporal intelligence
@@ -411,7 +408,6 @@ maycation-planner/
 - `rgba(28,28,30,0.68/0.76/0.62)` card backgrounds — intentional off-scale glass variants
 - `rgba(255,255,255,0.04)` header-img-preview — nearest token is 0.05
 - `rgba(0,0,0,0.4)` day-tile shadow — intentional contextual variant
-- `tokens-bridge.css` shorthand aliases — removal plan not yet drafted
 
 ### Intelligence deferred work
 

@@ -299,9 +299,9 @@ Note: `typography.eyebrow` and `typography.label` are distinct type scales, but 
 
 | Location | Selector | Status |
 |----------|----------|--------|
-| `index.css:9` | `--accent: #0a84ff` | Light-mode fallback, overridden by `tokens-bridge.css` for all modes. Not visible in production. |
+| `index.css:9` | `--accent: #0a84ff` | Light-mode fallback. No callers in `App.css` — `var(--accent)` was retired in v2.3.0. Variable still defined in `index.css` `:root` but unreferenced. |
 
-The light-mode `--accent` in `index.css` is dead code: `tokens-bridge.css` maps `--accent: var(--color-accent-default)` without a media query, so the bridge override applies to all color schemes. Do not remove this until the light-mode token strategy is resolved.
+The `--accent` variable in `index.css` is now unreferenced by `App.css`. It remains defined in `index.css` `:root` as a legacy base. The full `index.css` `:root` variable block is a pre-token-system holdover; its migration is deferred until the light-mode token strategy is resolved.
 
 ### Why `countdown`, not `accent.blue` or `info`
 
@@ -603,7 +603,7 @@ A story showing the countdown label color would validate the token end-to-end in
 - Opacity primitives (`opacity.primitive.*`) provide raw alpha values for both Figma and CSS reference
 - Semantic opacity tokens document the design system's composition model
 - Style Dictionary filter correctly excludes tokens with 'primitive' in path from generated output
-- `tokens-bridge.css` correctly routes all legacy variable names to token values
+- Token bridge layer (`tokens-bridge.css`) fully retired — all call sites migrated to full semantic token names (v2.3.0)
 - `radius.card`, `radius.input`, `radius.pill` are semantic aliases for ordinal scale values
 - Shadow tokens have both ordinal (`shadow.sm`) and semantic (`shadow.surface.card`) names
 
@@ -787,7 +787,6 @@ When component tokens are added (Layer 2), they will be filtered **in** to the o
 | `tokens/source/icon.tokens.json` | Icon sizes |
 | `tokens/generated/tokens.css` | Generated CSS custom properties (do not edit) |
 | `tokens/generated/tokens.ts` | Generated TypeScript constants (do not edit) |
-| `src/tokens-bridge.css` | Legacy variable bridge; maps `--text`, `--accent`, etc. to token values |
 
 To regenerate after editing source files:
 

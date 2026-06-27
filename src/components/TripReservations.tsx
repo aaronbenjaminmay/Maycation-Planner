@@ -115,12 +115,12 @@ function ReservationCard({ item }: { item: PlannerItem }) {
   const timeRange = formatPlannerItemTimeRange(item)
 
   return (
-    <CardSurface className="planner-item-card">
+    <CardSurface className="planner-item-card planner-item-card--single-column">
       <div className="planner-item-card__content">
         {timeRange ? (
           <p className="planner-item-time">{timeRange}</p>
         ) : null}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+        <div className="icon-label">
           <Icon name={reservationTypeIconMap[item.reservation_type]} size="small" />
           <strong>{item.title}</strong>
         </div>
@@ -141,8 +141,7 @@ function ReservationCard({ item }: { item: PlannerItem }) {
             href={item.external_url}
             target="_blank"
             rel="noopener noreferrer"
-            className="muted"
-            style={{ color: 'var(--accent)' }}
+            className="link-accent"
           >
             View booking
           </a>

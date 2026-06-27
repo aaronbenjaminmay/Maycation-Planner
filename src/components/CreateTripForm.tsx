@@ -64,7 +64,7 @@ export function CreateTripForm({
   }
 
   return (
-    <form className="trip-form" onSubmit={handleSubmit}>
+    <form className="form-body" onSubmit={handleSubmit}>
       <TextInput label="Trip Name" value={name} onChange={setName} required />
 
       <TextInput

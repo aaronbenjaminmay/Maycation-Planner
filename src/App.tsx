@@ -4,7 +4,7 @@ import {
   signUpWithEmailPassword,
   useAuthSession,
 } from './lib/auth'
-import { CardSurface, FeedbackMessage, TextInput } from './components/DesignSystem'
+import { Button, CardSurface, FeedbackMessage, TextInput } from './components/DesignSystem'
 import { TripsDashboard } from './components/TripsDashboard'
 import './App.css'
 
@@ -95,13 +95,13 @@ function App() {
             required
           />
 
-          <button type="submit" disabled={isSubmitting}>
+          <Button type="submit" variant="primary" disabled={isSubmitting}>
             {isSubmitting
               ? 'Working...'
               : authMode === 'sign-in'
                 ? 'Sign in'
                 : 'Create account'}
-          </button>
+          </Button>
         </form>
 
         {feedback ? <FeedbackMessage>{feedback}</FeedbackMessage> : null}

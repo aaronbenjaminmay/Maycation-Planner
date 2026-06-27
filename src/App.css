@@ -46,10 +46,10 @@
   display: grid;
   gap: 24px;
   padding: 28px;
-  border: 1px solid var(--border);
+  border: 1px solid var(--color-border-default);
   border-radius: 8px;
-  background: var(--panel);
-  box-shadow: var(--shadow);
+  background: var(--color-surface-default);
+  box-shadow: var(--shadow-lg);
 }
 
 .dashboard-panel {
@@ -65,24 +65,20 @@
   grid-template-columns: 1fr 1fr;
   gap: 6px;
   padding: 4px;
-  border: 1px solid var(--border);
+  border: 1px solid var(--color-border-default);
   border-radius: 8px;
-  background: var(--control-bg);
+  background: var(--color-surface-elevated);
 }
 
-.trip-card:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 2px;
-}
-
-/* Auth-screen buttons are raw HTML, not the Button component */
-.mode-toggle button,
-.auth-form button {
+/* Auth mode-toggle buttons are raw HTML, not the Button component.
+   The auth form submit button uses <Button variant="primary"> — its styles
+   are owned by the Button component in §10. */
+.mode-toggle button {
   min-height: 44px;
   padding: 0 var(--spacing-md);
   border: 1px solid transparent;
   border-radius: var(--radius-full);
-  color: var(--text-h);
+  color: var(--color-text-primary);
   background: transparent;
   font: inherit;
   font-size: 14px;
@@ -91,50 +87,23 @@
   cursor: pointer;
 }
 
-.mode-toggle button.active,
-.auth-form button {
-  color: var(--accent-text);
-  border-color: var(--accent);
-  background: var(--accent);
+.mode-toggle button.active {
+  color: var(--color-accent-text);
+  border-color: var(--color-accent-default);
+  background: var(--color-accent-default);
 }
 
-.auth-form button:hover:not(:disabled) {
-  background: color-mix(in srgb, var(--accent) 86%, white 14%);
-}
-
-.auth-form button:focus-visible,
 .mode-toggle button:focus-visible {
-  outline: 2px solid var(--accent);
+  outline: 2px solid var(--color-accent-default);
   outline-offset: 2px;
 }
 
-.auth-form button:disabled {
-  cursor: not-allowed;
-  opacity: var(--opacity-disabled-default);
-}
-
 .auth-form,
-.trip-form,
-.planner-item-form,
-.invite-form {
+.form-body {
   display: grid;
-  gap: 16px;
+  gap: var(--spacing-md);
 }
 
-
-.feedback {
-  padding: 12px;
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  color: var(--text-h);
-  background: var(--control-bg);
-}
-
-.feedback--error {
-  border-color: var(--color-danger-border);
-  background: var(--color-danger-surface);
-  color: var(--color-danger-text);
-}
 
 .empty-state,
 .settings-panel {
@@ -159,24 +128,6 @@
   gap: 14px;
 }
 
-.trip-card {
-  display: grid;
-  gap: 7px;
-  width: 100%;
-  padding: 18px;
-  border: 1px solid var(--color-border-glass);
-  border-radius: 8px;
-  color: inherit;
-  background: var(--control-bg);
-  font: inherit;
-  text-align: left;
-  cursor: pointer;
-}
-
-.trip-card:hover {
-  border-color: var(--accent);
-}
-
 .planner-item-list {
   display: grid;
   gap: 10px;
@@ -188,15 +139,15 @@
   justify-content: space-between;
   gap: 10px;
   padding: 14px;
-  border: 1px solid var(--border);
-  border-left: 3px solid var(--accent);
+  border: 1px solid var(--color-border-default);
+  border-left: 3px solid var(--color-accent-default);
   border-radius: 8px;
-  background: var(--control-bg);
+  background: var(--color-surface-elevated);
 }
 
 .planner-item-card.completed {
   border-left-color: var(--color-accent-default);
-  background: color-mix(in srgb, var(--control-bg) 88%, var(--color-accent-default));
+  background: color-mix(in srgb, var(--color-surface-elevated) 88%, var(--color-accent-default));
 }
 
 .planner-item-card__content {
@@ -207,7 +158,7 @@
 }
 
 .planner-item-card strong {
-  color: var(--text-h);
+  color: var(--color-text-primary);
   line-height: 1.2;
 }
 
@@ -266,7 +217,7 @@
   display: grid;
   gap: 8px;
   margin-top: var(--spacing-md);
-  color: var(--text);
+  color: var(--color-text-secondary);
 }
 
 .screen-header__actions {
@@ -281,10 +232,10 @@
 .icon-button {
   min-width: 44px;
   min-height: 44px;
-  border: 1px solid var(--border);
+  border: 1px solid var(--color-border-default);
   border-radius: 999px;
-  color: var(--text-h);
-  background: color-mix(in srgb, var(--panel) 72%, transparent);
+  color: var(--color-text-primary);
+  background: color-mix(in srgb, var(--color-surface-default) 72%, transparent);
   font: inherit;
   font-size: 13px;
   font-weight: 800;
@@ -306,11 +257,11 @@ button.dashboard-card {
 }
 
 .dashboard-card:hover {
-  border-color: var(--accent);
+  border-color: var(--color-accent-default);
 }
 
 .dashboard-card strong {
-  color: var(--text-h);
+  color: var(--color-text-primary);
   font-size: 1.15rem;
   line-height: 1.15;
 }
@@ -333,7 +284,7 @@ button.dashboard-card {
 }
 
 .day-tile:hover {
-  border-color: var(--accent);
+  border-color: var(--color-accent-default);
 }
 
 .day-tile__header {
@@ -347,7 +298,7 @@ button.dashboard-card {
 
 .day-tile__date {
   display: block;
-  color: var(--accent);
+  color: var(--color-accent-default);
   font-size: 12px;
   font-weight: 800;
   letter-spacing: 0.08em;
@@ -356,7 +307,7 @@ button.dashboard-card {
 
 .day-tile h2 {
   margin: 8px 0 0;
-  color: var(--text-h);
+  color: var(--color-text-primary);
   font-size: 1.45rem;
   line-height: 1.1;
 }
@@ -364,7 +315,7 @@ button.dashboard-card {
 .day-tile__day-label {
   display: block;
   margin-top: 8px;
-  color: var(--text);
+  color: var(--color-text-secondary);
   font-size: 13px;
   font-weight: 800;
 }
@@ -414,7 +365,7 @@ button.dashboard-card {
 .dashboard-card:focus-visible,
 .day-tile:focus-visible,
 .icon-button:focus-visible {
-  outline: 2px solid var(--accent);
+  outline: 2px solid var(--color-accent-default);
   outline-offset: 2px;
 }
 
@@ -727,7 +678,7 @@ button.dashboard-card {
 .day-detail-screen .detail-header {
   gap: 18px;
   padding-bottom: 18px;
-  border-bottom: 1px solid var(--border);
+  border-bottom: 1px solid var(--color-border-default);
 }
 
 .day-detail-screen .screen-header h1 {
@@ -745,7 +696,7 @@ button.dashboard-card {
   gap: 16px;
   padding: 18px 0;
   border: 0;
-  border-bottom: 1px solid var(--border);
+  border-bottom: 1px solid var(--color-border-default);
   border-radius: 0;
   background: transparent;
 }
@@ -759,7 +710,7 @@ button.dashboard-card {
   order: 1;
 }
 .day-detail-screen .planner-item-time {
-  color: var(--accent);
+  color: var(--color-accent-default);
   font-size: 12px;
   font-weight: 900;
   letter-spacing: 0.12em;
@@ -802,7 +753,7 @@ button.dashboard-card {
 }
 
 .screen-header h1 {
-  color: var(--text-h);
+  color: var(--color-text-primary);
   font-size: clamp(1.85rem, 7vw, 2.75rem);
   font-weight: 900;
   letter-spacing: 0;
@@ -891,7 +842,7 @@ button.dashboard-card {
 
 .modal-sheet__header h2 {
   margin: 0;
-  color: var(--text-h);
+  color: var(--color-text-primary);
   font-size: 1.35rem;
   font-weight: 900;
   line-height: 1.05;
@@ -1116,7 +1067,7 @@ button.dashboard-card {
 .label,
 .planner-item-time {
   margin: 0 0 var(--spacing-xs);
-  color: var(--accent);
+  color: var(--color-accent-default);
   font-size: 11px;
   font-weight: 900;
   letter-spacing: 0.18em;
@@ -1126,7 +1077,7 @@ button.dashboard-card {
 
 .screen-header h1 {
   margin: 0;
-  color: var(--text-h);
+  color: var(--color-text-primary);
   font-size: var(--typography-title-font-size);
   font-weight: 900;
   letter-spacing: 0;
@@ -1150,7 +1101,7 @@ button.dashboard-card {
 .trip-dashboard .day-tile h2,
 .day-tile h2 {
   margin: 0;
-  color: var(--text-h);
+  color: var(--color-text-primary);
   font-size: 1rem;
   font-weight: 900;
   letter-spacing: 0;
@@ -1281,14 +1232,6 @@ button.dashboard-card {
   gap: 16px;
 }
 
-.auth-form,
-.trip-form,
-.planner-item-form,
-.invite-form {
-  gap: var(--spacing-md);
-}
-
-
 @media (max-width: 720px) {
   .dashboard-panel,
   .auth-panel {
@@ -1348,6 +1291,40 @@ button.dashboard-card {
   align-items: center;
   gap: 8px;
 }
+
+/* ─── Shared UI utilities ────────────────────────────────────────────────── */
+
+/* Inline icon + text pairing — replaces repeated inline flex style blocks */
+.icon-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Horizontal group of two or more icon buttons in a header trailing slot */
+.action-group {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+}
+
+/* Planner card variant: top-aligns both columns for tall content (e.g. StayCard) */
+.planner-item-card--align-start {
+  align-items: start;
+}
+
+/* Planner card variant: single-column for read-only display cards with no controls */
+.planner-item-card--single-column {
+  grid-template-columns: 1fr;
+}
+
+/* Accent-colored inline link — replaces inline style={{ color: 'var(--color-accent-default)' }} */
+.link-accent {
+  color: var(--color-accent-default);
+}
+
+/* ─────────────────────────────────────────────────────────────────────────── */
+
 /* Focused Day Detail planner card layout */
 .day-detail-screen .planner-item-card {
   position: relative;
@@ -1369,7 +1346,7 @@ button.dashboard-card {
 
 .day-detail-screen .planner-item-time {
   margin: 0;
-  color: var(--accent);
+  color: var(--color-accent-default);
   font-size: 11px;
   font-weight: 900;
   letter-spacing: 0.16em;
@@ -1378,7 +1355,7 @@ button.dashboard-card {
 }
 
 .day-detail-screen .planner-item-card strong {
-  color: var(--text-h);
+  color: var(--color-text-primary);
   font-size: 1.05rem;
   font-weight: 900;
   line-height: 1.15;
@@ -1445,7 +1422,7 @@ button.dashboard-card {
 }
 
 .member-row strong {
-  color: var(--text-h);
+  color: var(--color-text-primary);
   font-size: 0.98rem;
   font-weight: 900;
   line-height: 1.15;
