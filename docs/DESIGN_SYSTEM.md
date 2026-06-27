@@ -19,7 +19,7 @@ The design system uses a four-tier hierarchy aligned with DTCG token conventions
 
 ## Component Inventory (T1)
 
-Domain-agnostic components with no imports from `lib/`. All are Storybook-documented as of v1.5.0.
+Domain-agnostic components with no imports from `lib/`. All are Storybook-documented.
 
 ### General
 
@@ -32,6 +32,7 @@ Domain-agnostic components with no imports from `lib/`. All are Storybook-docume
 | `Icon` | `Icon.tsx` | (inline SVG) | `Components/Icon` |
 | `IconButton` | `IconButton.tsx` | `App.css §11` | `Components/IconButton` |
 | `ModalSheet` | `ModalSheet.tsx` | `App.css §1, §7` | `Components/ModalSheet` |
+| `PlaceInput` | `PlaceInput.tsx` | `PlaceInput.css` | `Components/PlaceInput` |
 
 ### Forms
 
@@ -277,6 +278,6 @@ Components with co-located CSS (`badge.css`, `forms.css`) load automatically whe
 
 ### Future Storybook phases
 
-**v1.x.0 — Code Connect for remaining T1 Components:** Wire Code Connect for EmptyState, StatusButton, FormActions, FormGrid, ScreenHeader, and PageControls. These 6 components have Figma components and stable APIs; they are the last T1 components without a `.figma.tsx` mapping.
+**v1.x.0 — Code Connect for remaining T1 Components:** Wire Code Connect for EmptyState, StatusButton, FormActions, FormGrid, ScreenHeader, and PageControls. These 6 components have Figma components and stable APIs and are the priority Code Connect targets. Icon is separately deferred (known Storybook rendering defect). PlaceInput is deferred until its Figma component is created (Place Intelligence Phase 5).
 
 **v1.x.0 — CSS Co-location Migration:** Migrate component styles from `App.css` to co-located CSS files. This removes the `App.css` dependency from Storybook's global imports and makes each component self-contained. See [DESIGN_SYSTEM_ROADMAP.md](./DESIGN_SYSTEM_ROADMAP.md) for scope.

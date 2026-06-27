@@ -1,5 +1,7 @@
 # Maycation — Product Roadmap
 
+**Product: v2.2.1 | Next milestone: v2.3.0 — Design System Convergence | Design System: v1.26.0 — CSS Token Parity**
+
 This roadmap is organized by product maturity, not by version or release schedule.
 
 It describes the direction and opportunity space. It is not a feature specification, a commitment list, or a sprint plan.

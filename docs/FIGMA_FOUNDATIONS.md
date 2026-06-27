@@ -660,6 +660,8 @@ For Code Connect to work well, the Figma and React systems need to share:
 | Form controls (`TextInput`, `TextArea`, `SelectInput`, `FormRow`) | ✅ *(v1.8.0)* | ✅ | ✅ |
 | Form layout (`FormGrid`, `FormActions`) | ✅ *(v1.8.0)* | ✅ | ❌ not yet wired (Figma nodes 86:54, 92:65) |
 | Navigation (`ScreenHeader`, `PageControls`) | ✅ *(v1.8.0)* | ✅ | ❌ not yet wired (Figma nodes 111:115, 111:158) |
+| `Icon` | ✅ | ✅ | ❌ not yet wired — deferred (known Storybook rendering defect) |
+| `PlaceInput` | ❌ pending Phase 5 Figma | ✅ | ❌ not yet wired — deferred until Figma component exists |
 
 ### Naming alignment to preserve
 
@@ -758,7 +760,7 @@ CSS opacity tokens (`--opacity-surface-glass: 0.72`, etc.) are generated and ava
 
 ---
 
-## 9. Style Dictionary Configuration Notes
+## 10. Style Dictionary Configuration Notes
 
 The current `sd.config.mjs` filters primitive tokens out of generated output:
 

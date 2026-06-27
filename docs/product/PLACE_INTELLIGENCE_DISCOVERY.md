@@ -2,7 +2,7 @@
 
 **Feature:** Travel Duration for Planner Items
 **Phase:** 2 — Product Evolution
-**Status:** Discovery
+**Status:** Complete — Shipped. See `PLACE_INTELLIGENCE_ARCHITECTURE.md` for canonical implementation state.
 **Date:** 2026-06-25
 
 ---

@@ -1,5 +1,7 @@
 # Maycation Planner Project Plan
 
+> Historical planning document. Some terminology or implementation details may differ from the shipped product.
+
 Maycation Planner is the successor to Disney Mayhem, a family vacation planner that was successfully used during a real Walt Disney World trip. Disney Mayhem proved the value of a shared, lightweight trip command center, but it also exposed architectural debt caused by implicit item types, title-based inference, unstable identifiers, and separate card models for special cases.
 
 Maycation Planner should preserve the practical, family-tested strengths of Disney Mayhem while rebuilding the foundation around explicit domain modeling, stable IDs, clear permissions, and one canonical planner item model.

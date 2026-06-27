@@ -44,11 +44,11 @@ The foundational layer is established and stable. See [FIGMA_FOUNDATIONS.md](./F
 
 **Status: Complete (Code Connect partially wired)**
 
-All 18 T1 Components are code-complete and Storybook-documented. 11 of 18 have Code Connect wired. 7 are not yet wired: EmptyState, StatusButton, FormActions, FormGrid, ScreenHeader, PageControls, Icon. See [DESIGN_SYSTEM.md — Component Inventory](./DESIGN_SYSTEM.md#component-inventory-t1) for the full list and Code Connect status.
+All 19 T1 Components are code-complete and Storybook-documented. 11 of 19 have Code Connect wired. 8 are not yet wired: EmptyState, StatusButton, FormActions, FormGrid, ScreenHeader, PageControls, Icon (deferred — known Storybook rendering defect), PlaceInput (deferred — Figma component pending Place Intelligence Phase 5). See [DESIGN_SYSTEM.md — Component Inventory](./DESIGN_SYSTEM.md#component-inventory-t1) for the full list and Code Connect status.
 
-**Summary (18 components across 4 groups):**
+**Summary (19 components across 4 groups):**
 
-- **General:** Badge, Button, CardSurface, FeedbackMessage, Icon, IconButton, ModalSheet
+- **General:** Badge, Button, CardSurface, FeedbackMessage, Icon, IconButton, ModalSheet, PlaceInput
 - **Forms:** FormActions, FormGrid, FormRow, SelectInput, TextArea, TextInput
 - **Navigation:** PageControls, ScreenHeader
 - **Feedback:** EmptyState, ProgressPill, StatusButton
@@ -101,9 +101,11 @@ Active maintenance work. Complete this before introducing new patterns or compon
 
 **Goal:** Wire Code Connect for EmptyState, StatusButton, FormActions, FormGrid, ScreenHeader, and PageControls.
 
-**Why it matters:** 7 T1 Components have Figma components and stable APIs but no `.figma.tsx` Code Connect file. Without it, the Figma ↔ code link for those components is visual-only. This work mirrors what is already done for the 11 wired components.
+**Why it matters:** 8 T1 Components currently have no `.figma.tsx` Code Connect file. Without it, the Figma ↔ code link for those components is visual-only. This work mirrors what is already done for the 11 wired components.
 
-**Expected outcome:** 6 new `.figma.tsx` files. All 18 T1 Components fully wired.
+**Scope:** EmptyState, StatusButton, FormActions, FormGrid, ScreenHeader, PageControls. Icon is excluded from this sprint — its Storybook rendering defect must be resolved first (tracked in project memory). PlaceInput Code Connect is deferred until its Figma component is created (Place Intelligence Phase 5).
+
+**Expected outcome:** 6 new `.figma.tsx` files. 17 of 19 T1 Components fully wired (Icon and PlaceInput remain deferred).
 
 ---
 

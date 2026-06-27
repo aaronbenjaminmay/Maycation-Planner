@@ -1,6 +1,6 @@
 # Maycation Design System — Principles
 
-Last updated: v1.27.0
+Last updated: v1.26.0
 
 This document is the single source of truth for how the Maycation design system is built, extended, and maintained. It consolidates principles from [DESIGN_SYSTEM.md](./DESIGN_SYSTEM.md), [FIGMA_FOUNDATIONS.md](./FIGMA_FOUNDATIONS.md), and the Storybook `Docs/Design Principles` story.
 

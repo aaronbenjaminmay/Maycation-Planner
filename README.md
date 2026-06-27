@@ -4,6 +4,19 @@ A collaborative family trip planner designed for real vacations, not spreadsheet
 
 Maycation helps families organize travel days, reservations, activities, transportation, and notes in a shared itinerary that works across devices and users.
 
+## Documentation
+
+Start here when joining the project as an engineer or AI assistant:
+
+1. [README.md](./README.md) — Setup and workflow (this file)
+2. [docs/PROJECT_STATE.md](./docs/PROJECT_STATE.md) — Full project state: architecture, design system, product status, versioning, and current milestone
+3. [PROJECT_CONSTITUTION.md](./PROJECT_CONSTITUTION.md) — Permanent engineering and design rules. Governs every implementation decision.
+4. [docs/DESIGN_SYSTEM.md](./docs/DESIGN_SYSTEM.md) — Component inventory, token architecture, CSS ownership, Storybook parity
+5. [docs/product/PRODUCT_ROADMAP.md](./docs/product/PRODUCT_ROADMAP.md) — Product opportunity areas and evolution direction
+6. [docs/architecture/](./docs/architecture/) — Implementation details: Place Intelligence, Stay Intelligence, Temporal Intelligence, Derivation Engine
+
+Do not begin implementation until you have read `docs/PROJECT_STATE.md` and `PROJECT_CONSTITUTION.md`.
+
 ## Current Status
 
 Maycation is actively under development.
@@ -29,7 +42,7 @@ Complete — Phase 1 Foundation
 * Style Dictionary pipeline → `tokens/generated/tokens.css` and `tokens.ts`
 * Full semantic token system: color, opacity, spacing, radius, shadow, typography, icon
 * Figma variable collections: Primitives and Semantic collections established
-* 18 T1 components — code-complete and Storybook-documented; 11 of 18 Code Connect–wired
+* 19 T1 components — code-complete and Storybook-documented; 11 of 19 Code Connect–wired
 * 3 T2 patterns — DashboardCard, DetailHeader, DayTile; Figma complete; Code Connect pending
 * Storybook — 99 stories across Foundation, Components, Patterns, and Docs groups
 * Dark-mode-first interface
@@ -95,7 +108,7 @@ Core principles:
 Complete (v1.26.0)
 
 * Design token pipeline (DTCG, Style Dictionary)
-* 18 T1 components — code, Storybook, and partial Code Connect
+* 19 T1 components — code, Storybook, and partial Code Connect
 * 3 T2 patterns — code, Storybook, and Figma
 * Figma variable collections (Primitives and Semantic)
 * Visual refinement to Disney Mayhem benchmark
@@ -131,7 +144,7 @@ Opens at `http://localhost:6006`.
 **Coverage:**
 - `Foundation/` — Color tokens, typography scale, spacing and radius scale
 - `Components/` — All T1 components: buttons, surfaces, forms, navigation, feedback
-- `Patterns/` — T2 compositions: DashboardCard, DetailHeader
+- `Patterns/` — T2 compositions: DashboardCard, DetailHeader, DayTile
 - `Docs/` — Design Principles and Component Classification
 
 **What Storybook is for:**

@@ -1,6 +1,32 @@
-# Maycation Project Snapshot
+# Maycation Project State
 
-> Canonical onboarding document for new Claude sessions. Built from the repository as of Design System v1.26.0 (June 2026). Verify against the repository before acting on specific details — this document may lag behind recent commits.
+> Canonical onboarding document for new Claude sessions. Reflects repository state as of Design System v1.26.0 / Product v2.2.1 (June 2026). Verify against the repository before acting on specific details — this document may lag behind recent commits.
+
+---
+
+## Documentation Precedence
+
+When documentation sources conflict, this order determines which is authoritative:
+
+1. **PROJECT_CONSTITUTION.md** — Permanent engineering, architecture, UX, and design system rules. These never change without deliberate intent.
+2. **PROJECT_STATE.md** (this document) — Current implementation state, versioning, and milestone.
+3. **docs/DESIGN_SYSTEM.md** — Component inventory, token architecture, and Storybook parity.
+4. **docs/product/PRODUCT_ROADMAP.md** — Product opportunity areas and evolution direction.
+5. **docs/architecture/** — Implementation details for individual systems.
+6. **Storybook** — Canonical component behavior. If Storybook and a doc disagree on component API, Storybook wins.
+7. **Existing implementation** — If no documentation covers a case, the live code is the current truth.
+
+---
+
+## Last Verified
+
+| Field | Value |
+|---|---|
+| Product version | v2.2.1 |
+| Design System version | v1.26.0 — CSS Token Parity |
+| Current milestone | v2.3.0 — Design System Convergence |
+| Verification date | 2026-06-27 |
+| Repository commit | `73db1d2` |
 
 ---
 
@@ -143,7 +169,7 @@ Core rules:
 
 ### Version
 
-**v1.26.0 — CSS Token Parity**
+**Design System: v1.26.0 — CSS Token Parity**
 
 ### Token Architecture (DTCG three-layer)
 
@@ -168,15 +194,15 @@ Pipeline: `tokens/*.json` → Style Dictionary (`sd.config.mjs`) → `tokens/gen
 | T2 Pattern | Opinionated T1 compositions. Domain-agnostic. Encodes Maycation layout conventions. |
 | T3 Product | Maycation-specific. Carries domain knowledge. Not in Storybook. |
 
-### T1 Components (18 total)
+### T1 Components (19 total)
 
-**General**: Badge, Button, CardSurface, FeedbackMessage, Icon, IconButton, ModalSheet  
-**Forms**: FormActions, FormGrid, FormRow, SelectInput, TextArea, TextInput  
-**Navigation**: PageControls, ScreenHeader  
+**General**: Badge, Button, CardSurface, FeedbackMessage, Icon, IconButton, ModalSheet, PlaceInput
+**Forms**: FormActions, FormGrid, FormRow, SelectInput, TextArea, TextInput
+**Navigation**: PageControls, ScreenHeader
 **Feedback**: EmptyState, ProgressPill, StatusButton
 
-Code Connect wired: **11 of 18** (Badge, Button, CardSurface, FeedbackMessage, FormRow, IconButton, ModalSheet, ProgressPill, SelectInput, TextArea, TextInput)  
-Not yet wired: EmptyState, StatusButton, FormActions, FormGrid, ScreenHeader, PageControls, Icon
+Code Connect wired: **11 of 19** (Badge, Button, CardSurface, FeedbackMessage, FormRow, IconButton, ModalSheet, ProgressPill, SelectInput, TextArea, TextInput)
+Not yet wired: EmptyState, StatusButton, FormActions, FormGrid, ScreenHeader, PageControls, Icon (deferred — known Storybook rendering defect), PlaceInput (deferred — Figma component pending Place Intelligence Phase 5)
 
 ### T2 Patterns (3 total)
 
@@ -192,7 +218,7 @@ App.css is the primary CSS file. It is organized into named sections (§1–§13
 
 ### Storybook
 
-Storybook is the canonical component implementation. What Storybook shows defines how a component behaves. Figma mirrors Storybook, not the reverse. 99 stories across 25 groups.
+Storybook is the canonical component implementation. What Storybook shows defines how a component behaves. Figma mirrors Storybook, not the reverse. 99+ stories across 25+ groups.
 
 ### CSS ownership
 
@@ -236,9 +262,26 @@ Components own all visual styling (layout, spacing, radius, borders, typography,
 
 **Source of truth**: `docs/product/PRODUCT_ROADMAP.md`
 
-Phase 1 (Design System Foundation) is complete as of v1.26.0. Phase 2 (Product Evolution) begins once System Health work is done.
+### Product versions
 
-**Phase 2 opportunity areas** (from `PRODUCT_ROADMAP.md`):
+| Stream | Current | Next milestone |
+|---|---|---|
+| Product | **v2.2.1** | **v2.3.0 — Design System Convergence** |
+| Design System | **v1.26.0 — CSS Token Parity** | v1.x.0 — System Health (Code Connect, CSS co-location) |
+
+### Current milestone: v2.3.0 — Design System Convergence
+
+Objective: audit every screen, component composition, modal, card, empty state, form, interaction, and layout and ensure it is assembled from existing design system components, documented patterns, Storybook components, and design tokens. No new features. Favor reuse over invention.
+
+### System Health (prerequisite to Product Phase 2)
+
+1. Code Connect for 6 priority T1 components (EmptyState, StatusButton, FormActions, FormGrid, ScreenHeader, PageControls)
+2. Code Connect for 3 T2 patterns (DashboardCard, DetailHeader, DayTile)
+3. Component Token Layer (Layer 2)
+4. CSS co-location migration
+
+### Phase 2 opportunity areas (from `PRODUCT_ROADMAP.md`)
+
 - Travel Duration (complete)
 - Address (partial)
 - Stay (complete)
@@ -248,12 +291,6 @@ Phase 1 (Design System Foundation) is complete as of v1.26.0. Phase 2 (Product E
 - Trip Timeline
 
 **Future** (later phases): Expense Tracking, Photos, AI Recommendations, Public Sharing
-
-**System Health work** (prerequisite to Phase 2):
-1. Code Connect for remaining 7 T1 components
-2. Code Connect for 3 T2 patterns
-3. Component Token Layer (Layer 2)
-4. CSS co-location migration
 
 ---
 
@@ -286,6 +323,7 @@ Phase 1 (Design System Foundation) is complete as of v1.26.0. Phase 2 (Product E
 ```
 maycation-planner/
 ├── docs/
+│   ├── PROJECT_STATE.md              — This document. Canonical onboarding and project state.
 │   ├── DESIGN_SYSTEM.md              — Component inventory, CSS section map, token debt
 │   ├── DESIGN_SYSTEM_PRINCIPLES.md   — 7 design principles, component/token/opacity rules
 │   ├── DESIGN_SYSTEM_ROADMAP.md      — v1.26.0 current release, System Health backlog, Phase 2 vision
@@ -297,8 +335,14 @@ maycation-planner/
 │   │   ├── STAY_INTELLIGENCE_ARCHITECTURE.md
 │   │   └── TEMPORAL_INTELLIGENCE_ARCHITECTURE.md
 │   └── product/
+│       ├── EXPERIENCE_PRINCIPLES.md  — 12 UX experience principles
+│       ├── FEATURE_EVALUATION.md     — Evaluation template for new feature proposals
+│       ├── PLACE_INTELLIGENCE_DISCOVERY.md — Discovery doc for Place Intelligence (complete)
+│       ├── PLACE_INTELLIGENCE_PLAN.md      — Implementation plan for Place Intelligence (complete)
+│       ├── PRODUCT_OPPORTUNITIES.md  — Living log of observed product friction
 │       ├── PRODUCT_PRINCIPLES.md     — 8 product principles
-│       └── PRODUCT_ROADMAP.md        — Phase 2 opportunity areas
+│       ├── PRODUCT_ROADMAP.md        — Phase 2 opportunity areas
+│       └── PRODUCT_VISION.md         — Mission, vision, and problem framing
 ├── src/
 │   ├── App.tsx                       — Auth state, top-level navigation
 │   ├── App.css                       — All component and product CSS (§1–§13)
@@ -317,7 +361,7 @@ maycation-planner/
 │   ├── components/ui/                — All T1 Components and T2 Patterns
 │   │   ├── *.tsx                     — Component implementations
 │   │   ├── *.figma.tsx               — Code Connect mappings (11 wired)
-│   │   ├── PlaceInput.tsx            — Place search + PlaceInputQuickPick integration
+│   │   ├── PlaceInput.tsx            — T1 component: place search + PlaceInputQuickPick
 │   │   ├── badge.css, forms.css, PlaceInput.css  — Co-located CSS (migration in progress)
 │   │   └── index.ts                  — Export barrel
 │   ├── lib/
@@ -327,7 +371,7 @@ maycation-planner/
 │   │   ├── tripMembers.ts            — Role loading, invite flow
 │   │   ├── auth.ts                   — Auth functions
 │   │   └── supabaseClient.ts         — Singleton client
-│   └── stories/                      — 99 Storybook stories across 25 groups
+│   └── stories/                      — Storybook stories across Foundation, Components, Patterns, Docs groups
 ├── supabase/
 │   ├── migrations/                   — 27 migrations (001_initial_schema → 027_trip_stays)
 │   └── functions/
@@ -335,7 +379,7 @@ maycation-planner/
 │       ├── get-travel-duration/      — Mapbox directions proxy
 │       └── send-invite-email/        — Trip invitation emails
 ├── tokens/                           — DTCG token source files
-│   └── generated/tokens.css          — Style Dictionary output
+│   └── generated/tokens.css          — Style Dictionary output (do not edit)
 ├── PROJECT_CONSTITUTION.md           — UI and implementation guardrails
 ├── PROJECT_PLAN.md                   — Product/architecture decisions
 ├── figma.config.json                 — Code Connect configuration
@@ -346,14 +390,16 @@ maycation-planner/
 
 ## 9. Outstanding Cleanup
 
-### System Health (blocking Phase 2)
+### System Health (prerequisite to v2.3.0 Design System Convergence and Product Phase 2)
 
 | Item | Priority |
 |---|---|
-| Code Connect for 7 unwired T1 components (EmptyState, StatusButton, FormActions, FormGrid, ScreenHeader, PageControls, Icon) | High |
+| Code Connect for 6 priority T1 components (EmptyState, StatusButton, FormActions, FormGrid, ScreenHeader, PageControls) | High |
 | Code Connect for 3 T2 patterns (DashboardCard, DetailHeader, DayTile) | High |
 | Component Token Layer (Layer 2) — component-scoped tokens for card, button, input, badge, icon-button, modal | Medium |
 | CSS co-location migration — move component CSS from App.css into co-located files | Medium |
+| Code Connect for Icon — blocked on resolving known Storybook rendering defect | Low (blocked) |
+| Code Connect for PlaceInput — deferred until Place Intelligence Phase 5 Figma component | Low (deferred) |
 
 ### Token debt (tracked in `TOKEN_DEBT.md`)
 
@@ -380,13 +426,15 @@ maycation-planner/
 
 ---
 
-## 10. Current Version
+## 10. Current Versions
 
 | Artifact | Version |
 |---|---|
+| Product | **v2.2.1** |
+| Next product milestone | **v2.3.0 — Design System Convergence** |
 | Design System | **v1.26.0 — CSS Token Parity** |
 | npm package | 0.0.0 (not published) |
 | Supabase migrations | 27 (latest: `027_trip_stays.sql`) |
-| T1 Components | 18 (all code-complete, 11/18 Code Connect wired) |
+| T1 Components | 19 (all code-complete, 11/19 Code Connect wired) |
 | T2 Patterns | 3 (all code-complete, 0/3 Code Connect wired) |
-| Storybook stories | 99 across 25 groups |
+| Storybook stories | 99+ across 25+ groups |

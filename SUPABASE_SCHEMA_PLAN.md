@@ -1,5 +1,7 @@
 # Maycation Planner Supabase Schema Plan
 
+> Historical planning document. Some terminology or implementation details may differ from the shipped product.
+
 ## 1. Auth Strategy
 
 Maycation Planner will use Supabase Auth as the authentication provider.
