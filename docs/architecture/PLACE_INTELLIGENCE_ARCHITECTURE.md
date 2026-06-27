@@ -293,33 +293,60 @@ None of these require changes to the current `places.ts` contract or Edge Functi
 
 ---
 
-## Search Provider Notes
+## Search Provider Architecture
 
-### Current provider: Mapbox Geocoding v5
+### Provider dispatch
 
-`search-places` calls `/geocoding/v5/mapbox.places/{query}.json` with `autocomplete=true`, `types=poi,address,place`, `limit=5`. The address field strips the leading venue-name prefix from `place_name` to avoid duplication in the PlaceInput selected state.
+`search-places` supports two Mapbox backends, selected by the `PLACE_SEARCH_PROVIDER` Supabase secret:
 
-**Known limitation:** Geocoding v5 is address-first. Venue name searches (e.g. "Narcoossee's", "Be Our Guest") return street-name matches rather than the specific restaurants. Exact venue name recall requires a venue-first API.
+| Secret value | Provider | Endpoint |
+|---|---|---|
+| `searchbox` | Mapbox Search Box v1 | `GET /search/searchbox/v1/forward` |
+| absent or any other value | Mapbox Geocoding v5 | `GET /geocoding/v5/mapbox.places/{query}.json` |
 
-### Search Box v1 attempt — June 2026
+**Current production value:** `PLACE_SEARCH_PROVIDER=searchbox`
 
-Mapbox Search Box v1 (`/search/searchbox/v1/forward`) was deployed as a replacement (version 2 of the `search-places` function). It returned 502s immediately in production because the `MAPBOX_ACCESS_TOKEN` stored in Supabase secrets does not have access to the Search Box product. The Geocoding v5 token does not automatically grant Search Box access — the two are separate Mapbox offerings.
+The client contract (`PlaceSuggestion` shape, HTTP request/response shape) is identical for both providers. No React code is aware of which backend is active.
 
-The production function was reverted to Geocoding v5 (version 3) within the same session. All client-side Reservation Place Intelligence work (PlaceInput in reservation form, title auto-fill, conditional address field, coordinate persistence) is valid and unaffected.
+### Rollback procedure
 
-### Safe retry gates for Search Box
+To revert to Geocoding v5 without redeployment:
 
-Before attempting Search Box again:
+```bash
+npx supabase secrets set PLACE_SEARCH_PROVIDER=geocoding --project-ref hintjmstninktszynqgv
+```
 
-1. **Verify token access first.** Call the endpoint directly using the production token before touching the Edge Function:
-   ```bash
-   curl -s "https://api.mapbox.com/search/searchbox/v1/forward?q=Narcoossees&access_token=YOUR_TOKEN&session_token=$(uuidgen)&types=poi,address&limit=1" | jq '.features[0].properties.name // .message // .error'
-   ```
-   If it returns a venue name → token is valid, proceed. If it returns an error → get a scoped token before writing any code.
+The Edge Function reads the env var on each request. The change takes effect immediately — no redeployment needed.
 
-2. **Deploy behind a `PLACE_SEARCH_PROVIDER` env var.** The Edge Function reads the var and dispatches to the appropriate provider; both implementations live in the same file. Deploy the code change first (env var absent = v5, no behaviour change), then flip the var in the Supabase dashboard to activate Search Box. To roll back: flip the var back — no redeployment.
+### Current provider: Mapbox Search Box v1 `/forward`
 
-3. **Validate against a branch or non-production function before flipping production.** Use a Supabase branch or a second Edge Function slug (`search-places-v2`) to run the Playwright validation test suite. Promote to production only after a clean run.
+`search-places` calls `/search/searchbox/v1/forward` with `types=poi,address`, `language=en`, `limit=5`. The response is GeoJSON (`features` array). Coordinates come from `feature.geometry.coordinates[0]` (longitude) and `[1]` (latitude). The address field uses `properties.full_address ?? properties.place_formatted`, with the venue name prefix stripped to avoid duplication in the PlaceInput selected state.
+
+**Venue-first results:** Search Box v1 ranks by venue name relevance rather than address proximity, which was the core motivation for the upgrade.
+
+**Known limitation — context-free queries:** Without a proximity parameter, queries for venue names that exist in multiple locations (e.g. "Be Our Guest") may rank non-Disney results above the intended location. A proximity bias (`proximity={lng},{lat}` near the trip destination) would resolve this. See deferred work in `PROJECT_STATE.md`.
+
+### Geocoding v5 fallback
+
+`search-places` falls back to `/geocoding/v5/mapbox.places/{query}.json` with `autocomplete=true`, `types=poi,address,place`, `limit=5`. The response is a GeoJSON feature collection. Coordinates come from `feature.center[0]` (longitude) and `[1]` (latitude).
+
+**Known limitation:** Geocoding v5 is address-first. Venue name searches return street-name matches rather than specific restaurants or attractions.
+
+### Search Box v1 — implementation history
+
+**First attempt (June 2026, Edge Function v2):** `search-places` was rewritten to call `/search/searchbox/v1/forward`. It returned 502s in production. The failure was attributed at the time to token scope, but terminal testing subsequently confirmed HTTP 200 from the same token — the root cause was an implementation/mapping bug in the Edge Function code, not a token access restriction.
+
+**Revert (v3):** Geocoding v5 was restored within the same session.
+
+**Provider dispatch (v4):** Both providers were added to a single Edge Function behind `PLACE_SEARCH_PROVIDER` dispatch. Geocoding v5 remained the default; the env var activated Search Box.
+
+**Diagnosis of `/suggest` failure (v6–v7):** When `PLACE_SEARCH_PROVIDER=searchbox` was activated, all queries returned 0 results. Root cause: the `/suggest` endpoint does **not** include coordinates in its response — coordinates require a separate `/retrieve` call per suggestion (N+1 HTTP calls). The implementation was filtering on `suggestion.center != null`, which eliminated all results.
+
+**Fix — switch to `/forward` (v8):** The implementation was changed from `/suggest` to `/forward`. The `/forward` endpoint returns GeoJSON features with `geometry.coordinates` directly — no session management, no N+1 calls. This is the current production implementation.
+
+**`/suggest` vs `/forward` distinction:**
+- `/suggest` → autocomplete suggestion list; no coordinates; requires `/retrieve` for coordinates; designed for session-based billing
+- `/forward` → direct geocoding; returns GeoJSON features with geometry; equivalent to Geocoding v5 in structure; appropriate for our use case
 
 ---
 
@@ -333,5 +360,9 @@ Before attempting Search Box again:
 | Phase 3.5 | `PlaceInputQuickPick` + Current Stay quick pick | Complete |
 | Phase A | Reservation Place Intelligence — PlaceInput in reservation form, coordinate storage | Complete |
 | Phase A.1 | Reservation form UX — title auto-fill, conditional address field, manual fallback | Complete |
+| Search Box upgrade | Provider dispatch, PLACE_SEARCH_PROVIDER feature flag, Search Box v1 /forward | Complete |
 | Phase 4 | Travel item card display | Not started |
-| Phase 5 | Figma component | Not started |
+| Phase 5 | Figma component (PlaceInput Code Connect deferred pending this) | Not started |
+| Proximity bias | Pass trip coordinates to provider for context-aware ranking | Not started |
+| Travel Quick Picks | Destination quick picks in Travel form (recent + reservation places) | Not started |
+| Saved Places | Persistent user-defined places surfaced as quick picks | Not started |

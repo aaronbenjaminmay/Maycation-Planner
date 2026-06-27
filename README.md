@@ -49,7 +49,7 @@ Complete — Phase 1 Foundation
 
 ### Current Focus
 
-Design System Phase 2: Code Connect for patterns, remaining T1 Code Connect, component token layer, CSS co-location migration.
+v2.5.0 — Design System Convergence: Code Connect for patterns, remaining T1 Code Connect, component token layer, CSS co-location migration.
 
 ## Design Philosophy
 
@@ -114,7 +114,17 @@ Complete (v1.26.0)
 * Visual refinement to Disney Mayhem benchmark
 * Shared card, form, modal, and navigation systems
 
-### Phase 2 — System Health
+### v2.4.0 — Reservation Place Intelligence
+
+Complete (June 2026)
+
+* Place Intelligence shared across Travel and Reservation planner items
+* Reservation Location field uses PlaceInput (search, autocomplete, coordinates)
+* Title auto-fill from place selection; conditional address field
+* Mapbox Search Box v1 `/forward` production provider via `PLACE_SEARCH_PROVIDER` dispatch
+* Geocoding v5 retained as fallback; rollback requires no redeployment
+
+### v2.5.0 — Design System Convergence
 
 Active
 
@@ -126,7 +136,8 @@ Active
 ### Future
 
 * Light mode (token architecture already supports it)
-* Expanded trip planning workflows
+* Place Intelligence: proximity bias, Travel Quick Picks, Saved Places
+* Reservation Intelligence Phase B+ (trip_reservations table, email import)
 * Additional collaboration features
 
 ## Storybook
@@ -202,9 +213,8 @@ npm run deploy
 
 Primary development occurs on feature branches and is merged into main.
 
-Current development focus:
+Current development focus (v2.5.0 — Design System Convergence):
 
 * Code Connect for T2 Patterns and remaining T1 Components
 * Component Token Layer (DTCG Layer 2)
 * CSS Co-location Migration
-* Product feature development on the stable design system foundation

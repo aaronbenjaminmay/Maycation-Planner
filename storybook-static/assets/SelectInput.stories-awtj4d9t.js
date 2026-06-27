@@ -1,0 +1,22 @@
+import{i as e}from"./preload-helper-xPQekRTU.js";import{t}from"./jsx-runtime-CaZkqeYb.js";import{n,t as r}from"./FormRow-drM7uJ5G.js";function i({label:e,value:t,onChange:n,options:i,disabled:o,hint:s}){return(0,a.jsx)(r,{label:e,hint:s,children:(0,a.jsx)(`select`,{className:`form-control`,value:t,onChange:e=>n(e.target.value),disabled:o,children:i.map(e=>(0,a.jsx)(`option`,{value:e.value,children:e.label},e.value))})})}var a,o=e((()=>{n(),a=t(),i.__docgenInfo={description:``,methods:[],displayName:`SelectInput`,props:{label:{required:!0,tsType:{name:`string`},description:``},value:{required:!0,tsType:{name:`string`},description:``},onChange:{required:!0,tsType:{name:`signature`,type:`function`,raw:`(value: string) => void`,signature:{arguments:[{type:{name:`string`},name:`value`}],return:{name:`void`}}},description:``},options:{required:!0,tsType:{name:`Array`,elements:[{name:`signature`,type:`object`,raw:`{ value: string; label: string }`,signature:{properties:[{key:`value`,value:{name:`string`,required:!0}},{key:`label`,value:{name:`string`,required:!0}}]}}],raw:`SelectOption[]`},description:``},disabled:{required:!1,tsType:{name:`boolean`},description:``},hint:{required:!1,tsType:{name:`string`},description:``}}}})),s,c,l,u,d,f,p,m,h,g;e((()=>{o(),s=t(),c={title:`Components/Forms/SelectInput`,component:i,parameters:{layout:`centered`}},l=e=>(0,s.jsx)(`div`,{style:{width:320},children:e}),u=[{value:`America/New_York`,label:`Eastern Time (ET)`},{value:`America/Chicago`,label:`Central Time (CT)`},{value:`America/Denver`,label:`Mountain Time (MT)`},{value:`America/Los_Angeles`,label:`Pacific Time (PT)`}],d=[{value:`owner`,label:`Owner`},{value:`planner`,label:`Planner`},{value:`participant`,label:`Participant`},{value:`viewer`,label:`Viewer`}],f={name:`Default`,render:()=>l((0,s.jsx)(i,{label:`Timezone`,value:`America/New_York`,onChange:()=>{},options:u}))},p={name:`With hint`,render:()=>l((0,s.jsx)(i,{label:`Member Role`,value:`planner`,onChange:()=>{},options:d,hint:`Controls what the member can see and do`}))},m={name:`Disabled`,render:()=>l((0,s.jsx)(i,{label:`Timezone`,value:`America/New_York`,onChange:()=>{},options:u,disabled:!0}))},h={name:`All variants`,render:()=>(0,s.jsxs)(`div`,{style:{width:320,display:`flex`,flexDirection:`column`,gap:16},children:[(0,s.jsx)(i,{label:`Timezone`,value:`America/New_York`,onChange:()=>{},options:u}),(0,s.jsx)(i,{label:`Role (with hint)`,value:`planner`,onChange:()=>{},options:d,hint:`Controls what the member can see and do`}),(0,s.jsx)(i,{label:`Disabled`,value:`America/New_York`,onChange:()=>{},options:u,disabled:!0})]})},f.parameters={...f.parameters,docs:{...f.parameters?.docs,source:{originalSource:`{
+  name: 'Default',
+  render: () => wrap(<SelectInput label="Timezone" value="America/New_York" onChange={() => {}} options={timezoneOptions} />)
+}`,...f.parameters?.docs?.source}}},p.parameters={...p.parameters,docs:{...p.parameters?.docs,source:{originalSource:`{
+  name: 'With hint',
+  render: () => wrap(<SelectInput label="Member Role" value="planner" onChange={() => {}} options={roleOptions} hint="Controls what the member can see and do" />)
+}`,...p.parameters?.docs?.source}}},m.parameters={...m.parameters,docs:{...m.parameters?.docs,source:{originalSource:`{
+  name: 'Disabled',
+  render: () => wrap(<SelectInput label="Timezone" value="America/New_York" onChange={() => {}} options={timezoneOptions} disabled />)
+}`,...m.parameters?.docs?.source}}},h.parameters={...h.parameters,docs:{...h.parameters?.docs,source:{originalSource:`{
+  name: 'All variants',
+  render: () => <div style={{
+    width: 320,
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 16
+  }}>
+      <SelectInput label="Timezone" value="America/New_York" onChange={() => {}} options={timezoneOptions} />
+      <SelectInput label="Role (with hint)" value="planner" onChange={() => {}} options={roleOptions} hint="Controls what the member can see and do" />
+      <SelectInput label="Disabled" value="America/New_York" onChange={() => {}} options={timezoneOptions} disabled />
+    </div>
+}`,...h.parameters?.docs?.source}}},g=[`Default`,`WithHint`,`Disabled`,`AllVariants`]}))();export{h as AllVariants,f as Default,m as Disabled,p as WithHint,g as __namedExportsOrder,c as default};

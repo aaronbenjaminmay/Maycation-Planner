@@ -1,6 +1,6 @@
 # Maycation — Product Roadmap
 
-**Product: v2.2.1 | Next milestone: v2.3.0 — Design System Convergence | Design System: v1.26.0 — CSS Token Parity**
+**Product: v2.4.0 | Next milestone: v2.5.0 — Design System Convergence | Design System: v1.26.0 — CSS Token Parity**
 
 This roadmap is organized by product maturity, not by version or release schedule.
 
@@ -14,19 +14,33 @@ It describes the direction and opportunity space. It is not a feature specificat
 
 The design system is stable. The product infrastructure is in place. Phase 2 is about using that foundation to make Maycation genuinely more useful during planning and travel — particularly by pulling common, repetitive context-switching tasks back inside Maycation.
 
-### Opportunity Areas
+### Completed
 
-**Travel Duration Intelligence**
-When a family adds a travel leg — a drive, a flight, a transfer — Maycation should know approximately how long it takes. Drive times should not require the user to open Maps and copy back an answer.
+**Travel Duration Intelligence** — Complete
+When a family adds a travel leg, Maycation estimates the drive time and derives the arrival time from the leave time and duration. Users do not need to open Maps.
 
-**Address Intelligence**
-Destinations, hotels, restaurants, and venues already have addresses. Maycation should be able to surface the right address at the right moment without the user re-entering it or remembering where they put it.
+**Stay Intelligence** — Complete (Phases 1, 2, 4)
+Where a family is staying is recorded once and used across the product: check-in and check-out reminders are offered via the Derivation Engine, and the active stay pre-populates the origin field for Travel items via PlaceInput quick picks. Day Detail ambient display (Phase 3) and Trip Dashboard accommodation timeline (Phase 5) are not yet started.
 
-**Stay Intelligence**
-Where a family is staying affects nearly everything about a trip day — the departure point for travel items, the check-in reminder on arrival day, the accommodation context visible on each night of the itinerary. Maycation should know where the family is sleeping and use that knowledge across the product without requiring them to enter the same hotel information in multiple places. Implemented via the Derivation Engine pattern: a stay entered once can offer check-in and check-out reminders, pre-populate travel origins, and provide day-level accommodation context.
+**Reservation Place Intelligence** — Complete (v2.4.0)
+Reservations now use PlaceInput for the Location field. Selecting a place auto-populates the Title, sets Location and Address, stores destination coordinates, and hides the manual Address field when a place is resolved. Manual entry remains fully supported. Place Intelligence is now a shared platform across both Travel and Reservation kinds.
 
-**Reservation Intelligence**
-Families receive booking confirmations by email. The information in those emails — confirmation numbers, check-in times, addresses, cancellation policies — is exactly what Maycation needs. Bringing that information in should be as low-friction as possible.
+**Reservation UX Refinement** — Complete (v2.4.0)
+Title auto-fill from place selection, conditional address field (hidden when coordinates are resolved), and clear distinction between resolved-place and manual-entry states.
+
+**Search Platform Upgrade** — Complete (v2.4.0)
+`search-places` Edge Function dispatches between Mapbox Geocoding v5 and Mapbox Search Box v1 via `PLACE_SEARCH_PROVIDER` secret. Search Box v1 `/forward` is the active production provider. Geocoding v5 is the fallback. No schema changes, no client API changes.
+
+### Active Opportunity Areas
+
+**Reservation Intelligence — Phase B+**
+Families receive booking confirmations by email. The information in those emails — confirmation numbers, check-in times, addresses, cancellation policies — is exactly what Maycation needs. Bringing that information in should be as low-friction as possible. This requires a `trip_reservations` table (trip-scoped fact), email import, and Derivation Engine integration to offer planner items. Phase A (Place Intelligence for reservation planner items) is complete. Phase B+ is the full reservation platform.
+
+**Place Intelligence — Proximity Bias**
+Without a trip location context, generic venue name queries (e.g. "Be Our Guest") may rank distant businesses above the intended location. Passing trip coordinates to the `search-places` function as proximity bias would weight results toward the trip area. No schema changes required — this is a parameter addition to the Edge Function.
+
+**Place Intelligence — Travel Quick Picks**
+Surface previously-used destinations and upcoming reservation locations as quick picks in the Travel form destination field. Reduces re-entry for common trip destinations.
 
 **Weather Context**
 A 90-degree afternoon matters if the family is walking through a theme park. A storm warning matters if they are driving. Weather is context that changes what a day looks like, and it should appear in the plan without requiring a separate app switch.
@@ -42,6 +56,9 @@ The sequence of a trip day matters. When items overlap, when travel time hasn't 
 ## Future — Intentionally Deferred
 
 These are ideas worth holding. They are not the current focus, and no timelines are attached to them.
+
+**Saved Places**
+Home, Airport, Hotel, and recently selected places stored in user profile and surfaced as PlaceInput quick picks. Reduces re-entry for repeat places. The `PlaceInputQuickPick` API is already designed to accept these without changing the component interface.
 
 **Expense Tracking**
 Shared trip expenses, split bills, and budget visibility are recurring pain points for families traveling together. This is a meaningful problem but a large one — expense features carry significant complexity and require integration with financial services. Defer until the core planning experience is complete.

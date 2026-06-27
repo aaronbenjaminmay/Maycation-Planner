@@ -22,11 +22,11 @@ When documentation sources conflict, this order determines which is authoritativ
 
 | Field | Value |
 |---|---|
-| Product version | v2.2.1 |
+| Product version | v2.4.0 |
 | Design System version | v1.26.0 — CSS Token Parity |
-| Current milestone | v2.3.0 — Design System Convergence |
+| Current milestone | v2.4.0 — Reservation Place Intelligence (complete) |
+| Next milestone | v2.5.0 — Design System Convergence |
 | Verification date | 2026-06-27 |
-| Repository commit | `73db1d2` |
 
 ---
 
@@ -99,7 +99,7 @@ Each "screen" is a full component swap — no `<Route>` or URL change.
 ### Supabase
 
 27 migrations (`001_initial_schema.sql` → `027_trip_stays.sql`). Three Edge Functions:
-- `search-places` — Mapbox geocoding proxy
+- `search-places` — Mapbox place search proxy; supports Geocoding v5 and Search Box v1 via `PLACE_SEARCH_PROVIDER` dispatch
 - `get-travel-duration` — Mapbox directions proxy
 - `send-invite-email` — trip invitation emails
 
@@ -121,15 +121,24 @@ PlaceValue      // name, address, coordinates?: { lat, lng }
 
 ### Place Intelligence
 
-`PlaceInput` component accepts user search queries and returns a `PlaceValue`. Coordinates flow from the user's selected search result through to the stored record, enabling travel duration estimation without re-geocoding.
+Place Intelligence is a shared platform consumed by both Travel and Reservation planner items. `PlaceInput` accepts user search queries and returns a `PlaceValue`. Coordinates flow from the selected result through to stored metadata, enabling downstream derivations.
 
-`PlaceInputQuickPick` provides pre-resolved `PlaceValue` objects (no search required). Used in `AddPlannerItemForm` to surface "Current Stay" as an origin pre-populated with hotel coordinates.
+`PlaceInputQuickPick` provides pre-resolved `PlaceValue` objects (no search required). Used in `AddPlannerItemForm` to surface "Current Stay" as an origin for Travel items.
+
+**Reservation Place Intelligence** (v2.4.0): The Reservation form uses `PlaceInput` for the Location field. Selecting a place auto-populates the Title (if empty), sets Location and Address, stores destination coordinates in `metadata.destination_place_lat/lng`, and hides the manual Address field when coordinates are resolved. Manual entry remains fully supported.
+
+**Provider dispatch**: `search-places` Edge Function dispatches to one of two Mapbox backends based on the `PLACE_SEARCH_PROVIDER` secret:
+- `searchbox` → Mapbox Search Box v1 `/forward` (current production active)
+- absent or any other value → Mapbox Geocoding v5 (fallback)
+
+See `docs/architecture/PLACE_INTELLIGENCE_ARCHITECTURE.md` for rollback procedure and provider detail.
 
 Data flow:
 ```
-PlaceInput → search-places Edge Function → Mapbox
-PlaceValue.coordinates → trip_stays.place_lat/lng
-getActiveStayForDay() → PlaceInputQuickPick → AddPlannerItemForm
+PlaceInput → search-places Edge Function → Mapbox (Search Box v1 or Geocoding v5)
+PlaceValue.coordinates → metadata.destination_place_lat/lng (reservations)
+PlaceValue.coordinates → metadata.start_place_lat/lng (travel origins)
+getActiveStayForDay() → PlaceInputQuickPick → AddPlannerItemForm (travel origin quick pick)
 PlaceInputQuickPick.value → get-travel-duration → estimated drive time
 ```
 
@@ -243,7 +252,12 @@ Components own all visual styling (layout, spacing, radius, borders, typography,
 
 | System | Phase | Status |
 |---|---|---|
-| Place Intelligence | Search + quick picks | Complete |
+| Place Intelligence | Travel: search, PlaceInput, quick picks, travel duration | Complete |
+| Place Intelligence | Reservation: PlaceInput in reservation form, coordinate storage | Complete |
+| Place Intelligence | Reservation UX: title auto-fill, conditional address field, manual fallback | Complete |
+| Place Intelligence | Search platform: Search Box v1 provider dispatch, feature flag | Complete |
+| Place Intelligence | Proximity bias / contextual ranking | Not started |
+| Place Intelligence | Saved Places | Not started |
 | Temporal Intelligence | Phase A (RPC + client + travel overnight) | Complete |
 | Temporal Intelligence | Phase B (display "next day" label) | Complete |
 | Temporal Intelligence | Phase C (edit round-trip endTimeMinutes restore) | Not started |
@@ -264,14 +278,18 @@ Components own all visual styling (layout, spacing, radius, borders, typography,
 
 | Stream | Current | Next milestone |
 |---|---|---|
-| Product | **v2.2.1** | **v2.3.0 — Design System Convergence** |
+| Product | **v2.4.0** | **v2.5.0 — Design System Convergence** |
 | Design System | **v1.26.0 — CSS Token Parity** | v1.x.0 — System Health (Code Connect, CSS co-location) |
 
-### Current milestone: v2.3.0 — Design System Convergence
+### v2.4.0 — Reservation Place Intelligence (complete)
+
+Completed June 2026. Place Intelligence is now a shared platform across Travel and Reservation planner items. Search Box v1 is production-ready and active via provider dispatch.
+
+### Next milestone: v2.5.0 — Design System Convergence
 
 Objective: audit every screen, component composition, modal, card, empty state, form, interaction, and layout and ensure it is assembled from existing design system components, documented patterns, Storybook components, and design tokens. No new features. Favor reuse over invention.
 
-### System Health (prerequisite to Product Phase 2)
+### System Health (prerequisite to v2.5.0)
 
 1. Code Connect for 6 priority T1 components (EmptyState, StatusButton, FormActions, FormGrid, ScreenHeader, PageControls)
 2. Code Connect for 3 T2 patterns (DashboardCard, DetailHeader, DayTile)
@@ -280,13 +298,13 @@ Objective: audit every screen, component composition, modal, card, empty state, 
 
 ### Phase 2 opportunity areas (from `PRODUCT_ROADMAP.md`)
 
-- Travel Duration (complete)
-- Address (partial)
-- Stay (complete)
-- Reservation — per-trip reservation facts (`trip_reservations` table, Reservation Intelligence)
-- Weather
-- Navigation
-- Trip Timeline
+- Travel Duration — Complete
+- Address / Place Intelligence — Complete (Search + quick picks + reservation context + Search Box platform)
+- Stay Intelligence — Complete (phases 1, 2, 4; phases 3 and 5 not started)
+- Reservation Intelligence — Phase A complete (Place Intelligence for reservations); Phase B+ (trip_reservations table, email import, full reservation platform) not started
+- Weather — Not started
+- Navigation — Not started
+- Trip Timeline — Not started
 
 **Future** (later phases): Expense Tracking, Photos, AI Recommendations, Public Sharing
 
@@ -415,6 +433,10 @@ maycation-planner/
 - **Temporal Phase D**: Non-travel overnight "Ends next day" toggle
 - **Stay Phase 3**: Day Detail ambient "Staying at [place]" context display
 - **Stay Phase 5**: Trip Dashboard accommodation timeline
+- **Place Intelligence — Proximity bias**: Pass origin coordinates to `search-places` to weight results toward trip location. Would fix "Be Our Guest" returning an Ohio business instead of the Magic Kingdom restaurant for context-free queries.
+- **Place Intelligence — Travel Quick Picks**: Surface previously-used destinations and upcoming reservation locations as quick picks in the Travel form destination field.
+- **Reservation Intelligence Phase B+**: `trip_reservations` table, email confirmation import, full reservation platform (Derivation Engine source fact for reservations)
+- **Saved Places**: Home, Airport, Hotel, recent selections surfaced as PlaceInput quick picks
 
 ### Known defects
 
@@ -426,11 +448,12 @@ maycation-planner/
 
 | Artifact | Version |
 |---|---|
-| Product | **v2.2.1** |
-| Next product milestone | **v2.3.0 — Design System Convergence** |
+| Product | **v2.4.0** |
+| Next product milestone | **v2.5.0 — Design System Convergence** |
 | Design System | **v1.26.0 — CSS Token Parity** |
 | npm package | 0.0.0 (not published) |
 | Supabase migrations | 27 (latest: `027_trip_stays.sql`) |
+| Edge Function: search-places | v8 (Search Box v1 /forward + Geocoding v5 dispatch) |
 | T1 Components | 19 (all code-complete, 11/19 Code Connect wired) |
 | T2 Patterns | 3 (all code-complete, 0/3 Code Connect wired) |
 | Storybook stories | 99+ across 25+ groups |
