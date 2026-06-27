@@ -1,6 +1,5 @@
 import '../tokens/generated/tokens.css'
 import '../src/index.css'
-import '../src/tokens-bridge.css'
 import '../src/App.css'
 
 const preview = {

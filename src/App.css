@@ -672,7 +672,7 @@ button.dashboard-card {
   display: block;
   min-height: 100svh;
   padding: 22px 18px 56px;
-  background: var(--bg);
+  background: var(--color-background-default);
 }
 
 .day-detail-screen .detail-header {
@@ -743,7 +743,7 @@ button.dashboard-card {
 .app-shell {
   background:
     radial-gradient(circle at 50% -10%, rgba(53, 184, 168, 0.08), transparent 34%),
-    var(--bg);
+    var(--color-background-default);
 }
 
 
