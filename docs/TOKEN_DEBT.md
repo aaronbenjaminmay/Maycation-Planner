@@ -4,6 +4,20 @@ Gaps between the semantic token layer and actual component usage, identified dur
 
 Entries marked **[RESOLVED]** are retained for architectural context. Pre-v1.25.0 resolutions are summarized in the archive at the bottom of this file.
 
+> **v2.5.0 CSS Co-location note:** during the CSS Co-location Migration (DESIGN_SYSTEM_ROADMAP.md §5 Phase 1), open debt values that live in component CSS (e.g., the Button/IconButton base border `rgba(255,255,255,0.12)` and base background `rgba(28,28,30,0.84)`) move **verbatim** from `App.css` into the component's co-located stylesheet. The migration introduces no new tokens and resolves no debt — it only changes the file location. Entries in this document stay open with updated locations until resolved by Component Token Layer (Phase 2) or dedicated token work.
+
+---
+
+## v1.27.0 — CSS Co-location Wave 1: Location Updates
+
+Open debt items that lived in `App.css §10–11` moved verbatim to co-located component stylesheets. Entries remain open — only the file location changed.
+
+| Value | Previous location | Current location |
+|---|---|---|
+| `rgba(255,255,255,0.12)` base border | `App.css §10–11` | `button.css`, `icon-button.css` |
+| `rgba(28,28,30,0.84)` base background | `App.css §10–11` | `button.css`, `icon-button.css` |
+| `color-mix()` primary hover | `App.css §10–11` | `button.css`, `icon-button.css` |
+
 ---
 
 ## [RESOLVED v1.25.0] Tranche B — Deferred Figma Token Bindings
@@ -38,7 +52,7 @@ Corresponding opacity semantics added: `--opacity-interactive-hover-border: 0.22
 
 **CSS migration still open:**
 
-The CSS counterparts for the new hover tokens (`--opacity-interactive-hover-border`, `--opacity-interactive-primary-hover`) are now defined in `tokens/generated/tokens.css`. App.css still uses hardcoded `rgba(255,255,255,0.22)` and `color-mix(...)` for button hover states. CSS migration is tracked under "Remaining Token Migration Debt" in DESIGN_SYSTEM_ROADMAP.md.
+The CSS counterparts for the new hover tokens (`--opacity-interactive-hover-border`, `--opacity-interactive-primary-hover`) are now defined in `tokens/generated/tokens.css`. *Update (v1.26.0):* the hardcoded `rgba(255,255,255,0.22)` hover border and `rgba(255,255,255,0.08)` hover background were wired to these tokens in v1.26.0 (see next section). The `color-mix(...)` primary hover remains and is intentional — no simpler token-driven form exists. Remaining items are tracked under "Remaining Token Migration Debt" in DESIGN_SYSTEM_ROADMAP.md.
 
 ---
 

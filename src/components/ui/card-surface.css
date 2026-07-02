@@ -1,0 +1,30 @@
+/*
+ * CardSurface — co-located component CSS.
+ * Flattened from App.css §1 (interactive cursor, backdrop-filter) and
+ * §7 visual-system consolidation (surface base) (v1.27.0 CSS Co-location Wave 1).
+ *
+ * The surface base keeps ZERO specificity via :where(), exactly as the original
+ * §7 :where() consolidation block. Contextual classes placed on the same element
+ * (.empty-state, .settings-panel, .trip-intel-card, .planner-item-card,
+ * .day-tile, .dashboard-card, .trip-card, .auth-panel) override these values at
+ * class specificity, independent of stylesheet load order. Do not raise the
+ * specificity of this rule.
+ */
+
+:where(.card-surface) {
+  border: 1px solid var(--color-border-glass);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface-glass);
+  box-shadow: var(--shadow-md);
+}
+
+.card-surface--interactive {
+  cursor: pointer;
+}
+
+@supports ((backdrop-filter: blur(18px)) or (-webkit-backdrop-filter: blur(18px))) {
+  .card-surface {
+    -webkit-backdrop-filter: blur(18px);
+    backdrop-filter: blur(18px);
+  }
+}

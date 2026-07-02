@@ -1,0 +1,112 @@
+/*
+ * IconButton — co-located component CSS.
+ * Flattened from App.css §11 (canonical block) + §5 backdrop-filter @supports
+ * (v1.27.0 CSS Co-location Wave 1). The superseded App.css §1 .icon-button
+ * pass contributed no surviving declarations (every property was overridden
+ * by §11, including font-size/weight via the later `font: inherit` shorthand).
+ *
+ * Token debt (tracked in docs/TOKEN_DEBT.md — moved verbatim, not resolved):
+ *   - base border rgba(255, 255, 255, 0.12) — no semantic token yet
+ *   - base background rgba(28, 28, 30, 0.84) — no semantic token yet
+ *   - color-mix() primary hover — no simpler token-driven form exists
+ */
+
+.icon-button {
+  box-sizing: border-box;
+  flex: 0 0 auto;
+  width: 40px;
+  min-width: 40px;
+  max-width: 40px;
+  height: 40px;
+  min-height: 40px;
+  max-height: 40px;
+  aspect-ratio: 1;
+  display: inline-grid;
+  place-items: center;
+  padding: 0;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: var(--radius-pill);
+  color: var(--color-text-primary);
+  background: rgba(28, 28, 30, 0.84);
+  box-shadow: none;
+  font: inherit;
+  line-height: 1;
+  cursor: pointer;
+  transition:
+    background 140ms ease,
+    border-color 140ms ease,
+    color 140ms ease,
+    transform 140ms ease;
+}
+
+.icon-button:hover:not(:disabled) {
+  border-color: rgba(255, 255, 255, var(--opacity-interactive-hover-border));
+  background: rgba(255, 255, 255, var(--opacity-interactive-hover));
+}
+
+.icon-button:active:not(:disabled) {
+  transform: scale(0.96);
+}
+
+.icon-button:focus-visible {
+  outline: 2px solid var(--color-accent-default);
+  outline-offset: 2px;
+}
+
+.icon-button:disabled {
+  cursor: not-allowed;
+  opacity: var(--opacity-disabled-default);
+}
+
+.icon-button--primary {
+  width: 44px;
+  min-width: 44px;
+  max-width: 44px;
+  height: 44px;
+  min-height: 44px;
+  max-height: 44px;
+  color: var(--color-icon-on-accent);
+  border-color: var(--color-accent-default);
+  background: var(--color-accent-default);
+}
+
+.icon-button--primary:hover:not(:disabled) {
+  color: var(--color-icon-on-accent);
+  border-color: var(--color-accent-default);
+  background: color-mix(in srgb, var(--color-accent-default) 86%, white 14%);
+}
+
+.icon-button--destructive {
+  color: var(--color-danger-text);
+  border-color: var(--color-danger-border);
+  background: var(--color-danger-surface);
+}
+
+.icon-button--destructive:hover:not(:disabled) {
+  color: var(--color-danger-text);
+  border-color: var(--color-danger-text);
+  background: var(--color-danger-surface-hover);
+}
+
+.icon-button--complete {
+  color: var(--color-icon-complete);
+}
+
+.icon-button--complete.icon-button--selected {
+  color: var(--color-icon-on-accent);
+  border-color: var(--color-accent-default);
+  background: var(--color-accent-default);
+}
+
+.icon-button--complete.icon-button--selected:hover:not(:disabled) {
+  color: var(--color-icon-on-accent);
+  border-color: var(--color-accent-default);
+  background: var(--color-accent-default);
+}
+
+@supports ((backdrop-filter: blur(18px)) or (-webkit-backdrop-filter: blur(18px))) {
+  .icon-button {
+    -webkit-backdrop-filter: blur(18px);
+    backdrop-filter: blur(18px);
+  }
+}

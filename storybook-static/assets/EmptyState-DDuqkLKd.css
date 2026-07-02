@@ -1,0 +1,1 @@
+.empty-state{border:1px solid var(--color-border-glass);border-radius:var(--radius-card);background:var(--color-surface-glass);box-shadow:var(--shadow-sm);justify-items:start;gap:18px;padding:22px;display:grid}.empty-state h2{color:var(--color-text-primary);letter-spacing:0;margin:0;font-size:1rem;font-weight:900;line-height:1.15}.empty-state__body{gap:8px;display:grid}

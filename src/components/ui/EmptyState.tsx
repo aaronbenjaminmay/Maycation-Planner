@@ -1,5 +1,6 @@
 import { type ReactNode } from 'react'
 import { CardSurface } from './CardSurface'
+import './empty-state.css'
 
 type EmptyStateProps = {
   action?: ReactNode

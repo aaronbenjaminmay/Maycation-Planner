@@ -1,5 +1,6 @@
 import { type ButtonHTMLAttributes } from 'react'
 import { Icon, type IconName } from './Icon'
+import './icon-button.css'
 
 type IconButtonVariant = 'complete' | 'default' | 'destructive' | 'primary'
 

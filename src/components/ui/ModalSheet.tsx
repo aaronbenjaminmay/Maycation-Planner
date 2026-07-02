@@ -1,5 +1,6 @@
 import { useEffect, type ReactNode } from 'react'
 import { IconButton } from './IconButton'
+import './modal-sheet.css'
 
 type ModalSheetProps = {
   ariaLabel: string

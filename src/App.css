@@ -2,24 +2,25 @@
  * App.css — Maycation product-screen styles
  *
  * This file owns layout, product-screen patterns, and visual system layers.
- * Component-owned CSS (buttons, icons, form controls, badges) lives in
- * co-located files under src/components/ui/ (forms.css, badge.css, etc.)
- * or in the component-system sections near the bottom of this file.
+ * Component-owned CSS lives in co-located files under src/components/ui/
+ * (badge.css, forms.css, PlaceInput.css, button.css, icon-button.css,
+ * card-surface.css, feedback-message.css, empty-state.css, modal-sheet.css).
+ * Wave 2/3 of the v2.5.0 CSS Co-location Migration will move the remaining
+ * component styles (ScreenHeader §8, PageControls §13, and the T2 patterns
+ * DashboardCard / DetailHeader / DayTile in §1–§8).
  *
- * Structure:
- *   1. App shells and auth screen
- *   2. Product-screen cards and lists
+ * Structure (section markers as they appear in this file):
+ *   1. App shells, auth screen, product-screen cards and lists
  *   3. Trip dashboard screen
  *   4. Day detail screen
  *   5. Visual system v1 (glass morphism, color pass)
  *   6. Disney Mayhem production-aligned visual system
- *   7. Visual system consolidation (:where blocks)
+ *   7. Visual system consolidation (canonical surface rules)
  *   8. Shared authenticated page shell (canonical .dashboard-shell)
- *   9. Login screen fixes
- *  10. Button and IconButton component styles
- *  11. Trip background image system
- *  12. Trip header image system
- *  13. PageControls component style
+ *   9. Login screen wordmark and mobile fixes
+ *  10–11. (removed v1.27.0 — Button/IconButton moved to co-located CSS)
+ *  12. Trip background image system
+ *  13. Upload field and PageControls
  *
  * Note: many selectors appear in multiple sections. This is intentional CSS
  * cascade layering from sequential visual system refinement passes.
@@ -105,7 +106,6 @@
 }
 
 
-.empty-state,
 .settings-panel {
   display: grid;
   gap: 18px;
@@ -117,10 +117,6 @@
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-}
-
-.empty-state {
-  justify-items: start;
 }
 
 .trip-list {
@@ -184,28 +180,6 @@
 }
 
 
-.modal-backdrop {
-  position: fixed;
-  inset: 0;
-  z-index: 20;
-  display: grid;
-  place-items: center;
-  padding: 18px;
-  background: var(--color-overlay-default);
-}
-
-
-.card-surface--interactive {
-  cursor: pointer;
-}
-
-@supports ((backdrop-filter: blur(18px)) or (-webkit-backdrop-filter: blur(18px))) {
-  .card-surface {
-    -webkit-backdrop-filter: blur(18px);
-    backdrop-filter: blur(18px);
-  }
-}
-
 .screen-header {
   display: flex;
   align-items: start;
@@ -227,19 +201,6 @@
 .detail-header {
   display: grid;
   gap: 18px;
-}
-
-.icon-button {
-  min-width: 44px;
-  min-height: 44px;
-  border: 1px solid var(--color-border-default);
-  border-radius: 999px;
-  color: var(--color-text-primary);
-  background: color-mix(in srgb, var(--color-surface-default) 72%, transparent);
-  font: inherit;
-  font-size: 13px;
-  font-weight: 800;
-  cursor: pointer;
 }
 
 .dashboard-card {
@@ -339,32 +300,8 @@ button.dashboard-card {
   gap: 8px;
 }
 
-.empty-state__body {
-  display: grid;
-  gap: 8px;
-}
-
-.modal-sheet {
-  width: min(100%, 560px);
-  max-height: calc(100svh - 36px);
-  overflow-y: auto;
-  display: grid;
-  gap: 18px;
-  padding: 22px;
-}
-
-.modal-sheet__header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  padding-bottom: 16px;
-  border-bottom: 1px solid var(--color-border-glass);
-}
-
 .dashboard-card:focus-visible,
-.day-tile:focus-visible,
-.icon-button:focus-visible {
+.day-tile:focus-visible {
   outline: 2px solid var(--color-accent-default);
   outline-offset: 2px;
 }
@@ -414,6 +351,8 @@ button.dashboard-card {
   border-radius: 24px;
   /* Color/Neutral 800 × 0.68 — intentional variant, lower than --color-surface-glass */
   background: rgba(28, 28, 30, 0.68);
+  /* Was supplied by the §7 :where() surface list; explicit since v1.27.0 */
+  box-shadow: var(--shadow-sm);
 }
 
 .trip-intel-card__header {
@@ -760,25 +699,6 @@ button.dashboard-card {
   line-height: 0.98;
 }
 
-.feedback {
-  border-color: var(--color-border-glass);
-  border-radius: var(--radius-input);
-  background: var(--color-surface-feedback-neutral);
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.feedback--error {
-  border-color: var(--color-danger-border);
-  background: var(--color-danger-surface);
-}
-
-.feedback--success {
-  border-color: var(--color-success-border);
-  background: var(--color-success-surface);
-  color: var(--color-success-text);
-}
-
 /* ─── Travel estimate ─────────────────────────────────────────────────────── */
 
 .travel-estimate {
@@ -840,19 +760,9 @@ button.dashboard-card {
   padding: 18px 20px;
 }
 
-.modal-sheet__header h2 {
-  margin: 0;
-  color: var(--color-text-primary);
-  font-size: 1.35rem;
-  font-weight: 900;
-  line-height: 1.05;
-}
 @supports ((backdrop-filter: blur(18px)) or (-webkit-backdrop-filter: blur(18px))) {
   .auth-panel,
-  .dashboard-panel,
-  .card-surface,
-  .modal-sheet,
-  .icon-button {
+  .dashboard-panel {
     -webkit-backdrop-filter: blur(18px);
     backdrop-filter: blur(18px);
   }
@@ -879,8 +789,7 @@ button.dashboard-card {
 }
 
 .auth-panel,
-.settings-panel,
-.empty-state {
+.settings-panel {
   padding: 22px;
 }
 
@@ -978,6 +887,8 @@ button.dashboard-card {
   border-radius: var(--radius-card);
   /* Color/Neutral 800 × 0.76 — intentional variant, higher than --color-surface-glass */
   background: rgba(28, 28, 30, 0.76);
+  /* Was supplied by the §7 :where() surface list; explicit since v1.27.0 */
+  box-shadow: var(--shadow-sm);
 }
 
 .day-detail-screen .planner-item-card strong {
@@ -1003,30 +914,34 @@ button.dashboard-card {
   }
 }
 
-/* ─── 7. Visual system consolidation — canonical :where() surface rules ── */
-:where(.card-surface, .auth-panel, .dashboard-panel, .modal-sheet) {
+/* ─── 7. Visual system consolidation — canonical surface rules ──────────────
+   v1.27.0: the .card-surface and .modal-sheet entries moved to co-located
+   card-surface.css / modal-sheet.css (still zero-specificity :where() there).
+   The product/pattern surface list below was raised from :where() to plain
+   class selectors so the co-located :where(.card-surface) base can never
+   out-cascade it by stylesheet load order. .trip-intel-card and
+   .planner-item-card are excluded: raising them would let this rule override
+   their earlier intentional-variant backgrounds (0.68 / 0.76), so their
+   surface values — including the box-shadow this list used to supply — live
+   on their own rules in §3 and §6. */
+:where(.auth-panel, .dashboard-panel) {
   border: 1px solid var(--color-border-glass);
   border-radius: var(--radius-lg);
   background: var(--color-surface-glass);
   box-shadow: var(--shadow-md);
 }
 
-:where(
-  .dashboard-card,
-  .trip-card,
-  .day-tile,
-  .trip-intel-card,
-  .planner-item-card,
-  .settings-panel,
-  .empty-state
-) {
+.dashboard-card,
+.trip-card,
+.day-tile,
+.settings-panel {
   border: 1px solid var(--color-border-glass);
   border-radius: var(--radius-card);
   background: var(--color-surface-glass);
   box-shadow: var(--shadow-sm);
 }
 
-:where(.dashboard-card, .trip-card, .settings-panel, .empty-state) {
+:where(.dashboard-card, .trip-card, .settings-panel) {
   padding: 18px;
 }
 
@@ -1096,7 +1011,6 @@ button.dashboard-card {
 
 .dashboard-card strong,
 .settings-panel h2,
-.empty-state h2,
 .planner-item-card strong,
 .trip-dashboard .day-tile h2,
 .day-tile h2 {
@@ -1494,171 +1408,8 @@ button.dashboard-card {
   }
 }
 
-/* ─── 10. Button component styles ────────────────────────────────────────── */
-.button {
-  box-sizing: border-box;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 44px;
-  padding: 0 var(--spacing-md);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: var(--radius-full);
-  color: var(--color-text-primary);
-  background: rgba(28, 28, 30, 0.84);
-  font: inherit;
-  font-size: 14px;
-  font-weight: 700;
-  white-space: nowrap;
-  cursor: pointer;
-  transition:
-    background 140ms ease,
-    border-color 140ms ease,
-    transform 140ms ease;
-}
-
-.button:hover:not(:disabled) {
-  border-color: rgba(255, 255, 255, var(--opacity-interactive-hover-border));
-  background: rgba(255, 255, 255, var(--opacity-interactive-hover));
-}
-
-.button:active:not(:disabled) {
-  transform: scale(0.96);
-}
-
-.button:focus-visible {
-  outline: 2px solid var(--color-accent-default);
-  outline-offset: 2px;
-}
-
-.button:disabled {
-  cursor: not-allowed;
-  opacity: var(--opacity-disabled-default);
-}
-
-.button--primary {
-  color: var(--color-accent-text);
-  border-color: var(--color-accent-default);
-  background: var(--color-accent-default);
-}
-
-.button--primary:hover:not(:disabled) {
-  color: var(--color-accent-text);
-  border-color: var(--color-accent-default);
-  background: color-mix(in srgb, var(--color-accent-default) 86%, white 14%);
-}
-
-.button--secondary {
-  color: var(--color-text-primary);
-  border-color: var(--color-border-default);
-  background: var(--color-surface-elevated);
-}
-
-.button--destructive {
-  color: var(--color-danger-text);
-  border-color: var(--color-danger-border);
-  background: var(--color-danger-surface);
-}
-
-.button--destructive:hover:not(:disabled) {
-  color: var(--color-danger-text);
-  border-color: var(--color-danger-text);
-  background: var(--color-danger-surface-hover);
-}
-
-/* ─── 11. IconButton component styles ──────────────────────────────────── */
-.icon-button {
-  box-sizing: border-box;
-  flex: 0 0 auto;
-  width: 40px;
-  min-width: 40px;
-  max-width: 40px;
-  height: 40px;
-  min-height: 40px;
-  max-height: 40px;
-  aspect-ratio: 1;
-  display: inline-grid;
-  place-items: center;
-  padding: 0;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: var(--radius-pill);
-  color: var(--color-text-primary);
-  background: rgba(28, 28, 30, 0.84);
-  box-shadow: none;
-  font: inherit;
-  line-height: 1;
-  cursor: pointer;
-  transition:
-    background 140ms ease,
-    border-color 140ms ease,
-    color 140ms ease,
-    transform 140ms ease;
-}
-
-.icon-button:hover:not(:disabled) {
-  border-color: rgba(255, 255, 255, var(--opacity-interactive-hover-border));
-  background: rgba(255, 255, 255, var(--opacity-interactive-hover));
-}
-
-.icon-button:active:not(:disabled) {
-  transform: scale(0.96);
-}
-
-.icon-button:focus-visible {
-  outline: 2px solid var(--color-accent-default);
-  outline-offset: 2px;
-}
-
-.icon-button:disabled {
-  cursor: not-allowed;
-  opacity: var(--opacity-disabled-default);
-}
-
-.icon-button--primary {
-  width: 44px;
-  min-width: 44px;
-  max-width: 44px;
-  height: 44px;
-  min-height: 44px;
-  max-height: 44px;
-  color: var(--color-icon-on-accent);
-  border-color: var(--color-accent-default);
-  background: var(--color-accent-default);
-}
-
-.icon-button--primary:hover:not(:disabled) {
-  color: var(--color-icon-on-accent);
-  border-color: var(--color-accent-default);
-  background: color-mix(in srgb, var(--color-accent-default) 86%, white 14%);
-}
-
-.icon-button--destructive {
-  color: var(--color-danger-text);
-  border-color: var(--color-danger-border);
-  background: var(--color-danger-surface);
-}
-
-.icon-button--destructive:hover:not(:disabled) {
-  color: var(--color-danger-text);
-  border-color: var(--color-danger-text);
-  background: var(--color-danger-surface-hover);
-}
-
-.icon-button--complete {
-  color: var(--color-icon-complete);
-}
-
-.icon-button--complete.icon-button--selected {
-  color: var(--color-icon-on-accent);
-  border-color: var(--color-accent-default);
-  background: var(--color-accent-default);
-}
-
-.icon-button--complete.icon-button--selected:hover:not(:disabled) {
-  color: var(--color-icon-on-accent);
-  border-color: var(--color-accent-default);
-  background: var(--color-accent-default);
-}
+/* ─── 10–11. (removed v1.27.0) Button and IconButton component styles moved
+   to co-located src/components/ui/button.css and icon-button.css. ─────────── */
 
 /* ─── 12. Trip background image system ───────────────────────────────────────
    Fixed viewport background layer using CSS custom property --trip-bg-image.

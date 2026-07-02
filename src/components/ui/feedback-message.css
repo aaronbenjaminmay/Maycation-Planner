@@ -1,0 +1,25 @@
+/*
+ * FeedbackMessage — co-located component CSS.
+ * Migrated verbatim from App.css §5 (v1.27.0 CSS Co-location Wave 1).
+ * Note: the base rule sets border-color without border-width/style by design —
+ * only the toned variants read as bordered surfaces via their backgrounds.
+ */
+
+.feedback {
+  border-color: var(--color-border-glass);
+  border-radius: var(--radius-input);
+  background: var(--color-surface-feedback-neutral);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.feedback--error {
+  border-color: var(--color-danger-border);
+  background: var(--color-danger-surface);
+}
+
+.feedback--success {
+  border-color: var(--color-success-border);
+  background: var(--color-success-surface);
+  color: var(--color-success-text);
+}

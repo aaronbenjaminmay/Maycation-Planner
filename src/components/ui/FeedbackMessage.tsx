@@ -1,4 +1,5 @@
 import { type ReactNode } from 'react'
+import './feedback-message.css'
 
 type FeedbackTone = 'neutral' | 'error' | 'success'
 

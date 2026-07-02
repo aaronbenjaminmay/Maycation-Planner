@@ -1,6 +1,6 @@
 # Maycation Design System
 
-Last updated: v1.26.0
+Last updated: v1.27.0 — CSS Co-location Wave 1 (2026-07-02)
 
 ## Component Classification
 
@@ -26,12 +26,12 @@ Domain-agnostic components with no imports from `lib/`. All are Storybook-docume
 | Component | File | CSS home | Storybook path |
 |-----------|------|----------|----------------|
 | `Badge` | `Badge.tsx` | `badge.css` | `Components/Badge` |
-| `Button` | `Button.tsx` | `App.css §10` | `Components/Button` |
-| `CardSurface` | `CardSurface.tsx` | `App.css §1, §7` | `Components/CardSurface` |
-| `FeedbackMessage` | `FeedbackMessage.tsx` | `App.css §1, §5` | `Components/Feedback/FeedbackMessage` |
+| `Button` | `Button.tsx` | `button.css` (v1.27.0) | `Components/Button` |
+| `CardSurface` | `CardSurface.tsx` | `card-surface.css` (v1.27.0) | `Components/CardSurface` |
+| `FeedbackMessage` | `FeedbackMessage.tsx` | `feedback-message.css` (v1.27.0) | `Components/Feedback/FeedbackMessage` |
 | `Icon` | `Icon.tsx` | (inline SVG) | `Components/Icon` |
-| `IconButton` | `IconButton.tsx` | `App.css §11` | `Components/IconButton` |
-| `ModalSheet` | `ModalSheet.tsx` | `App.css §1, §7` | `Components/ModalSheet` |
+| `IconButton` | `IconButton.tsx` | `icon-button.css` (v1.27.0) | `Components/IconButton` |
+| `ModalSheet` | `ModalSheet.tsx` | `modal-sheet.css` (v1.27.0) | `Components/ModalSheet` |
 | `PlaceInput` | `PlaceInput.tsx` | `PlaceInput.css` | `Components/PlaceInput` |
 
 ### Forms
@@ -56,7 +56,7 @@ Domain-agnostic components with no imports from `lib/`. All are Storybook-docume
 
 | Component | File | CSS home | Storybook path |
 |-----------|------|----------|----------------|
-| `EmptyState` | `EmptyState.tsx` | `App.css §1, §6, §7` | `Components/Feedback/EmptyState` |
+| `EmptyState` | `EmptyState.tsx` | `empty-state.css` (v1.27.0) | `Components/Feedback/EmptyState` |
 | `ProgressPill` | `ProgressPill.tsx` | (via Badge) | `Components/Feedback/ProgressPill` |
 | `StatusButton` | `StatusButton.tsx` | (via IconButton) | `Components/Feedback/StatusButton` |
 
@@ -103,6 +103,30 @@ Product screens and sub-components (`TripCard`, `ReservationCard`) live in `src/
 3. **Do not duplicate class definitions across files.** If a class appears in both `forms.css` and `App.css`, the `App.css` definition wins in the app but the `forms.css` definition wins in Storybook — a guaranteed conflict.
 4. **Token variables** (`var(--color-*)`, `var(--spacing-*)`, etc.) are defined in `tokens/generated/tokens.css` via Style Dictionary. Use them everywhere; never hardcode color or spacing values.
 5. **Use full token names everywhere.** `var(--color-*)`, `var(--spacing-*)`, etc. defined in `tokens/generated/tokens.css`. No compatibility bridge layer exists.
+
+---
+
+## Design System Convergence (v2.5.0)
+
+Design System Convergence has two axes. Both are required before a component — or the system — can be called converged:
+
+| Axis | Meaning | Status |
+|---|---|---|
+| **JSX ownership** | Product screens are assembled from design system components; no raw one-off UI. | ✅ Complete (2026-07 audit) |
+| **CSS ownership** | Each component's presentation lives in a stylesheet the component owns and imports. | 🔶 In progress — Wave 1 complete (v1.27.0): Button, IconButton, CardSurface, FeedbackMessage, EmptyState, ModalSheet validated self-contained in Storybook without App.css. Waves 2–3 remain. |
+
+The 2026-07 convergence audit confirmed the JSX axis is complete but found that nine T1/T2 components still derive their presentation from `App.css` (§1–§13 layered passes). Storybook currently renders these components correctly only because `.storybook/preview.ts` imports the entire `App.css` globally — meaning "Storybook is canonical" and "components own presentation" hold at the JSX level but not yet at the CSS level.
+
+**Migration rule (applies to every co-location change):**
+
+> Flatten the existing App.css cascade into a single canonical component stylesheet.
+> Preserve behavior exactly.
+> Do not optimize, redesign, rename selectors, or introduce new tokens during migration.
+> Behavioral changes and visual cleanup are separate work.
+
+**Validation strategy:** a component is considered converged only when it renders correctly in Storybook **without requiring `App.css` to be imported globally**. Storybook becomes progressively self-contained as each component is migrated.
+
+Migration proceeds in three waves ordered by dependency depth (independent T1 → layout T1 → T2 patterns). See [DESIGN_SYSTEM_ROADMAP.md §5 — Phase 1](./DESIGN_SYSTEM_ROADMAP.md) for the wave assignments and sequencing rationale.
 
 ---
 
@@ -169,17 +193,15 @@ See [DESIGN_SYSTEM_PRINCIPLES.md](./DESIGN_SYSTEM_PRINCIPLES.md) for the full se
 
 | § | Name | Key classes |
 |---|------|-------------|
-| 1 | App shells | `.app-shell`, `.app-shell--auth` |
-| 2 | Auth screen | `.auth-panel`, login form layout |
-| 3 | Trip dashboard screen | `.trip-dashboard`, `.dashboard-card`, `.trip-destination-grid` |
+| 1 | App shells, auth screen, product cards/lists | `.app-shell`, `.auth-panel`, `.mode-toggle`, `.settings-panel` |
+| 3 | Trip dashboard screen | `.trip-dashboard`, `.trip-intel-card`, `.trip-destination-grid` |
 | 4 | Day detail screen | `.day-detail-screen`, `.planner-item-card` |
-| 5 | Visual system v1 | FeedbackMessage surface overrides, mode-toggle (glass-surface blocks removed v1.14.0) |
+| 5 | Visual system v1 | mode-toggle glass pass, travel-estimate (FeedbackMessage rules moved to `feedback-message.css` v1.27.0) |
 | 6 | Disney Mayhem production-aligned visual system | Full visual overhaul pass |
-| 7 | Visual system consolidation | Canonical `:where()` blocks using tokens |
+| 7 | Visual system consolidation | Canonical surface rules (`.card-surface`/`.modal-sheet` entries moved to co-located CSS v1.27.0; product/pattern list raised to class specificity) |
 | 8 | Shared authenticated page shell (canonical) | `.page-shell`, `.dashboard-shell` |
-| 9 | Login screen wordmark and mobile fixes | `.wordmark`, mobile overrides |
-| 10 | Button component styles | `.button`, `.button--*` |
-| 11 | IconButton component styles | `.icon-button`, `.icon-button--*` |
+| 9 | Login screen wordmark and mobile fixes | `.auth-wordmark`, mobile overrides |
+| 10–11 | *(removed v1.27.0)* | Button/IconButton styles moved to `button.css` / `icon-button.css` |
 | 12 | Trip background image system | `.dashboard-shell.has-trip-bg`, `::before`/`::after` layers |
 | 13 | Upload field and PageControls | `.upload-field`, `.page-controls` |
 
@@ -191,16 +213,16 @@ See [DESIGN_SYSTEM_PRINCIPLES.md](./DESIGN_SYSTEM_PRINCIPLES.md) for the full se
 
 **v1.7.0 Token Architecture Phase 1** resolved the highest-priority item: Badge no longer depends on product-domain tokens. See `docs/TOKEN_DEBT.md`.
 
-These hardcoded values remain in `App.css` as of v1.26.0. See [TOKEN_DEBT.md](./TOKEN_DEBT.md) for the full resolution history.
+These hardcoded values remain as of v1.27.0 (Wave 1 moved the Button/IconButton values verbatim into their co-located files — locations updated, debt unchanged). See [TOKEN_DEBT.md](./TOKEN_DEBT.md) for the full resolution history.
 
 | Value | Location | Status |
 |-------|----------|--------|
 | `#a1a1a6` (SVG only) | `forms.css select.form-control background-image` | Cannot fix — URL-encoded SVG stroke in data URI; browser limitation |
-| `rgba(255, 255, 255, 0.12)` | `.button`, `.icon-button` base border | No semantic token yet |
-| `rgba(28, 28, 30, 0.84)` | `.button`, `.icon-button` base background | No semantic token yet |
-| `rgba(28, 28, 30, 0.68/0.76/0.62)` | `.trip-intel-card`, `.planner-item-card` backgrounds | Intentional variants; no tokens for these off-scale glass opacities |
-| `#fff` | Trip intel card and day tile text | No pure-white text semantic token; `--color-text-primary` is `#f5f7fb` |
-| `color-mix()` primary hover | `.button--primary:hover`, `.icon-button--primary:hover` | `var(--opacity-interactive-primary-hover)` exists; no simpler token-driven form available |
+| `rgba(255, 255, 255, 0.12)` | `button.css`, `icon-button.css` base border | No semantic token yet |
+| `rgba(28, 28, 30, 0.84)` | `button.css`, `icon-button.css` base background | No semantic token yet |
+| `rgba(28, 28, 30, 0.68/0.76/0.62)` | `.trip-intel-card`, `.planner-item-card` backgrounds (App.css) | Intentional variants; no tokens for these off-scale glass opacities |
+| `#fff` | Trip intel card and day tile text (App.css) | No pure-white text semantic token; `--color-text-primary` is `#f5f7fb` |
+| `color-mix()` primary hover | `button.css` / `icon-button.css` `--primary:hover` | `var(--opacity-interactive-primary-hover)` exists; no simpler token-driven form available |
 
 Inline `rgba()` values in CSS for **intentional surface variants** are **intentional** per the Opacity Handling Rule. `--color-surface-glass` is itself the rgba composite (`rgba(28,28,30,0.72)`) and is used directly in §7 `:where()` blocks. Intentional variants (`trip-intel-card` 0.68, `planner-item-card` 0.76, `.trip-dashboard .day-tile` contextual shadow) remain as inline `rgba()` with documentation comments. Each composite rgba in CSS should have a comment in the format:
 ```css
@@ -278,6 +300,10 @@ Components with co-located CSS (`badge.css`, `forms.css`) load automatically whe
 
 ### Future Storybook phases
 
-**v1.x.0 — Code Connect for remaining T1 Components:** Wire Code Connect for EmptyState, StatusButton, FormActions, FormGrid, ScreenHeader, and PageControls. These 6 components have Figma components and stable APIs and are the priority Code Connect targets. Icon is separately deferred (known Storybook rendering defect). PlaceInput is deferred until its Figma component is created (Place Intelligence Phase 5).
+Ordered per the v2.5.0 System Health phases (see [DESIGN_SYSTEM_ROADMAP.md §5](./DESIGN_SYSTEM_ROADMAP.md)):
 
-**v1.x.0 — CSS Co-location Migration:** Migrate component styles from `App.css` to co-located CSS files. This removes the `App.css` dependency from Storybook's global imports and makes each component self-contained. See [DESIGN_SYSTEM_ROADMAP.md](./DESIGN_SYSTEM_ROADMAP.md) for scope.
+**Phase 1 — CSS Co-location Migration (primary initiative of v2.5.0):** Migrate component styles from `App.css` to co-located CSS files, in three dependency-ordered waves. This removes the `App.css` dependency from Storybook's global imports and makes each component self-contained. Success criterion: components render correctly in Storybook without `App.css` imported globally. See [Design System Convergence](#design-system-convergence-v250) above for the migration rule.
+
+**Phase 2 — Component Token Layer:** Component-scoped tokens land in the consolidated co-located CSS produced by Phase 1.
+
+**Phase 3 — Code Connect for remaining T1 Components and T2 Patterns:** Wire Code Connect for EmptyState, StatusButton, FormActions, FormGrid, ScreenHeader, PageControls, and the three patterns (DashboardCard, DetailHeader, DayTile). Icon is separately deferred (known Storybook rendering defect). PlaceInput is deferred until its Figma component is created (Place Intelligence Phase 5). May proceed in parallel with Phases 1–2 where convenient; it blocks nothing.

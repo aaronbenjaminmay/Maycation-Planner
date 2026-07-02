@@ -1,4 +1,5 @@
 import { type ButtonHTMLAttributes, type HTMLAttributes, type ReactNode } from 'react'
+import './card-surface.css'
 
 type CardSurfaceDivProps = {
   as?: 'div'

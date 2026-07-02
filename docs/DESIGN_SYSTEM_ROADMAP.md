@@ -1,8 +1,8 @@
 # Maycation Design System — Roadmap
 
-Current release: **v1.26.0 — CSS Token Parity**
+Current release: **v1.27.0 — CSS Co-location Wave 1**
 
-v1.26.0 eliminated 11 hardcoded CSS values in App.css that already had generated design tokens. No new tokens, no Figma changes, no visual changes. v1.25.0 resolved all 36 deferred Tranche B token binding decisions from v1.24.0, adding 3 new primitive variables and binding 28 nodes.
+v1.27.0 co-located CSS for all six Wave 1 independent T1 components (Button, IconButton, CardSurface, FeedbackMessage, EmptyState, ModalSheet). Each component now owns its presentation in a co-located stylesheet and renders correctly in Storybook without `App.css` imported globally. App.css §10 and §11 removed. v1.26.0 eliminated 11 hardcoded CSS values in App.css.
 
 ---
 
@@ -97,51 +97,99 @@ Interactive card tile for trip days. Composes `CardSurface` + `Icon` + `Progress
 
 Active maintenance work. Complete this before introducing new patterns or components.
 
-### Code Connect for Remaining T1 Components
+**Ordering (revised 2026-07 for v2.5.0 — Design System Convergence):** the convergence audit found that JSX-level convergence is complete — every product screen is assembled from design system components — but CSS-level convergence is not. Nine T1/T2 components still derive their presentation from `App.css`, and Storybook renders them correctly only because `.storybook/preview.ts` imports the entire application stylesheet. CSS Co-location is therefore the **primary architectural initiative of v2.5.0**, not a medium-priority cleanup task. System Health work proceeds in this order:
 
-**Goal:** Wire Code Connect for EmptyState, StatusButton, FormActions, FormGrid, ScreenHeader, and PageControls.
-
-**Why it matters:** 8 T1 Components currently have no `.figma.tsx` Code Connect file. Without it, the Figma ↔ code link for those components is visual-only. This work mirrors what is already done for the 11 wired components.
-
-**Scope:** EmptyState, StatusButton, FormActions, FormGrid, ScreenHeader, PageControls. Icon is excluded from this sprint — its Storybook rendering defect must be resolved first (tracked in project memory). PlaceInput Code Connect is deferred until its Figma component is created (Place Intelligence Phase 5).
-
-**Expected outcome:** 6 new `.figma.tsx` files. 17 of 19 T1 Components fully wired (Icon and PlaceInput remain deferred).
+| Phase | Initiative | Rationale |
+|---|---|---|
+| **1** | CSS Co-location Migration | Convergence blocker. Components must own their presentation in fact, not only in JSX, before anything layers on top. |
+| **2** | Component Token Layer (Layer 2) | Component tokens land in consolidated, co-located component CSS. Requires Phase 1. |
+| **3** | Code Connect completion (T1 + Patterns) | Tooling parity. Valuable, but changes nothing about how the app is assembled. May proceed in parallel where convenient; it blocks nothing. |
 
 ---
 
-### Code Connect for Patterns
+### Phase 1 — CSS Co-location Migration (primary initiative of v2.5.0)
 
-**Goal:** Wire Code Connect for `DashboardCard`, `DetailHeader`, and `DayTile`.
+**Goal:** Move component styles from `App.css` into co-located CSS files so that each design system component owns its presentation.
 
-**Why it matters:** Figma components currently have no Code Connect mapping. Without it, the Figma ↔ code link is visual-only — AI tools, design handoff, and design-to-code workflows cannot resolve Figma components to their code counterparts. All three patterns have stable APIs and Figma parity; they are ready to be wired.
+**Why it is Phase 1:** True Design System Convergence requires both:
 
-**Expected outcome:** Three `.figma.tsx` Code Connect files. Each pattern's Figma component resolves to its React import in code.
+- **JSX ownership** — screens are assembled from design system components. **Complete.**
+- **CSS ownership** — each component's presentation lives in a stylesheet it owns. **In progress.**
+
+Until CSS ownership is complete, "Storybook is canonical" and "components own presentation" hold at the JSX level but not at the CSS level: a component renders correctly in Storybook only because the full `App.css` — all of its layered visual system passes — is loaded globally behind it.
+
+**Migration rule:**
+
+> Flatten the existing App.css cascade into a single canonical component stylesheet.
+> Preserve behavior exactly.
+> Do not optimize, redesign, rename selectors, or introduce new tokens during migration.
+> Behavioral changes and visual cleanup are separate work.
+
+**Validation strategy:** A component is considered converged only when it renders correctly in Storybook **without requiring `App.css` to be imported globally**. Storybook becomes progressively self-contained as each component is migrated.
+
+**Migration waves — ordered by dependency depth, not component popularity:**
+
+**Wave 1 — Independent T1 components. ✅ Complete (v1.27.0).** All six components co-located and validated in Storybook without `App.css`.
+
+| Component | CSS home |
+|---|---|
+| Button | `src/components/ui/button.css` |
+| IconButton | `src/components/ui/icon-button.css` |
+| CardSurface | `src/components/ui/card-surface.css` |
+| FeedbackMessage | `src/components/ui/feedback-message.css` |
+| EmptyState | `src/components/ui/empty-state.css` |
+| ModalSheet | `src/components/ui/modal-sheet.css` |
+
+> `ProgressPill` and `StatusButton` have no CSS of their own (they render through Badge and IconButton classes) — they converge automatically with `badge.css` (already co-located) and Wave 1 IconButton. `Icon` uses inline SVG only.
+
+**Wave 2 — Layout T1 components.** Their CSS interacts with page-shell structure (ScreenHeader's divider under `.detail-header`, PageControls' fixed positioning against the `.dashboard-shell` padding bridge). Migrating them requires boundary decisions between component ownership and product-shell ownership, so they follow the mechanical Wave 1 migrations.
+
+| Component | Current CSS home |
+|---|---|
+| ScreenHeader | `App.css §8` |
+| PageControls | `App.css §13` |
+| FormActions | `forms.css` — *already co-located, but selectors are scoped under `.form-body`, which is defined in `App.css`. Wave 2 severs that dependency; no file move needed.* |
+| FormGrid | `forms.css` — *same `.form-body` dependency as FormActions* |
+
+**Wave 3 — T2 patterns.** Compose Wave 1/2 components and are the most entangled in the `App.css` §5–§7 layered passes. They can only validate as self-contained once the T1 CSS they compose is already co-located — the deepest dependency migrates last.
+
+| Pattern | Current CSS home |
+|---|---|
+| DashboardCard | `App.css §1, §3, §6, §7` |
+| DetailHeader | `App.css §4, §8` |
+| DayTile | `App.css §3, §6, §7` |
+
+**Expected outcome:** Each component owns its own CSS file. `App.css` retains only product-screen layout, shell structure, and product-pattern utilities. `.storybook/preview.ts` no longer imports `App.css`. Documented intentional contextual variants (e.g., the `.trip-dashboard .day-tile` shadow) remain in `App.css` as product-context overrides, with their tracking in [`TOKEN_DEBT.md`](./TOKEN_DEBT.md) unchanged.
 
 ---
 
-### Component Token Layer (Layer 2)
+### Phase 2 — Component Token Layer (Layer 2)
 
 **Goal:** Implement component-scoped tokens for core components (`card`, `button`, `input`, `badge`, `icon-button`, `modal`).
 
-**Why it matters:** Currently, components reference semantic tokens directly (e.g., `CardSurface` uses `--color-surface-glass` inline). Layer 2 component tokens create an explicit contract between design and code, make per-component overrides safe, and complete the three-layer DTCG architecture described in [`FIGMA_FOUNDATIONS.md §1`](./FIGMA_FOUNDATIONS.md). This work should not begin until Code Connect is wired and the Figma variable foundation is validated against live components.
+**Why it matters:** Currently, components reference semantic tokens directly (e.g., `CardSurface` uses `--color-surface-glass` inline). Layer 2 component tokens create an explicit contract between design and code, make per-component overrides safe, and complete the three-layer DTCG architecture described in [`FIGMA_FOUNDATIONS.md §1`](./FIGMA_FOUNDATIONS.md). This work must not begin until CSS co-location (Phase 1) is complete: component tokens land in consolidated, co-located component CSS — introducing them while a component's presentation is still spread across `App.css` passes would bind tokens to a cascade that is about to be flattened.
 
-**Expected outcome:** `component.*` token namespace in `tokens/`, corresponding Figma variable collection, and updated component CSS to reference component tokens instead of semantic tokens directly.
+**Expected outcome:** `component.*` token namespace in `tokens/`, corresponding Figma variable collection, and updated co-located component CSS to reference component tokens instead of semantic tokens directly.
 
 ---
 
-### CSS Co-location Migration
+### Phase 3 — Code Connect Completion
 
-**Goal:** Move component styles from `App.css` into co-located CSS files for each component.
+**Goal:** Wire Code Connect for the remaining T1 Components (EmptyState, StatusButton, FormActions, FormGrid, ScreenHeader, PageControls) and all three T2 Patterns (`DashboardCard`, `DetailHeader`, `DayTile`).
 
-**Why it matters:** Several T1 Components (`Button`, `CardSurface`, `IconButton`, `ModalSheet`, `ScreenHeader`, `PageControls`, `EmptyState`, `ProgressPill`, `StatusButton`) have their CSS in `App.css` rather than co-located files. This makes Storybook dependent on the full `App.css`, creates risk of cross-component selector conflicts, and couples component styles to product-screen layout rules. The migration is identified in `DESIGN_SYSTEM.md` under Future Storybook phases.
+**Why it matters:** Without Code Connect, the Figma ↔ code link for these components is visual-only — AI tools, design handoff, and design-to-code workflows cannot resolve Figma components to their code counterparts. This work mirrors what is already done for the 11 wired components. It is sequenced last because it is design-tooling parity: it improves the Figma → code bridge but changes nothing about how the application is assembled, and it depends on nothing in Phases 1–2 (it may proceed in parallel where convenient).
 
-**Expected outcome:** Each component owns its own CSS file. `App.css` retains only product-screen layout, shell structure, and pattern utilities. Storybook no longer depends on App.css for component rendering.
+**Scope:** Icon is excluded — its Storybook rendering defect must be resolved first (tracked in project memory). PlaceInput Code Connect is deferred until its Figma component is created (Place Intelligence Phase 5).
+
+**Expected outcome:** 9 new `.figma.tsx` files. 17 of 19 T1 Components and 3 of 3 T2 Patterns fully wired (Icon and PlaceInput remain deferred).
 
 ---
 
 ### Remaining Token Migration Debt
 
 **Goal:** Eliminate the last hardcoded values in `App.css` that predate the semantic token layer.
+
+**Interaction with Phase 1:** per the migration rule, CSS co-location moves these values **verbatim** into co-located component stylesheets — it does not resolve them. Debt entries that travel with a component (e.g., Button/IconButton base border and background) remain tracked in [`TOKEN_DEBT.md`](./TOKEN_DEBT.md) with updated locations. Resolving them is Phase 2 (Component Token Layer) or separate token work, never a side effect of migration.
 
 **Why it matters:** These values bypass the token pipeline, cannot be updated via Style Dictionary, and are invisible to Figma. They are tracked in [`TOKEN_DEBT.md`](./TOKEN_DEBT.md) and in `DESIGN_SYSTEM.md` under Known Token Migration Debt.
 

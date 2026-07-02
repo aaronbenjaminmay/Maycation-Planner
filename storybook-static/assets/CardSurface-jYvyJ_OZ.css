@@ -1,0 +1,1 @@
+:where(.card-surface){border:1px solid var(--color-border-glass);border-radius:var(--radius-lg);background:var(--color-surface-glass);box-shadow:var(--shadow-md)}.card-surface--interactive{cursor:pointer}@supports ((-webkit-backdrop-filter:blur(18px)) or (backdrop-filter:blur(18px))){.card-surface{-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px)}}

@@ -1,0 +1,62 @@
+/*
+ * ModalSheet — co-located component CSS.
+ * Flattened from App.css §1 (backdrop, sheet layout, header), §5 (header h2,
+ * backdrop-filter), and §7 (surface base) (v1.27.0 CSS Co-location Wave 1).
+ *
+ * The surface base keeps zero specificity via :where(), mirroring the original
+ * §7 :where() consolidation block it was extracted from.
+ *
+ * Placement rule (unchanged): ModalSheet must not be a direct child of
+ * <main class="dashboard-shell has-trip-bg"> — the .dashboard-shell.has-trip-bg > *
+ * rule overrides position: fixed. Render inside <section class="page-shell">.
+ */
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: grid;
+  place-items: center;
+  padding: 18px;
+  background: var(--color-overlay-default);
+}
+
+:where(.modal-sheet) {
+  border: 1px solid var(--color-border-glass);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface-glass);
+  box-shadow: var(--shadow-md);
+}
+
+.modal-sheet {
+  width: min(100%, 560px);
+  max-height: calc(100svh - 36px);
+  overflow-y: auto;
+  display: grid;
+  gap: 18px;
+  padding: 22px;
+}
+
+.modal-sheet__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--color-border-glass);
+}
+
+.modal-sheet__header h2 {
+  margin: 0;
+  color: var(--color-text-primary);
+  font-size: 1.35rem;
+  font-weight: 900;
+  line-height: 1.05;
+}
+
+@supports ((backdrop-filter: blur(18px)) or (-webkit-backdrop-filter: blur(18px))) {
+  .modal-sheet {
+    -webkit-backdrop-filter: blur(18px);
+    backdrop-filter: blur(18px);
+  }
+}

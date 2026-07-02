@@ -1,0 +1,80 @@
+/*
+ * Button — co-located component CSS.
+ * Migrated verbatim from App.css §10 (v1.27.0 CSS Co-location Wave 1).
+ *
+ * Token debt (tracked in docs/TOKEN_DEBT.md — moved verbatim, not resolved):
+ *   - base border rgba(255, 255, 255, 0.12) — no semantic token yet
+ *   - base background rgba(28, 28, 30, 0.84) — no semantic token yet
+ *   - color-mix() primary hover — no simpler token-driven form exists
+ */
+
+.button {
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 0 var(--spacing-md);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: var(--radius-full);
+  color: var(--color-text-primary);
+  background: rgba(28, 28, 30, 0.84);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    background 140ms ease,
+    border-color 140ms ease,
+    transform 140ms ease;
+}
+
+.button:hover:not(:disabled) {
+  border-color: rgba(255, 255, 255, var(--opacity-interactive-hover-border));
+  background: rgba(255, 255, 255, var(--opacity-interactive-hover));
+}
+
+.button:active:not(:disabled) {
+  transform: scale(0.96);
+}
+
+.button:focus-visible {
+  outline: 2px solid var(--color-accent-default);
+  outline-offset: 2px;
+}
+
+.button:disabled {
+  cursor: not-allowed;
+  opacity: var(--opacity-disabled-default);
+}
+
+.button--primary {
+  color: var(--color-accent-text);
+  border-color: var(--color-accent-default);
+  background: var(--color-accent-default);
+}
+
+.button--primary:hover:not(:disabled) {
+  color: var(--color-accent-text);
+  border-color: var(--color-accent-default);
+  background: color-mix(in srgb, var(--color-accent-default) 86%, white 14%);
+}
+
+.button--secondary {
+  color: var(--color-text-primary);
+  border-color: var(--color-border-default);
+  background: var(--color-surface-elevated);
+}
+
+.button--destructive {
+  color: var(--color-danger-text);
+  border-color: var(--color-danger-border);
+  background: var(--color-danger-surface);
+}
+
+.button--destructive:hover:not(:disabled) {
+  color: var(--color-danger-text);
+  border-color: var(--color-danger-text);
+  background: var(--color-danger-surface-hover);
+}

@@ -1,0 +1,40 @@
+/*
+ * EmptyState — co-located component CSS.
+ * Flattened from App.css §1 (grid layout), §6 (final 22px padding pass), and
+ * §7 (surface treatment + heading typography) (v1.27.0 CSS Co-location Wave 1).
+ *
+ * Cascade notes from flattening:
+ *   - padding: §1 set 20px, §6 set 22px at equal specificity → final 22px.
+ *     The §7 :where() 18px padding entry was dead for .empty-state (zero
+ *     specificity vs. the §6 class rule) and is intentionally not carried over.
+ *   - The surface properties were previously zero-specificity (§7 :where()).
+ *     They are written at class specificity here; nothing targeted
+ *     .empty-state between those two specificity levels, so computed output
+ *     is identical and load order vs. the :where(.card-surface) base
+ *     (EmptyState renders on CardSurface) no longer matters.
+ */
+
+.empty-state {
+  display: grid;
+  gap: 18px;
+  justify-items: start;
+  padding: 22px;
+  border: 1px solid var(--color-border-glass);
+  border-radius: var(--radius-card);
+  background: var(--color-surface-glass);
+  box-shadow: var(--shadow-sm);
+}
+
+.empty-state h2 {
+  margin: 0;
+  color: var(--color-text-primary);
+  font-size: 1rem;
+  font-weight: 900;
+  letter-spacing: 0;
+  line-height: 1.15;
+}
+
+.empty-state__body {
+  display: grid;
+  gap: 8px;
+}
