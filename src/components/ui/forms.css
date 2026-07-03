@@ -108,6 +108,15 @@ select.form-control {
   gap: 10px;
 }
 
+/* ─── FormBody layout base ───────────────────────────────────────────────── */
+/* Migrated from App.css §1 compound .auth-form,.form-body (v1.28.0). */
+/* .auth-form remains in App.css (product-context, not component-owned). */
+
+.form-body {
+  display: grid;
+  gap: var(--spacing-md);
+}
+
 /* ─── FormActions inside .form-body ─────────────────────────────────────── */
 
 .form-body .form-actions {
@@ -142,5 +151,15 @@ select.form-control {
   .form-body .form-actions__main {
     display: grid;
     grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* ─── 560px: collapse 2-col grid to 1-col ───────────────────────────────── */
+/* Migrated from App.css §2 @media (max-width: 560px) (v1.28.0). */
+
+@media (max-width: 560px) {
+  .form-grid,
+  .form-actions {
+    grid-template-columns: 1fr;
   }
 }

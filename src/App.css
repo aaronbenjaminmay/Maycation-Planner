@@ -99,11 +99,12 @@
   outline-offset: 2px;
 }
 
-.auth-form,
-.form-body {
+.auth-form {
   display: grid;
   gap: var(--spacing-md);
 }
+
+/* .form-body base layout moved to co-located src/components/ui/forms.css (v1.28.0). */
 
 
 .settings-panel {
@@ -179,24 +180,6 @@
   gap: 8px;
 }
 
-
-.screen-header {
-  display: flex;
-  align-items: start;
-  justify-content: space-between;
-  gap: 16px;
-}
-
-.screen-header__meta {
-  display: grid;
-  gap: 8px;
-  margin-top: var(--spacing-md);
-  color: var(--color-text-secondary);
-}
-
-.screen-header__actions {
-  flex: 0 0 auto;
-}
 
 .detail-header {
   display: grid;
@@ -317,15 +300,7 @@ button.dashboard-card {
     padding: 22px;
   }
 
-  .screen-header {
-    align-items: stretch;
-    flex-direction: column;
-  }
-
-  .form-grid,
-  .form-actions {
-    grid-template-columns: 1fr;
-  }
+  /* .form-grid and .form-actions breakpoint moved to co-located src/components/ui/forms.css (v1.28.0). */
 }
 
 /* ─── 3. Trip dashboard screen ───────────────────────────────────────────────
@@ -691,14 +666,6 @@ button.dashboard-card {
   gap: 20px;
 }
 
-.screen-header h1 {
-  color: var(--color-text-primary);
-  font-size: clamp(1.85rem, 7vw, 2.75rem);
-  font-weight: 900;
-  letter-spacing: 0;
-  line-height: 0.98;
-}
-
 /* ─── Travel estimate ─────────────────────────────────────────────────────── */
 
 .travel-estimate {
@@ -747,10 +714,6 @@ button.dashboard-card {
   border-radius: 999px;
 }
 
-.screen-header {
-  align-items: center;
-}
-
 .detail-header {
   gap: 16px;
 }
@@ -793,21 +756,9 @@ button.dashboard-card {
   padding: 22px;
 }
 
-.screen-header,
-.detail-header {
-  padding-bottom: 18px;
-  border-bottom: 1px solid var(--color-border-glass);
-}
-
 .detail-header .screen-header {
   padding-bottom: 0;
   border-bottom: 0;
-}
-
-.screen-header h1 {
-  font-size: clamp(1.85rem, 6vw, 2.65rem);
-  font-weight: 900;
-  line-height: 0.98;
 }
 
 .dashboard-card,
@@ -908,7 +859,6 @@ button.dashboard-card {
     min-height: 88px;
   }
 
-  .screen-header,
   .detail-header {
     padding-bottom: 16px;
   }
@@ -951,7 +901,6 @@ button.dashboard-card {
   padding: 24px;
 }
 
-.screen-header,
 .detail-header {
   gap: 12px;
   padding-bottom: 16px;
@@ -961,21 +910,6 @@ button.dashboard-card {
 .detail-header .screen-header {
   padding-bottom: 0;
   border-bottom: 0;
-}
-
-.screen-header {
-  display: flex;
-  align-items: start;
-}
-
-.screen-header > div {
-  min-width: 0;
-}
-
-.screen-header__actions {
-  display: flex;
-  align-items: center;
-  gap: 8px;
 }
 
 .eyebrow,
@@ -990,16 +924,6 @@ button.dashboard-card {
   text-transform: uppercase;
 }
 
-.screen-header h1 {
-  margin: 0;
-  color: var(--color-text-primary);
-  font-size: var(--typography-title-font-size);
-  font-weight: 900;
-  letter-spacing: 0;
-  line-height: 0.98;
-}
-
-.screen-header__meta,
 .muted,
 .day-tile__summary,
 .planner-item-card p {
@@ -1359,10 +1283,6 @@ button.dashboard-card {
     gap: 16px;
   }
 
-  .screen-header {
-    align-items: start;
-  }
-
 }
 
 /* ─── 9. Login screen wordmark and mobile fixes ─────────────────────────── */
@@ -1507,47 +1427,4 @@ button.dashboard-card {
   text-transform: var(--typography-label-text-transform);
 }
 
-/* PageControls: persistent fixed frosted pill */
-.page-controls {
-  position: fixed;
-  top: calc(env(safe-area-inset-top, 0px) + var(--spacing-md));
-  left: 0;
-  right: 0;
-  z-index: 10;
-  padding-left: calc(env(safe-area-inset-left, 0px) + var(--spacing-xl));
-  padding-right: calc(env(safe-area-inset-right, 0px) + var(--spacing-xl));
-  pointer-events: none;
-}
-
-.page-controls__inner {
-  width: min(100%, 900px);
-  margin: 0 auto;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--spacing-xs);
-  padding: var(--spacing-xs);
-  background: var(--color-surface-glass);
-  border: 1px solid var(--color-border-glass);
-  border-radius: var(--radius-full);
-  box-shadow: var(--shadow-sm);
-  pointer-events: auto;
-}
-
-@supports ((backdrop-filter: blur(18px)) or (-webkit-backdrop-filter: blur(18px))) {
-  .page-controls__inner {
-    -webkit-backdrop-filter: blur(18px);
-    backdrop-filter: blur(18px);
-  }
-}
-
-.page-controls__slot {
-  flex: 0 0 auto;
-}
-
-@media (max-width: 720px) {
-  .page-controls {
-    padding-left: calc(env(safe-area-inset-left, 0px) + var(--spacing-md));
-    padding-right: calc(env(safe-area-inset-right, 0px) + var(--spacing-md));
-  }
-}
+/* PageControls styles moved to co-located src/components/ui/page-controls.css (v1.28.0). */

@@ -1,0 +1,55 @@
+/*
+ * PageControls — co-located component CSS.
+ * Migrated verbatim from App.css §13 (v1.28.0 CSS Co-location Wave 2).
+ * Single source — no multi-pass cascade to flatten.
+ *
+ * Placement constraint (unchanged from App.css comment): PageControls must not
+ * be a direct child of <main class="dashboard-shell has-trip-bg"> — the
+ * .dashboard-shell.has-trip-bg > * rule sets position:relative on all direct
+ * children, overriding position:fixed. Always render inside
+ * <section class="page-shell">.
+ */
+
+.page-controls {
+  position: fixed;
+  top: calc(env(safe-area-inset-top, 0px) + var(--spacing-md));
+  left: 0;
+  right: 0;
+  z-index: 10;
+  padding-left: calc(env(safe-area-inset-left, 0px) + var(--spacing-xl));
+  padding-right: calc(env(safe-area-inset-right, 0px) + var(--spacing-xl));
+  pointer-events: none;
+}
+
+.page-controls__inner {
+  width: min(100%, 900px);
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-xs);
+  padding: var(--spacing-xs);
+  background: var(--color-surface-glass);
+  border: 1px solid var(--color-border-glass);
+  border-radius: var(--radius-full);
+  box-shadow: var(--shadow-sm);
+  pointer-events: auto;
+}
+
+@supports ((backdrop-filter: blur(18px)) or (-webkit-backdrop-filter: blur(18px))) {
+  .page-controls__inner {
+    -webkit-backdrop-filter: blur(18px);
+    backdrop-filter: blur(18px);
+  }
+}
+
+.page-controls__slot {
+  flex: 0 0 auto;
+}
+
+@media (max-width: 720px) {
+  .page-controls {
+    padding-left: calc(env(safe-area-inset-left, 0px) + var(--spacing-md));
+    padding-right: calc(env(safe-area-inset-right, 0px) + var(--spacing-md));
+  }
+}

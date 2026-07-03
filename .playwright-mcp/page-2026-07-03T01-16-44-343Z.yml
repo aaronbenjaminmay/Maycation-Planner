@@ -1,0 +1,5 @@
+- generic [ref=f7e1]:
+  - button "Back" [ref=f7e3] [cursor=pointer]:
+    - img [ref=f7e4]
+  - button "Add item" [ref=f7e7] [cursor=pointer]:
+    - img [ref=f7e8]

@@ -1,4 +1,5 @@
 import { type ReactNode } from 'react'
+import './screen-header.css'
 
 type ScreenHeaderProps = {
   actions?: ReactNode

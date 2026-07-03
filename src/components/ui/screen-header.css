@@ -1,0 +1,73 @@
+/*
+ * ScreenHeader — co-located component CSS.
+ * Flattened from App.css §1 (layout base, meta, actions), §2 (560px responsive),
+ * §7 (canonical pass: layout, h1, meta, actions), §13 (720px responsive)
+ * (v1.28.0 CSS Co-location Wave 2).
+ *
+ * Cascade notes from flattening:
+ *   - §1 gap:16px overridden by §7 compound gap:12px — final: 12px
+ *   - §6 align-items:center overridden by §7 align-items:start — not carried over
+ *   - §5 and §6 .screen-header h1 overridden by §7 canonical — not carried over
+ *   - §6 .screen-header,detail-header padding-bottom:18px overridden by §7 16px — not carried over
+ *   - .screen-header__meta extracted from §7 compound with .muted/.day-tile__summary/
+ *     .planner-item-card p — compound reduced in App.css, standalone rule here
+ *
+ * Product-context rules kept in App.css (not component-owned):
+ *   - .detail-header .screen-header { padding-bottom:0; border-bottom:0 }
+ *     (composition reset when ScreenHeader renders inside DetailHeader)
+ *   - .page-shell > .screen-header (higher-specificity shell override: padding-bottom:18px)
+ *   - .page-shell .screen-header__actions { margin-left:auto }
+ *   - .day-detail-screen .screen-header h1 (product-screen font-size override)
+ */
+
+.screen-header {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--color-border-glass);
+}
+
+@media (max-width: 560px) {
+  .screen-header {
+    align-items: stretch;
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 720px) {
+  .screen-header {
+    align-items: start;
+  }
+}
+
+.screen-header > div {
+  min-width: 0;
+}
+
+.screen-header h1 {
+  margin: 0;
+  color: var(--color-text-primary);
+  font-size: var(--typography-title-font-size);
+  font-weight: 900;
+  letter-spacing: 0;
+  line-height: 0.98;
+}
+
+.screen-header__meta {
+  display: grid;
+  gap: 8px;
+  margin-top: var(--spacing-md);
+  color: var(--color-text-muted);
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+.screen-header__actions {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}

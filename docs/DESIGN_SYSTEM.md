@@ -1,6 +1,6 @@
 # Maycation Design System
 
-Last updated: v1.27.0 — CSS Co-location Wave 1 (2026-07-02)
+Last updated: v1.28.0 — CSS Co-location Wave 2 (2026-07-02)
 
 ## Component Classification
 
@@ -49,8 +49,8 @@ Domain-agnostic components with no imports from `lib/`. All are Storybook-docume
 
 | Component | File | CSS home | Storybook path |
 |-----------|------|----------|----------------|
-| `PageControls` | `PageControls.tsx` | `App.css §13` | `Components/Navigation/PageControls` |
-| `ScreenHeader` | `ScreenHeader.tsx` | `App.css §8` | `Components/Navigation/ScreenHeader` |
+| `PageControls` | `PageControls.tsx` | `page-controls.css` (v1.28.0) | `Components/Navigation/PageControls` |
+| `ScreenHeader` | `ScreenHeader.tsx` | `screen-header.css` (v1.28.0) | `Components/Navigation/ScreenHeader` |
 
 ### Feedback
 
@@ -99,7 +99,7 @@ Product screens and sub-components (`TripCard`, `ReservationCard`) live in `src/
 ## CSS Ownership Rules
 
 1. **Primitive CSS** belongs co-located with its component or in a dedicated stylesheet imported by that component (e.g., `badge.css`, `forms.css`). Never redefine Primitive classes in `App.css`.
-2. **App.css** owns product-screen layout, shell structure, the visual system passes, and product-pattern utilities (`.upload-field`, `.page-controls`).
+2. **App.css** owns product-screen layout, shell structure, the visual system passes, and product-pattern utilities (`.upload-field`). Component CSS files own their component's presentation.
 3. **Do not duplicate class definitions across files.** If a class appears in both `forms.css` and `App.css`, the `App.css` definition wins in the app but the `forms.css` definition wins in Storybook — a guaranteed conflict.
 4. **Token variables** (`var(--color-*)`, `var(--spacing-*)`, etc.) are defined in `tokens/generated/tokens.css` via Style Dictionary. Use them everywhere; never hardcode color or spacing values.
 5. **Use full token names everywhere.** `var(--color-*)`, `var(--spacing-*)`, etc. defined in `tokens/generated/tokens.css`. No compatibility bridge layer exists.
@@ -113,7 +113,7 @@ Design System Convergence has two axes. Both are required before a component —
 | Axis | Meaning | Status |
 |---|---|---|
 | **JSX ownership** | Product screens are assembled from design system components; no raw one-off UI. | ✅ Complete (2026-07 audit) |
-| **CSS ownership** | Each component's presentation lives in a stylesheet the component owns and imports. | 🔶 In progress — Wave 1 complete (v1.27.0): Button, IconButton, CardSurface, FeedbackMessage, EmptyState, ModalSheet validated self-contained in Storybook without App.css. Waves 2–3 remain. |
+| **CSS ownership** | Each component's presentation lives in a stylesheet the component owns and imports. | 🔶 In progress — Wave 2 complete (v1.28.0): ScreenHeader, PageControls, FormActions, FormGrid validated self-contained in Storybook without App.css. Wave 3 (DashboardCard, DetailHeader, DayTile) remains. |
 
 The 2026-07 convergence audit confirmed the JSX axis is complete but found that nine T1/T2 components still derive their presentation from `App.css` (§1–§13 layered passes). Storybook currently renders these components correctly only because `.storybook/preview.ts` imports the entire `App.css` globally — meaning "Storybook is canonical" and "components own presentation" hold at the JSX level but not yet at the CSS level.
 
@@ -203,7 +203,7 @@ See [DESIGN_SYSTEM_PRINCIPLES.md](./DESIGN_SYSTEM_PRINCIPLES.md) for the full se
 | 9 | Login screen wordmark and mobile fixes | `.auth-wordmark`, mobile overrides |
 | 10–11 | *(removed v1.27.0)* | Button/IconButton styles moved to `button.css` / `icon-button.css` |
 | 12 | Trip background image system | `.dashboard-shell.has-trip-bg`, `::before`/`::after` layers |
-| 13 | Upload field and PageControls | `.upload-field`, `.page-controls` |
+| 13 | Upload field | `.upload-field` (PageControls moved to `page-controls.css` v1.28.0) |
 
 ---
 

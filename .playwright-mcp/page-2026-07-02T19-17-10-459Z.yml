@@ -1,0 +1,4 @@
+- banner [ref=f3e3]:
+  - heading "My Trips" [level=1] [ref=f3e5]
+  - button "New trip" [ref=f3e7] [cursor=pointer]:
+    - img [ref=f3e8]
