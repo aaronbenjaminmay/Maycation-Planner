@@ -1,6 +1,6 @@
 # Maycation — Product Roadmap
 
-**Product: v2.4.0 | Next milestone: v2.5.0 — Design System Convergence | Design System: v1.26.0 — CSS Token Parity**
+**Product: v2.4.0 | Next milestone: v2.5.0 — Design System Convergence (CSS Co-location complete; Component Token Layer and Code Connect completion remain) | Design System: v1.29.0 — CSS Co-location Wave 3**
 
 This roadmap is organized by product maturity, not by version or release schedule.
 

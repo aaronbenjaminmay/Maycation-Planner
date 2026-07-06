@@ -1,6 +1,6 @@
 # Maycation Design System
 
-Last updated: v1.28.0 — CSS Co-location Wave 2 (2026-07-02)
+Last updated: v1.29.0 — CSS Co-location Wave 3 (2026-07-04)
 
 ## Component Classification
 
@@ -68,9 +68,11 @@ Opinionated compositions of Components. Domain-agnostic but encode Maycation lay
 
 | Component | File | CSS home | Storybook path | Composes | Figma |
 |-----------|------|----------|----------------|----------|-------|
-| `DashboardCard` | `DashboardCard.tsx` | `App.css §1, §3, §6, §7` | `Patterns/DashboardCard` | `CardSurface` | ✅ `04 Patterns` · Code Connect not wired |
-| `DetailHeader` | `DetailHeader.tsx` | `App.css §4, §8` | `Patterns/DetailHeader` | `PageControls` (fixed overlay) + `ScreenHeader` (in-flow) | ✅ `04 Patterns` · Code Connect not wired |
-| `DayTile` | `DayTile.tsx` | `App.css §3, §6, §7` | `Patterns/DayTile` | `CardSurface` + `Icon` + `ProgressPill` | ✅ `04 Patterns` · Code Connect not wired |
+| `DashboardCard` | `DashboardCard.tsx` | `dashboard-card.css` (v1.29.0) | `Patterns/DashboardCard` | `CardSurface` | ✅ `04 Patterns` · Code Connect not wired |
+| `DetailHeader` | `DetailHeader.tsx` | `detail-header.css` (v1.29.0) | `Patterns/DetailHeader` | `PageControls` (fixed overlay) + `ScreenHeader` (in-flow) | ✅ `04 Patterns` · Code Connect not wired |
+| `DayTile` | `DayTile.tsx` | `day-tile.css` (v1.29.0) | `Patterns/DayTile` | `CardSurface` + `Icon` + `ProgressPill` | ✅ `04 Patterns` · Code Connect not wired |
+
+> All three patterns' product-context composition rules (`.trip-card`/`.settings-panel`, `.page-shell > .detail-header`/`.day-detail-screen .detail-header`, `.trip-dashboard .day-tile`) intentionally remain in `App.css` — see the DetailHeader composition note below and [DESIGN_SYSTEM_ROADMAP.md §5 Phase 1 — Wave 3](./DESIGN_SYSTEM_ROADMAP.md) for the full ownership rationale per pattern.
 
 ### DetailHeader composition note
 
@@ -113,9 +115,9 @@ Design System Convergence has two axes. Both are required before a component —
 | Axis | Meaning | Status |
 |---|---|---|
 | **JSX ownership** | Product screens are assembled from design system components; no raw one-off UI. | ✅ Complete (2026-07 audit) |
-| **CSS ownership** | Each component's presentation lives in a stylesheet the component owns and imports. | 🔶 In progress — Wave 2 complete (v1.28.0): ScreenHeader, PageControls, FormActions, FormGrid validated self-contained in Storybook without App.css. Wave 3 (DashboardCard, DetailHeader, DayTile) remains. |
+| **CSS ownership** | Each component's presentation lives in a stylesheet the component owns and imports. | ✅ Complete (v1.29.0) — Wave 1 (v1.27.0): Button, IconButton, CardSurface, FeedbackMessage, EmptyState, ModalSheet. Wave 2 (v1.28.0): ScreenHeader, PageControls, FormActions, FormGrid. Wave 3 (v1.29.0): DashboardCard, DetailHeader, DayTile. All 13 migrated components validated self-contained in Storybook without `App.css`. |
 
-The 2026-07 convergence audit confirmed the JSX axis is complete but found that nine T1/T2 components still derive their presentation from `App.css` (§1–§13 layered passes). Storybook currently renders these components correctly only because `.storybook/preview.ts` imports the entire `App.css` globally — meaning "Storybook is canonical" and "components own presentation" hold at the JSX level but not yet at the CSS level.
+The 2026-07 convergence audit confirmed the JSX axis is complete but found that nine T1/T2 components (later revised to include the three T2 patterns) derived their presentation from `App.css` (§1–§13 layered passes), with Storybook rendering them correctly only because `.storybook/preview.ts` imported the entire `App.css` globally. As of v1.29.0, every migrated component owns its presentation in a co-located stylesheet. `.storybook/preview.ts` still imports `App.css` globally — it now serves only shared typography utilities (`.eyebrow`, `.muted`, `.label`) and documented product-context/composition overrides (e.g. `.trip-dashboard .day-tile`, `.page-shell > .detail-header`), not any migrated component's own presentation.
 
 **Migration rule (applies to every co-location change):**
 
@@ -193,13 +195,13 @@ See [DESIGN_SYSTEM_PRINCIPLES.md](./DESIGN_SYSTEM_PRINCIPLES.md) for the full se
 
 | § | Name | Key classes |
 |---|------|-------------|
-| 1 | App shells, auth screen, product cards/lists | `.app-shell`, `.auth-panel`, `.mode-toggle`, `.settings-panel` |
-| 3 | Trip dashboard screen | `.trip-dashboard`, `.trip-intel-card`, `.trip-destination-grid` |
-| 4 | Day detail screen | `.day-detail-screen`, `.planner-item-card` |
+| 1 | App shells, auth screen, product cards/lists | `.app-shell`, `.auth-panel`, `.mode-toggle`, `.settings-panel` (`.dashboard-card`, `.detail-header`, `.day-tile` base moved to co-located CSS v1.29.0) |
+| 3 | Trip dashboard screen | `.trip-dashboard`, `.trip-intel-card`, `.trip-destination-grid`, `.trip-dashboard .day-tile` (product-context override, intentionally retained — see [Pattern Inventory](#pattern-inventory-t2)) |
+| 4 | Day detail screen | `.day-detail-screen`, `.planner-item-card`, `.day-detail-screen .detail-header` (product-context override, intentionally retained) |
 | 5 | Visual system v1 | mode-toggle glass pass, travel-estimate (FeedbackMessage rules moved to `feedback-message.css` v1.27.0) |
 | 6 | Disney Mayhem production-aligned visual system | Full visual overhaul pass |
-| 7 | Visual system consolidation | Canonical surface rules (`.card-surface`/`.modal-sheet` entries moved to co-located CSS v1.27.0; product/pattern list raised to class specificity) |
-| 8 | Shared authenticated page shell (canonical) | `.page-shell`, `.dashboard-shell` |
+| 7 | Visual system consolidation | Canonical surface rules (`.card-surface`/`.modal-sheet` entries moved to co-located CSS v1.27.0; `.dashboard-card`/`.day-tile` entries moved to co-located CSS v1.29.0; `.trip-card`/`.settings-panel` remain, unrelated product classes) |
+| 8 | Shared authenticated page shell (canonical) | `.page-shell`, `.dashboard-shell`, `.page-shell > .detail-header` (product-context override, intentionally retained) |
 | 9 | Login screen wordmark and mobile fixes | `.auth-wordmark`, mobile overrides |
 | 10–11 | *(removed v1.27.0)* | Button/IconButton styles moved to `button.css` / `icon-button.css` |
 | 12 | Trip background image system | `.dashboard-shell.has-trip-bg`, `::before`/`::after` layers |
@@ -213,7 +215,7 @@ See [DESIGN_SYSTEM_PRINCIPLES.md](./DESIGN_SYSTEM_PRINCIPLES.md) for the full se
 
 **v1.7.0 Token Architecture Phase 1** resolved the highest-priority item: Badge no longer depends on product-domain tokens. See `docs/TOKEN_DEBT.md`.
 
-These hardcoded values remain as of v1.27.0 (Wave 1 moved the Button/IconButton values verbatim into their co-located files — locations updated, debt unchanged). See [TOKEN_DEBT.md](./TOKEN_DEBT.md) for the full resolution history.
+These hardcoded values remain as of v1.29.0 (Waves 1–3 moved values verbatim into co-located files where applicable — locations updated, debt unchanged; the two DayTile-related entries below stayed in `App.css` since they belong to the `.trip-dashboard .day-tile` product-context override, not the migrated pattern file). See [TOKEN_DEBT.md](./TOKEN_DEBT.md) for the full resolution history.
 
 | Value | Location | Status |
 |-------|----------|--------|
@@ -302,7 +304,7 @@ Components with co-located CSS (`badge.css`, `forms.css`) load automatically whe
 
 Ordered per the v2.5.0 System Health phases (see [DESIGN_SYSTEM_ROADMAP.md §5](./DESIGN_SYSTEM_ROADMAP.md)):
 
-**Phase 1 — CSS Co-location Migration (primary initiative of v2.5.0):** Migrate component styles from `App.css` to co-located CSS files, in three dependency-ordered waves. This removes the `App.css` dependency from Storybook's global imports and makes each component self-contained. Success criterion: components render correctly in Storybook without `App.css` imported globally. See [Design System Convergence](#design-system-convergence-v250) above for the migration rule.
+**Phase 1 — CSS Co-location Migration (primary initiative of v2.5.0). ✅ Complete (v1.29.0).** Migrated component styles from `App.css` to co-located CSS files, in three dependency-ordered waves. Every migrated component now renders correctly in Storybook without `App.css` imported globally — verified individually per component. `.storybook/preview.ts` retains the `App.css` import for shared typography utilities and documented product-context overrides only. See [Design System Convergence](#design-system-convergence-v250) above for the migration rule.
 
 **Phase 2 — Component Token Layer:** Component-scoped tokens land in the consolidated co-located CSS produced by Phase 1.
 

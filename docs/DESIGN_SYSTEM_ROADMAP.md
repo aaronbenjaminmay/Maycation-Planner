@@ -1,8 +1,8 @@
 # Maycation Design System — Roadmap
 
-Current release: **v1.27.0 — CSS Co-location Wave 1**
+Current release: **v1.29.0 — CSS Co-location Wave 3**
 
-v1.27.0 co-located CSS for all six Wave 1 independent T1 components (Button, IconButton, CardSurface, FeedbackMessage, EmptyState, ModalSheet). Each component now owns its presentation in a co-located stylesheet and renders correctly in Storybook without `App.css` imported globally. App.css §10 and §11 removed. v1.26.0 eliminated 11 hardcoded CSS values in App.css.
+v1.29.0 co-located CSS for all three T2 Patterns (DashboardCard, DetailHeader, DayTile), completing the CSS Co-location Migration (Phase 1 of v2.5.0 Design System Convergence). Each pattern now owns its uncontested presentation in a co-located stylesheet and renders correctly in Storybook without `App.css` imported globally. `.trip-dashboard .day-tile` and `.page-shell > .detail-header` remain in `App.css` as intentional, documented product-context overrides — Wave 3 changed CSS ownership, not behavior. v1.28.0 completed Wave 2 (ScreenHeader, PageControls, FormActions, FormGrid); v1.27.0 completed Wave 1 (Button, IconButton, CardSurface, FeedbackMessage, EmptyState, ModalSheet); v1.26.0 eliminated 11 hardcoded CSS values in App.css.
 
 ---
 
@@ -97,26 +97,26 @@ Interactive card tile for trip days. Composes `CardSurface` + `Icon` + `Progress
 
 Active maintenance work. Complete this before introducing new patterns or components.
 
-**Ordering (revised 2026-07 for v2.5.0 — Design System Convergence):** the convergence audit found that JSX-level convergence is complete — every product screen is assembled from design system components — but CSS-level convergence is not. Nine T1/T2 components still derive their presentation from `App.css`, and Storybook renders them correctly only because `.storybook/preview.ts` imports the entire application stylesheet. CSS Co-location is therefore the **primary architectural initiative of v2.5.0**, not a medium-priority cleanup task. System Health work proceeds in this order:
+**Ordering (revised 2026-07 for v2.5.0 — Design System Convergence):** the convergence audit found that JSX-level convergence is complete — every product screen is assembled from design system components — but CSS-level convergence was not. Nine T1/T2 components derived their presentation from `App.css`, and Storybook rendered them correctly only because `.storybook/preview.ts` imported the entire application stylesheet. CSS Co-location was therefore the **primary architectural initiative of v2.5.0**, not a medium-priority cleanup task. System Health work proceeds in this order:
 
 | Phase | Initiative | Rationale |
 |---|---|---|
-| **1** | CSS Co-location Migration | Convergence blocker. Components must own their presentation in fact, not only in JSX, before anything layers on top. |
-| **2** | Component Token Layer (Layer 2) | Component tokens land in consolidated, co-located component CSS. Requires Phase 1. |
+| **1** | CSS Co-location Migration | ✅ **Complete (v1.29.0).** Convergence blocker. Components must own their presentation in fact, not only in JSX, before anything layers on top. |
+| **2** | Component Token Layer (Layer 2) | Component tokens land in consolidated, co-located component CSS. Requires Phase 1 — now unblocked. |
 | **3** | Code Connect completion (T1 + Patterns) | Tooling parity. Valuable, but changes nothing about how the app is assembled. May proceed in parallel where convenient; it blocks nothing. |
 
 ---
 
-### Phase 1 — CSS Co-location Migration (primary initiative of v2.5.0)
+### Phase 1 — CSS Co-location Migration ✅ Complete (v1.29.0)
 
 **Goal:** Move component styles from `App.css` into co-located CSS files so that each design system component owns its presentation.
 
-**Why it is Phase 1:** True Design System Convergence requires both:
+**Why it was Phase 1:** True Design System Convergence requires both:
 
 - **JSX ownership** — screens are assembled from design system components. **Complete.**
-- **CSS ownership** — each component's presentation lives in a stylesheet it owns. **In progress.**
+- **CSS ownership** — each component's presentation lives in a stylesheet it owns. **Complete (v1.29.0).**
 
-Until CSS ownership is complete, "Storybook is canonical" and "components own presentation" hold at the JSX level but not at the CSS level: a component renders correctly in Storybook only because the full `App.css` — all of its layered visual system passes — is loaded globally behind it.
+Before this phase, "Storybook is canonical" and "components own presentation" held at the JSX level but not at the CSS level: a component rendered correctly in Storybook only because the full `App.css` — all of its layered visual system passes — was loaded globally behind it. All 13 migrated components (9 T1 + 3 T2, excluding the CSS-free `ProgressPill`/`StatusButton`/`Icon`) now render correctly in Storybook with `App.css` commented out of `.storybook/preview.ts` — verified per-component during Waves 1–3. The import itself remains in `preview.ts` because shared typography utilities (`.eyebrow`, `.muted`, `.label`) and documented product-context overrides (e.g. `.trip-dashboard .day-tile`, `.page-shell > .detail-header`) are intentionally still product-owned in `App.css`.
 
 **Migration rule:**
 
@@ -151,15 +151,15 @@ Until CSS ownership is complete, "Storybook is canonical" and "components own pr
 | FormActions | `forms.css` — *already co-located, but selectors are scoped under `.form-body`, which is defined in `App.css`. Wave 2 severs that dependency; no file move needed.* |
 | FormGrid | `forms.css` — *same `.form-body` dependency as FormActions* |
 
-**Wave 3 — T2 patterns.** Compose Wave 1/2 components and are the most entangled in the `App.css` §5–§7 layered passes. They can only validate as self-contained once the T1 CSS they compose is already co-located — the deepest dependency migrates last.
+**Wave 3 — T2 patterns. ✅ Complete (v1.29.0).** Composed Wave 1/2 components and were the most entangled in the `App.css` §1, §3–§8 layered passes. Each pattern's uncontested presentation is now co-located; each pattern's product-context composition (rendering inside `.trip-dashboard` or `.page-shell`) intentionally remains in `App.css`, per the Wave 3 audit's ownership-boundary decisions.
 
-| Pattern | Current CSS home |
-|---|---|
-| DashboardCard | `App.css §1, §3, §6, §7` |
-| DetailHeader | `App.css §4, §8` |
-| DayTile | `App.css §3, §6, §7` |
+| Pattern | CSS home | Product-context rules remaining in `App.css` |
+|---|---|---|
+| DashboardCard | `src/components/ui/dashboard-card.css` | `.trip-card` (TripCard's `className` extension), `.settings-panel` (unrelated product class formerly compounded for shared values) |
+| DetailHeader | `src/components/ui/detail-header.css` | `.page-shell > .detail-header` (shell-level padding/border override, same relationship as ScreenHeader's Wave 2 treatment), `.day-detail-screen .detail-header` (Day Detail's 18px gap, preserved exactly — not normalized to the 12px used elsewhere) |
+| DayTile | `src/components/ui/day-tile.css` | `.trip-dashboard .day-tile` and its `__content`/`__icon`/`__date`/`h2`/`__summary` descendants — DayTile's only production consumer always renders inside `.trip-dashboard`, which overrides this file's `display:grid` with `display:flex; align-items:center` plus a heavier contextual shadow (tracked in [`TOKEN_DEBT.md`](./TOKEN_DEBT.md)). Per Wave 3 decision, that layout is **not** promoted into the pattern merely because it is the only current consumer. |
 
-**Expected outcome:** Each component owns its own CSS file. `App.css` retains only product-screen layout, shell structure, and product-pattern utilities. `.storybook/preview.ts` no longer imports `App.css`. Documented intentional contextual variants (e.g., the `.trip-dashboard .day-tile` shadow) remain in `App.css` as product-context overrides, with their tracking in [`TOKEN_DEBT.md`](./TOKEN_DEBT.md) unchanged.
+**Outcome:** Each pattern owns its own CSS file. `App.css` retains only product-screen layout, shell structure, product-pattern utilities, and the documented composition/product overrides listed above. `.storybook/preview.ts` still imports `App.css` globally (for shared typography utilities `.eyebrow`/`.muted`/`.label` and the product-context rules above), but every migrated component now renders its own presentation correctly with that import removed — verified individually per component. Documented intentional contextual variants (e.g., the `.trip-dashboard .day-tile` shadow) remain in `App.css` as product-context overrides, with their tracking in [`TOKEN_DEBT.md`](./TOKEN_DEBT.md) unchanged.
 
 ---
 
@@ -167,7 +167,7 @@ Until CSS ownership is complete, "Storybook is canonical" and "components own pr
 
 **Goal:** Implement component-scoped tokens for core components (`card`, `button`, `input`, `badge`, `icon-button`, `modal`).
 
-**Why it matters:** Currently, components reference semantic tokens directly (e.g., `CardSurface` uses `--color-surface-glass` inline). Layer 2 component tokens create an explicit contract between design and code, make per-component overrides safe, and complete the three-layer DTCG architecture described in [`FIGMA_FOUNDATIONS.md §1`](./FIGMA_FOUNDATIONS.md). This work must not begin until CSS co-location (Phase 1) is complete: component tokens land in consolidated, co-located component CSS — introducing them while a component's presentation is still spread across `App.css` passes would bind tokens to a cascade that is about to be flattened.
+**Why it matters:** Currently, components reference semantic tokens directly (e.g., `CardSurface` uses `--color-surface-glass` inline). Layer 2 component tokens create an explicit contract between design and code, make per-component overrides safe, and complete the three-layer DTCG architecture described in [`FIGMA_FOUNDATIONS.md §1`](./FIGMA_FOUNDATIONS.md). This work was blocked on CSS co-location (Phase 1), now complete as of v1.29.0: component tokens land in consolidated, co-located component CSS, which now exists for all 13 migrated components. Phase 2 has not yet started.
 
 **Expected outcome:** `component.*` token namespace in `tokens/`, corresponding Figma variable collection, and updated co-located component CSS to reference component tokens instead of semantic tokens directly.
 
@@ -189,7 +189,7 @@ Until CSS ownership is complete, "Storybook is canonical" and "components own pr
 
 **Goal:** Eliminate the last hardcoded values in `App.css` that predate the semantic token layer.
 
-**Interaction with Phase 1:** per the migration rule, CSS co-location moves these values **verbatim** into co-located component stylesheets — it does not resolve them. Debt entries that travel with a component (e.g., Button/IconButton base border and background) remain tracked in [`TOKEN_DEBT.md`](./TOKEN_DEBT.md) with updated locations. Resolving them is Phase 2 (Component Token Layer) or separate token work, never a side effect of migration.
+**Interaction with Phase 1 (complete as of v1.29.0):** per the migration rule, CSS co-location moved values **verbatim** into co-located component stylesheets — it did not resolve them. Debt entries that traveled with a component (e.g., Button/IconButton base border and background) remain tracked in [`TOKEN_DEBT.md`](./TOKEN_DEBT.md) with updated locations. The two Wave 3 debt items (`#fff` day-tile/trip-intel text, `rgba(0,0,0,0.4)` day-tile shadow) did not relocate — both belong to `.trip-dashboard .day-tile`, which stayed in `App.css` as documented product-context ownership. Resolving any of these is Phase 2 (Component Token Layer) or separate token work, never a side effect of migration.
 
 **Why it matters:** These values bypass the token pipeline, cannot be updated via Style Dictionary, and are invisible to Figma. They are tracked in [`TOKEN_DEBT.md`](./TOKEN_DEBT.md) and in `DESIGN_SYSTEM.md` under Known Token Migration Debt.
 

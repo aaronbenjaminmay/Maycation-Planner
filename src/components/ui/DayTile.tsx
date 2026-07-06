@@ -1,6 +1,7 @@
 import { CardSurface } from './CardSurface'
 import { Icon, type IconName } from './Icon'
 import { ProgressPill } from './ProgressPill'
+import './day-tile.css'
 
 type DayTileProps = {
   completedCount: number

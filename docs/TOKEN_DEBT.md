@@ -4,7 +4,7 @@ Gaps between the semantic token layer and actual component usage, identified dur
 
 Entries marked **[RESOLVED]** are retained for architectural context. Pre-v1.25.0 resolutions are summarized in the archive at the bottom of this file.
 
-> **v2.5.0 CSS Co-location note:** during the CSS Co-location Migration (DESIGN_SYSTEM_ROADMAP.md §5 Phase 1), open debt values that live in component CSS (e.g., the Button/IconButton base border `rgba(255,255,255,0.12)` and base background `rgba(28,28,30,0.84)`) move **verbatim** from `App.css` into the component's co-located stylesheet. The migration introduces no new tokens and resolves no debt — it only changes the file location. Entries in this document stay open with updated locations until resolved by Component Token Layer (Phase 2) or dedicated token work.
+> **v2.5.0 CSS Co-location note:** during the CSS Co-location Migration (DESIGN_SYSTEM_ROADMAP.md §5 Phase 1, complete as of v1.29.0), open debt values that live in component CSS (e.g., the Button/IconButton base border `rgba(255,255,255,0.12)` and base background `rgba(28,28,30,0.84)`) moved **verbatim** from `App.css` into the component's co-located stylesheet. The migration introduced no new tokens and resolved no debt — it only changed file location. Entries in this document stay open with updated locations until resolved by Component Token Layer (Phase 2) or dedicated token work.
 
 ---
 
@@ -17,6 +17,17 @@ Open debt items that lived in `App.css §10–11` moved verbatim to co-located c
 | `rgba(255,255,255,0.12)` base border | `App.css §10–11` | `button.css`, `icon-button.css` |
 | `rgba(28,28,30,0.84)` base background | `App.css §10–11` | `button.css`, `icon-button.css` |
 | `color-mix()` primary hover | `App.css §10–11` | `button.css`, `icon-button.css` |
+
+---
+
+## v1.29.0 — CSS Co-location Wave 3: Location Updates
+
+No open debt items relocated. The three T2 Patterns (DashboardCard, DetailHeader, DayTile) contain zero hardcoded color/opacity values in their new co-located stylesheets (`dashboard-card.css`, `detail-header.css`, `day-tile.css`) — confirmed by inspection. The two debt items associated with DayTile's rendered context stayed in `App.css`, unmoved, because they belong to the `.trip-dashboard .day-tile` product-context override, which Wave 3 intentionally did not migrate:
+
+| Value | Location | Status |
+|---|---|---|
+| `#fff` text | `App.css`, `.trip-dashboard .day-tile h2` (unchanged) | Open — no pure-white text semantic token |
+| `rgba(0,0,0,0.4)` day-tile shadow | `App.css`, `.trip-dashboard .day-tile` (unchanged) | Open — intentional contextual variant, no token |
 
 ---
 

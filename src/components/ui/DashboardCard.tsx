@@ -1,5 +1,6 @@
 import { type ReactNode } from 'react'
 import { CardSurface } from './CardSurface'
+import './dashboard-card.css'
 
 type DashboardCardProps = {
   children?: ReactNode

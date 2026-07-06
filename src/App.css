@@ -181,113 +181,16 @@
 }
 
 
-.detail-header {
-  display: grid;
-  gap: 18px;
-}
+/* .detail-header base moved to co-located src/components/ui/detail-header.css
+   (v2.5.0 Wave 3). */
 
-.dashboard-card {
-  width: 100%;
-  display: grid;
-  gap: 8px;
-  padding: 18px;
-  color: inherit;
-  font: inherit;
-  text-align: left;
-}
+/* .dashboard-card base, hover, meta, and strong moved to co-located
+   src/components/ui/dashboard-card.css (v2.5.0 Wave 3). */
 
-button.dashboard-card {
-  cursor: pointer;
-}
-
-.dashboard-card:hover {
-  border-color: var(--color-accent-default);
-}
-
-.dashboard-card strong {
-  color: var(--color-text-primary);
-  font-size: 1.15rem;
-  line-height: 1.15;
-}
-
-.dashboard-card__meta {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.day-tile {
-  display: grid;
-  width: 100%;
-  min-height: 158px;
-  padding: 20px;
-  color: inherit;
-  font: inherit;
-  text-align: left;
-  cursor: pointer;
-}
-
-.day-tile:hover {
-  border-color: var(--color-accent-default);
-}
-
-.day-tile__header {
-  display: flex;
-  flex: 1;
-  min-width: 0;
-  align-items: start;
-  justify-content: space-between;
-  gap: 16px;
-}
-
-.day-tile__date {
-  display: block;
-  color: var(--color-accent-default);
-  font-size: 12px;
-  font-weight: 800;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
-.day-tile h2 {
-  margin: 8px 0 0;
-  color: var(--color-text-primary);
-  font-size: 1.45rem;
-  line-height: 1.1;
-}
-
-.day-tile__day-label {
-  display: block;
-  margin-top: 8px;
-  color: var(--color-text-secondary);
-  font-size: 13px;
-  font-weight: 800;
-}
-
-.day-tile__summary {
-  margin-top: 6px;
-  font-weight: 700;
-}
-
-.day-tile__text {
-  flex: 1;
-  min-width: 0;
-}
-
-.day-tile__stats {
-  flex: 0 0 auto;
-  display: flex;
-  align-items: flex-start;
-  flex-wrap: wrap;
-  justify-content: flex-end;
-  gap: 8px;
-}
-
-.dashboard-card:focus-visible,
-.day-tile:focus-visible {
-  outline: 2px solid var(--color-accent-default);
-  outline-offset: 2px;
-}
+/* .day-tile base, hover, focus-visible, header, date, h2, day-label, summary,
+   text, and stats moved to co-located src/components/ui/day-tile.css
+   (v2.5.0 Wave 3). .trip-dashboard .day-tile and its descendants remain
+   below (§3) as documented product-context overrides. */
 
 @media (max-width: 560px) {
   .app-shell {
@@ -714,9 +617,7 @@ button.dashboard-card {
   border-radius: 999px;
 }
 
-.detail-header {
-  gap: 16px;
-}
+/* .detail-header gap revision moved to co-located detail-header.css (Wave 3). */
 
 
 .trip-card {
@@ -756,12 +657,12 @@ button.dashboard-card {
   padding: 22px;
 }
 
-.detail-header .screen-header {
-  padding-bottom: 0;
-  border-bottom: 0;
-}
+/* .detail-header .screen-header composition reset moved to co-located
+   detail-header.css (Wave 3). */
 
-.dashboard-card,
+/* .dashboard-card sizing moved to co-located dashboard-card.css (Wave 3);
+   .trip-card is a product-context className applied alongside it and keeps
+   the identical values here, unchanged. */
 .trip-card {
   min-height: 104px;
   padding: 18px 20px;
@@ -859,9 +760,8 @@ button.dashboard-card {
     min-height: 88px;
   }
 
-  .detail-header {
-    padding-bottom: 16px;
-  }
+  /* .detail-header padding-bottom (720px breakpoint) moved to co-located
+     detail-header.css (Wave 3) — resolves to the same flat value there. */
 }
 
 /* ─── 7. Visual system consolidation — canonical surface rules ──────────────
@@ -881,9 +781,10 @@ button.dashboard-card {
   box-shadow: var(--shadow-md);
 }
 
-.dashboard-card,
+/* .dashboard-card and .day-tile surface base moved to co-located
+   dashboard-card.css / day-tile.css (Wave 3); .trip-card and .settings-panel
+   keep the identical values here, unchanged. */
 .trip-card,
-.day-tile,
 .settings-panel {
   border: 1px solid var(--color-border-glass);
   border-radius: var(--radius-card);
@@ -901,16 +802,9 @@ button.dashboard-card {
   padding: 24px;
 }
 
-.detail-header {
-  gap: 12px;
-  padding-bottom: 16px;
-  border-bottom: 1px solid var(--color-border-glass);
-}
-
-.detail-header .screen-header {
-  padding-bottom: 0;
-  border-bottom: 0;
-}
+/* .detail-header canonical gap/padding-bottom/border-bottom and the
+   .screen-header composition reset moved to co-located detail-header.css
+   (Wave 3). */
 
 .eyebrow,
 .label,
@@ -924,8 +818,9 @@ button.dashboard-card {
   text-transform: uppercase;
 }
 
+/* .day-tile__summary moved to co-located day-tile.css (Wave 3); .muted and
+   .planner-item-card p keep the identical values here, unchanged. */
 .muted,
-.day-tile__summary,
 .planner-item-card p {
   color: var(--color-text-muted);
   font-size: 13px;
@@ -933,11 +828,13 @@ button.dashboard-card {
   line-height: 1.35;
 }
 
-.dashboard-card strong,
+/* .dashboard-card strong and (unscoped) .day-tile h2 moved to co-located
+   dashboard-card.css / day-tile.css (Wave 3); .settings-panel h2,
+   .planner-item-card strong, and .trip-dashboard .day-tile h2 keep the
+   identical values here, unchanged. */
 .settings-panel h2,
 .planner-item-card strong,
-.trip-dashboard .day-tile h2,
-.day-tile h2 {
+.trip-dashboard .day-tile h2 {
   margin: 0;
   color: var(--color-text-primary);
   font-size: 1rem;
@@ -990,42 +887,28 @@ button.dashboard-card {
   font-size: 14px;
 }
 
-.trip-dashboard .day-tile,
-.day-tile {
+/* .day-tile sizing and position moved to co-located day-tile.css (Wave 3);
+   .trip-dashboard .day-tile keeps the identical values here, unchanged. */
+.trip-dashboard .day-tile {
   min-height: 92px;
   padding: 18px;
+  position: relative;
 }
 
-.trip-dashboard .day-tile__content,
-.day-tile__content {
+/* .day-tile__content moved to co-located day-tile.css (Wave 3);
+   .trip-dashboard .day-tile__content keeps the identical values here,
+   unchanged. */
+.trip-dashboard .day-tile__content {
   display: flex;
   align-items: center;
   gap: 14px;
 }
 
-.day-tile__icon {
-  color: var(--color-text-muted);
-}
-
-.trip-dashboard .day-tile__summary,
-.day-tile__summary {
+/* .day-tile__icon color, .day-tile__summary margin-top, .day-tile__stats
+   overlay positioning, and .day-tile__header padding-right all moved to
+   co-located day-tile.css (Wave 3). */
+.trip-dashboard .day-tile__summary {
   margin-top: 4px;
-}
-
-.trip-dashboard .day-tile,
-.day-tile {
-  position: relative;
-}
-
-.day-tile__stats {
-  position: absolute;
-  top: var(--spacing-lg);
-  right: var(--spacing-lg);
-}
-
-/* Reserves space so title text does not run under the absolute ProgressPill */
-.day-tile__header {
-  padding-right: 68px;
 }
 
 .day-detail-screen .detail-header {
@@ -1080,8 +963,10 @@ button.dashboard-card {
     padding: 28px 16px 64px;
   }
 
-  .trip-dashboard .day-tile,
-  .day-tile {
+  /* .day-tile min-height (720px breakpoint) moved to co-located day-tile.css
+     (Wave 3); .trip-dashboard .day-tile keeps the identical value here,
+     unchanged. */
+  .trip-dashboard .day-tile {
     min-height: 88px;
   }
 }

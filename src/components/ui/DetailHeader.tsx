@@ -2,6 +2,7 @@ import { type ReactNode } from 'react'
 import { IconButton } from './IconButton'
 import { PageControls } from './PageControls'
 import { ScreenHeader } from './ScreenHeader'
+import './detail-header.css'
 
 type DetailHeaderProps = {
   action?: ReactNode

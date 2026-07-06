@@ -1,6 +1,6 @@
 # Maycation Project State
 
-> Canonical onboarding document for new Claude sessions. Reflects repository state as of Design System v1.28.0 / Product v2.4.0 (July 2026). Verify against the repository before acting on specific details — this document may lag behind recent commits.
+> Canonical onboarding document for new Claude sessions. Reflects repository state as of Design System v1.29.0 / Product v2.4.0 (July 2026). Verify against the repository before acting on specific details — this document may lag behind recent commits.
 
 ---
 
@@ -23,10 +23,10 @@ When documentation sources conflict, this order determines which is authoritativ
 | Field | Value |
 |---|---|
 | Product version | v2.4.0 |
-| Design System version | v1.28.0 — CSS Co-location Wave 2 |
-| Current milestone | v2.5.0 — Design System Convergence (in progress — Wave 2 complete, Wave 3 next) |
+| Design System version | v1.29.0 — CSS Co-location Wave 3 |
+| Current milestone | v2.5.0 — Design System Convergence (CSS Co-location Migration complete — Phase 1 of 3; Component Token Layer and Code Connect completion remain) |
 | Previous milestone | v2.4.0 — Reservation Place Intelligence (complete) |
-| Verification date | 2026-07-02 |
+| Verification date | 2026-07-04 |
 
 ---
 
@@ -178,7 +178,7 @@ Core rules:
 
 ### Version
 
-**Design System: v1.28.0 — CSS Co-location Wave 2**
+**Design System: v1.29.0 — CSS Co-location Wave 3**
 
 ### Token Architecture (DTCG three-layer)
 
@@ -213,11 +213,13 @@ Not yet wired: EmptyState, StatusButton, FormActions, FormGrid, ScreenHeader, Pa
 
 ### T2 Patterns (3 total)
 
-| Pattern | Composes | Figma | Code Connect |
-|---|---|---|---|
-| DashboardCard | CardSurface | ✅ | Not wired |
-| DetailHeader | PageControls (fixed) + ScreenHeader (in-flow) | ✅ | Not wired |
-| DayTile | CardSurface + Icon + ProgressPill | ✅ | Not wired |
+| Pattern | CSS home | Composes | Figma | Code Connect |
+|---|---|---|---|---|
+| DashboardCard | `dashboard-card.css` (v1.29.0) | CardSurface | ✅ | Not wired |
+| DetailHeader | `detail-header.css` (v1.29.0) | PageControls (fixed) + ScreenHeader (in-flow) | ✅ | Not wired |
+| DayTile | `day-tile.css` (v1.29.0) | CardSurface + Icon + ProgressPill | ✅ | Not wired |
+
+Each pattern's product-context composition rules intentionally remain in `App.css`: `.trip-card`/`.settings-panel` (DashboardCard), `.page-shell > .detail-header`/`.day-detail-screen .detail-header` (DetailHeader), `.trip-dashboard .day-tile` and its descendants (DayTile). See `docs/DESIGN_SYSTEM_ROADMAP.md` §5 Phase 1 — Wave 3 for the full per-selector ownership rationale.
 
 ### CSS Ownership Status
 
@@ -225,13 +227,13 @@ Not yet wired: EmptyState, StatusButton, FormActions, FormGrid, ScreenHeader, Pa
 |---|---|---|
 | **Wave 1** — Independent T1 | Button, IconButton, CardSurface, FeedbackMessage, EmptyState, ModalSheet | ✅ Complete (v1.27.0) |
 | **Wave 2** — Layout T1 | ScreenHeader, PageControls, FormActions, FormGrid | ✅ Complete (v1.28.0) |
-| **Wave 3** — T2 Patterns | DashboardCard, DetailHeader, DayTile | Pending |
+| **Wave 3** — T2 Patterns | DashboardCard, DetailHeader, DayTile | ✅ Complete (v1.29.0) |
 
-A component is considered converged only when it renders correctly in Storybook **without** `App.css` imported globally. Wave 1 components all pass this criterion.
+A component is considered converged only when it renders correctly in Storybook **without** `App.css` imported globally. All 13 migrated components (Waves 1–3) pass this criterion. `.storybook/preview.ts` still imports `App.css` globally — it now serves only shared typography utilities (`.eyebrow`, `.muted`, `.label`) and the documented product-context overrides listed above, not any migrated component's own presentation.
 
 ### App.css Section Map
 
-App.css is the primary CSS file. It is organized into named sections (§1–§13). Wave 1 components (Button, IconButton, CardSurface, FeedbackMessage, EmptyState, ModalSheet) now own co-located CSS files; §10–11 replaced with a pointer comment. Wave 2/3 component CSS remains in App.css pending migration.
+App.css is the primary CSS file. It is organized into named sections (§1–§13). Wave 1 components (Button, IconButton, CardSurface, FeedbackMessage, EmptyState, ModalSheet) own co-located CSS files; §10–11 replaced with a pointer comment. Wave 2 components (ScreenHeader, PageControls, FormActions, FormGrid) own co-located CSS files. Wave 3 patterns (DashboardCard, DetailHeader, DayTile) own co-located CSS files; App.css retains only their product-context composition overrides (`.trip-card`, `.settings-panel`, `.page-shell > .detail-header`, `.day-detail-screen .detail-header`, `.trip-dashboard .day-tile` and descendants). The CSS Co-location Migration (Phase 1 of v2.5.0) is complete.
 
 ### Storybook
 
@@ -241,16 +243,16 @@ Storybook is the canonical component implementation. What Storybook shows define
 
 Components own all visual styling (layout, spacing, radius, borders, typography, states). Product screens own content, state, data, business logic, and event handlers. Screens must not own visual styling.
 
-### Convergence status (2026-07 audit)
+### Convergence status (2026-07 audit; updated 2026-07-04 for Wave 3 completion)
 
 Design System Convergence has two axes:
 
 | Axis | Status |
 |---|---|
 | **JSX ownership** — screens assembled from design system components | ✅ Complete. All product screens import from the design system barrel; no raw one-off UI remains beyond documented product patterns (hidden file inputs in the upload field, auth mode-toggle). |
-| **CSS ownership** — each component's presentation in a stylesheet it owns | 🔶 In progress. Waves 1–2 complete: Button, IconButton, CardSurface, FeedbackMessage, EmptyState, ModalSheet (v1.27.0) and ScreenHeader, PageControls, FormActions, FormGrid (v1.28.0) each own co-located stylesheets and render in Storybook without `App.css`. Remaining: DashboardCard, DetailHeader, DayTile (Wave 3). |
+| **CSS ownership** — each component's presentation in a stylesheet it owns | ✅ Complete (v1.29.0). Wave 1: Button, IconButton, CardSurface, FeedbackMessage, EmptyState, ModalSheet (v1.27.0). Wave 2: ScreenHeader, PageControls, FormActions, FormGrid (v1.28.0). Wave 3: DashboardCard, DetailHeader, DayTile (v1.29.0). All 13 each own a co-located stylesheet and render in Storybook without `App.css`. |
 
-A component counts as converged only when it renders correctly in Storybook **without** `App.css` imported globally. The CSS Co-location Migration (three dependency-ordered waves) is the primary architectural initiative of v2.5.0 — see `docs/DESIGN_SYSTEM_ROADMAP.md` §5 Phase 1.
+A component counts as converged only when it renders correctly in Storybook **without** `App.css` imported globally. The CSS Co-location Migration (three dependency-ordered waves) was the primary architectural initiative of v2.5.0 Phase 1 — now complete. See `docs/DESIGN_SYSTEM_ROADMAP.md` §5 Phase 1. Phase 2 (Component Token Layer) and Phase 3 (Code Connect completion) remain open.
 
 ---
 
@@ -300,7 +302,7 @@ A component counts as converged only when it renders correctly in Storybook **wi
 | Stream | Current | Next milestone |
 |---|---|---|
 | Product | **v2.4.0** | **v2.5.0 — Design System Convergence** |
-| Design System | **v1.28.0 — CSS Co-location Wave 2** | v1.x.0 — CSS Co-location Wave 3 (DashboardCard, DetailHeader, DayTile) |
+| Design System | **v1.29.0 — CSS Co-location Wave 3** | Phase 2 — Component Token Layer (not yet started) |
 
 ### v2.4.0 — Reservation Place Intelligence (complete)
 
@@ -310,13 +312,13 @@ Completed June 2026. Place Intelligence is now a shared platform across Travel a
 
 Objective: audit every screen, component composition, modal, card, empty state, form, interaction, and layout and ensure it is assembled from existing design system components, documented patterns, Storybook components, and design tokens. No new features. Favor reuse over invention.
 
-**Status:** The convergence audit is complete (2026-07). JSX ownership is converged. CSS co-location Waves 1–2 are complete: six independent T1 components co-located (v1.27.0), four layout T1 components co-located (v1.28.0). Wave 3 (DashboardCard, DetailHeader, DayTile) is next.
+**Status:** The convergence audit is complete (2026-07). JSX ownership is converged. CSS co-location is complete (Phase 1 of 3): six independent T1 components co-located (v1.27.0), four layout T1 components co-located (v1.28.0), three T2 patterns co-located (v1.29.0). Phase 2 (Component Token Layer) and Phase 3 (Code Connect completion) have not started.
 
 ### System Health phases (v2.5.0 execution order)
 
-1. **Phase 1 — CSS Co-location Migration** (primary initiative). Wave 1 ✅ complete (v1.27.0): Button, IconButton, CardSurface, FeedbackMessage, EmptyState, ModalSheet. Wave 2 ✅ complete (v1.28.0): ScreenHeader, PageControls, FormActions, FormGrid (`.form-body` dependency severed from App.css). Wave 3 T2 patterns (DashboardCard, DetailHeader, DayTile) — pending. Migration rule: flatten the App.css cascade into one canonical component stylesheet, preserve behavior exactly, no renames/optimizations/new tokens.
-2. **Phase 2 — Component Token Layer (Layer 2)** — requires Phase 1; component tokens land in consolidated co-located CSS.
-3. **Phase 3 — Code Connect completion** for 6 priority T1 components (EmptyState, StatusButton, FormActions, FormGrid, ScreenHeader, PageControls) and 3 T2 patterns (DashboardCard, DetailHeader, DayTile). May run in parallel; blocks nothing.
+1. **Phase 1 — CSS Co-location Migration** (primary initiative). ✅ **Complete (v1.29.0).** Wave 1 (v1.27.0): Button, IconButton, CardSurface, FeedbackMessage, EmptyState, ModalSheet. Wave 2 (v1.28.0): ScreenHeader, PageControls, FormActions, FormGrid (`.form-body` dependency severed from App.css). Wave 3 (v1.29.0): DashboardCard, DetailHeader, DayTile — each pattern's uncontested presentation co-located; documented product-context composition (`.trip-card`/`.settings-panel`, `.page-shell > .detail-header`/`.day-detail-screen .detail-header`, `.trip-dashboard .day-tile`) intentionally remains in App.css. Migration rule: flatten the App.css cascade into one canonical component stylesheet, preserve behavior exactly, no renames/optimizations/new tokens — followed throughout all three waves.
+2. **Phase 2 — Component Token Layer (Layer 2)** — Phase 1 dependency now satisfied; not yet started. Component tokens will land in the consolidated co-located CSS produced by Phase 1.
+3. **Phase 3 — Code Connect completion** for 6 priority T1 components (EmptyState, StatusButton, FormActions, FormGrid, ScreenHeader, PageControls) and 3 T2 patterns (DashboardCard, DetailHeader, DayTile). May run in parallel; blocks nothing. Not yet started.
 
 ### Phase 2 opportunity areas (from `PRODUCT_ROADMAP.md`)
 
@@ -383,7 +385,7 @@ maycation-planner/
 │       └── PRODUCT_VISION.md         — Mission, vision, and problem framing
 ├── src/
 │   ├── App.tsx                       — Auth state, top-level navigation
-│   ├── App.css                       — Product/shell CSS (§1–§13); §10–11 removed (v1.27.0); Wave 3 component CSS pending migration
+│   ├── App.css                       — Product/shell CSS (§1–§13); §10–11 removed (v1.27.0); CSS Co-location Migration complete (v1.29.0) — retains only product-screen layout, shell structure, and documented product-context overrides
 │   ├── components/
 │   │   ├── DesignSystem.tsx          — Re-export barrel for all design system components
 │   │   ├── AddPlannerItemForm.tsx    — Add/edit planner items; Place + Temporal intelligence
@@ -403,6 +405,7 @@ maycation-planner/
 │   │   ├── button.css, icon-button.css, card-surface.css  — Wave 1 co-located CSS (v1.27.0)
 │   │   ├── feedback-message.css, empty-state.css, modal-sheet.css  — Wave 1 co-located CSS (v1.27.0)
 │   │   ├── screen-header.css, page-controls.css  — Wave 2 co-located CSS (v1.28.0)
+│   │   ├── dashboard-card.css, detail-header.css, day-tile.css  — Wave 3 co-located CSS (v1.29.0)
 │   │   └── index.ts                  — Export barrel
 │   ├── lib/
 │   │   ├── trips.ts                  — Trip/TripDay/PlannerItem types and data functions
@@ -434,8 +437,8 @@ maycation-planner/
 
 | Item | Priority |
 |---|---|
-| **Phase 1:** CSS co-location migration — Waves 1–2 ✅ complete (v1.27.0, v1.28.0). Wave 3 (DashboardCard, DetailHeader, DayTile) next. (See `DESIGN_SYSTEM_ROADMAP.md` §5) | **High — active** |
-| **Phase 2:** Component Token Layer (Layer 2) — component-scoped tokens for card, button, input, badge, icon-button, modal; requires Phase 1 | Medium (sequenced after Phase 1) |
+| **Phase 1:** CSS co-location migration — Waves 1–3 ✅ **complete** (v1.27.0, v1.28.0, v1.29.0). (See `DESIGN_SYSTEM_ROADMAP.md` §5) | Done |
+| **Phase 2:** Component Token Layer (Layer 2) — component-scoped tokens for card, button, input, badge, icon-button, modal; Phase 1 dependency now satisfied | **High — active (not yet started)** |
 | **Phase 3:** Code Connect for 6 priority T1 components (EmptyState, StatusButton, FormActions, FormGrid, ScreenHeader, PageControls) | Medium (parallel-safe; blocks nothing) |
 | **Phase 3:** Code Connect for 3 T2 patterns (DashboardCard, DetailHeader, DayTile) | Medium (parallel-safe; blocks nothing) |
 | Code Connect for Icon — blocked on resolving known Storybook rendering defect | Low (blocked) |
@@ -475,7 +478,7 @@ maycation-planner/
 |---|---|
 | Product | **v2.4.0** |
 | Next product milestone | **v2.5.0 — Design System Convergence** |
-| Design System | **v1.28.0 — CSS Co-location Wave 2** |
+| Design System | **v1.29.0 — CSS Co-location Wave 3** |
 | npm package | 0.0.0 (not published) |
 | Supabase migrations | 27 (latest: `027_trip_stays.sql`) |
 | Edge Function: search-places | v8 (Search Box v1 /forward + Geocoding v5 dispatch) |

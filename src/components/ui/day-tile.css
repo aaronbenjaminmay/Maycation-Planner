@@ -1,0 +1,157 @@
+/*
+ * DayTile — co-located component CSS.
+ * Flattened from App.css §1 (base layout, hover, header/date/day-label/summary/
+ * text/stats), §7 (canonical surface, sizing, h2/summary typography,
+ * icon color, position, stats overlay, header padding-right)
+ * (v2.5.0 CSS Co-location Wave 3).
+ *
+ * Cascade notes from flattening:
+ *   - §1 min-height:158px/padding:20px overridden by the §7
+ *     `.trip-dashboard .day-tile, .day-tile` compound (92px/18px) — final
+ *     values taken from that compound's unscoped half, split out here
+ *   - §1 `.day-tile h2` (font-size:1.45rem) overridden by the §7
+ *     `.trip-dashboard .day-tile h2, .day-tile h2` compound (font-size:1rem,
+ *     weight:900) — final values taken from that compound's unscoped half
+ *   - `.day-tile__summary` margin-top:6px (§1) overridden to 4px by the §7
+ *     `.trip-dashboard .day-tile__summary, .day-tile__summary` compound;
+ *     color/font-size/line-height came from the separate §7
+ *     `.muted, .day-tile__summary, .planner-item-card p` compound — same
+ *     extraction Wave 2 already did for `.screen-header__meta` out of this
+ *     exact compound
+ *   - `.day-tile__content` (flex/center/gap) and surface base
+ *     (border/radius/background/box-shadow) were each compounded with a
+ *     `.trip-dashboard`-scoped twin holding the identical value — extracted
+ *     here, unscoped duplicate left in App.css
+ *   - `.day-tile__stats` and `.day-tile__header` each accumulated a second,
+ *     non-conflicting declaration later in §7 (absolute-position overlay;
+ *     padding-right reservation) — consolidated into one rule per selector
+ *   - the §7 `@media (max-width: 720px) { .trip-dashboard .day-tile, .day-tile
+ *     { min-height: 88px } }` compound is split the same way — unscoped half
+ *     here, `.trip-dashboard .day-tile` twin left in App.css
+ *
+ * `.day-tile__date` is carried forward unchanged even though DayTile.tsx
+ * never renders an element with this class (confirmed dead in the Wave 3
+ * audit) — not resolved during this migration, tracked for post-convergence
+ * cleanup per that decision.
+ *
+ * Product-context rules kept in App.css (not component-owned):
+ *   - `.trip-dashboard .day-tile` and its `__content`/`__icon`/`__date`/`h2`/
+ *     `__summary` descendants — DayTile's only production consumer
+ *     (`TripDetail.tsx`) always renders it inside `.trip-dashboard`, and that
+ *     context overrides this file's `display:grid` with `display:flex;
+ *     align-items:center`, plus a heavier box-shadow (tracked in
+ *     TOKEN_DEBT.md) and its own responsive sizing passes. Per Wave 3
+ *     decision, that flex/center layout is NOT promoted into this file — the
+ *     reusable pattern's own default stays `display:grid` regardless of
+ *     being its only current consumer. Storybook therefore shows a
+ *     different layout mode than production; this is a known, tracked gap,
+ *     not an oversight.
+ *   - Selectors compounded here only for shared *values* (not derived from
+ *     `.trip-dashboard`) — e.g. `.trip-card, .settings-panel` in the surface
+ *     rule, `.muted, .planner-item-card p` in the summary-text rule — remain
+ *     in App.css unchanged; they are unrelated product/utility classes that
+ *     happened to share a declaration with `.day-tile`.
+ */
+
+.day-tile {
+  display: grid;
+  width: 100%;
+  min-height: 92px;
+  padding: 18px;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  position: relative;
+  border: 1px solid var(--color-border-glass);
+  border-radius: var(--radius-card);
+  background: var(--color-surface-glass);
+  box-shadow: var(--shadow-sm);
+}
+
+.day-tile:hover {
+  border-color: var(--color-accent-default);
+}
+
+.day-tile:focus-visible {
+  outline: 2px solid var(--color-accent-default);
+  outline-offset: 2px;
+}
+
+.day-tile__content {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.day-tile__icon {
+  color: var(--color-text-muted);
+}
+
+.day-tile__header {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  align-items: start;
+  justify-content: space-between;
+  gap: 16px;
+  /* Reserves space so title text does not run under the absolute ProgressPill */
+  padding-right: 68px;
+}
+
+.day-tile__date {
+  display: block;
+  color: var(--color-accent-default);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.day-tile h2 {
+  margin: 0;
+  color: var(--color-text-primary);
+  font-size: 1rem;
+  font-weight: 900;
+  letter-spacing: 0;
+  line-height: 1.15;
+}
+
+.day-tile__day-label {
+  display: block;
+  margin-top: 8px;
+  color: var(--color-text-secondary);
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.day-tile__summary {
+  margin-top: 4px;
+  color: var(--color-text-muted);
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+.day-tile__text {
+  flex: 1;
+  min-width: 0;
+}
+
+.day-tile__stats {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+  position: absolute;
+  top: var(--spacing-lg);
+  right: var(--spacing-lg);
+}
+
+@media (max-width: 720px) {
+  .day-tile {
+    min-height: 88px;
+  }
+}

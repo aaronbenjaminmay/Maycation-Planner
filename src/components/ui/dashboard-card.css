@@ -1,0 +1,75 @@
+/*
+ * DashboardCard — co-located component CSS.
+ * Flattened from App.css §1 (base layout, hover, meta, strong), §6 (min-height/
+ * padding/gap sizing pass), and §7 (canonical surface + typography pass)
+ * (v2.5.0 CSS Co-location Wave 3).
+ *
+ * Cascade notes from flattening:
+ *   - §1 padding:18px overridden by §6 compound padding:18px 20px — final: 18px 20px
+ *   - §1 `.dashboard-card strong` font-size:1.15rem overridden by the §7
+ *     `.dashboard-card strong, .settings-panel h2, .planner-item-card strong,
+ *     .trip-dashboard .day-tile h2, .day-tile h2` compound (font-size:1rem,
+ *     weight:900) — final values taken from that compound, split out here
+ *   - Surface base (border/border-radius/background/box-shadow) was raised to
+ *     plain-class specificity in §7 as `.dashboard-card, .trip-card, .day-tile,
+ *     .settings-panel` — this OVERRIDES the lower-specificity :where(.card-surface)
+ *     base in card-surface.css (different border-radius/box-shadow tokens).
+ *     Kept at plain-class specificity here so it still wins over that base
+ *     regardless of stylesheet load order.
+ *   - `.dashboard-card:focus-visible` split out of the shared
+ *     `.dashboard-card:focus-visible, .day-tile:focus-visible` compound —
+ *     `.day-tile:focus-visible` remains in App.css until DayTile migrates.
+ *
+ * Product-context rules kept in App.css (not component-owned):
+ *   - `.trip-card` (TripCard's product-specific className extension) — sized
+ *     identically to `.dashboard-card` today; left in place unchanged.
+ *   - `.settings-panel` fragments that were compounded with `.dashboard-card`
+ *     purely for cascade convenience — unrelated product class, unchanged.
+ *   - `:where(.dashboard-card, .trip-card, .settings-panel) { padding: 18px }`
+ *     is vestigial (already shadowed by the §6 padding above at higher
+ *     specificity) — left in App.css verbatim per Wave 3 decision; tracked for
+ *     post-convergence cleanup, not resolved during this migration.
+ */
+
+.dashboard-card {
+  width: 100%;
+  display: grid;
+  min-height: 104px;
+  gap: 8px;
+  padding: 18px 20px;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  border: 1px solid var(--color-border-glass);
+  border-radius: var(--radius-card);
+  background: var(--color-surface-glass);
+  box-shadow: var(--shadow-sm);
+}
+
+button.dashboard-card {
+  cursor: pointer;
+}
+
+.dashboard-card:hover {
+  border-color: var(--color-accent-default);
+}
+
+.dashboard-card:focus-visible {
+  outline: 2px solid var(--color-accent-default);
+  outline-offset: 2px;
+}
+
+.dashboard-card__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.dashboard-card strong {
+  margin: 0;
+  color: var(--color-text-primary);
+  font-size: 1rem;
+  font-weight: 900;
+  letter-spacing: 0;
+  line-height: 1.15;
+}

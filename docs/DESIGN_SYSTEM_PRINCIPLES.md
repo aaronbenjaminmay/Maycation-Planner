@@ -1,6 +1,6 @@
 # Maycation Design System — Principles
 
-Last updated: v1.26.0 (v2.5.0 convergence audit addenda, 2026-07-02)
+Last updated: v1.29.0 (v2.5.0 CSS Co-location Wave 3 complete, 2026-07-04)
 
 This document is the single source of truth for how the Maycation design system is built, extended, and maintained. It consolidates principles from [DESIGN_SYSTEM.md](./DESIGN_SYSTEM.md), [FIGMA_FOUNDATIONS.md](./FIGMA_FOUNDATIONS.md), and the Storybook `Docs/Design Principles` story.
 
@@ -92,7 +92,7 @@ Product colors (kind/role badges) use `color.kind.*` and `color.role.*` namespac
 **App.css is layered by design — and the layers are being retired for component CSS.**
 `App.css` has multiple refinement passes (§1–13). Later passes override earlier ones. Do not remove an early-pass definition without verifying the later-pass override covers all the same selectors.
 
-Under v2.5.0 Design System Convergence, component CSS still living in these passes is being migrated to co-located component stylesheets (see [DESIGN_SYSTEM_ROADMAP.md §5 — Phase 1](./DESIGN_SYSTEM_ROADMAP.md)). The migration rule: flatten the existing App.css cascade into a single canonical component stylesheet; preserve behavior exactly; do not optimize, redesign, rename selectors, or introduce new tokens during migration — behavioral changes and visual cleanup are separate work. A component is converged only when it renders correctly in Storybook without `App.css` imported globally. The layered-pass structure remains valid for what `App.css` keeps: product-screen layout, shell structure, and product-pattern utilities.
+Under v2.5.0 Design System Convergence, component CSS living in these passes was migrated to co-located component stylesheets in three dependency-ordered waves (see [DESIGN_SYSTEM_ROADMAP.md §5 — Phase 1](./DESIGN_SYSTEM_ROADMAP.md)), **complete as of v1.29.0**. The migration rule: flatten the existing App.css cascade into a single canonical component stylesheet; preserve behavior exactly; do not optimize, redesign, rename selectors, or introduce new tokens during migration — behavioral changes and visual cleanup are separate work. A component is converged only when it renders correctly in Storybook without `App.css` imported globally; all 13 migrated components meet this criterion. The layered-pass structure remains valid for what `App.css` keeps: product-screen layout, shell structure, product-pattern utilities, and documented composition/product-context overrides for the three T2 Patterns (e.g. `.trip-dashboard .day-tile`, `.page-shell > .detail-header`).
 
 ---
 

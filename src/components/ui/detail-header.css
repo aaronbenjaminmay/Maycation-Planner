@@ -1,0 +1,41 @@
+/*
+ * DetailHeader — co-located component CSS.
+ * Flattened from App.css §1 (base layout), §5 (gap revision), §6 (responsive
+ * padding-bottom pass, ScreenHeader composition reset), and §7 (canonical
+ * gap/padding-bottom/border-bottom pass, composition reset duplicate)
+ * (v2.5.0 CSS Co-location Wave 3).
+ *
+ * Cascade notes from flattening:
+ *   - §1 gap:18px overridden by §5 gap:16px, overridden by §7 canonical
+ *     gap:12px — final: 12px
+ *   - §6's `@media (max-width: 720px) { .detail-header { padding-bottom:16px } }`
+ *     resolves to the same value as §7's unconditional padding-bottom:16px —
+ *     both collapse to one flat value, no breakpoint needed here
+ *   - `.detail-header .screen-header` reset (padding-bottom:0, border-bottom:0)
+ *     appeared identically in §6 and §7 — a single rule here covers both
+ *
+ * Product-context rules kept in App.css (not component-owned) — DetailHeader
+ * is structurally dependent on always rendering as a direct child of
+ * `.page-shell`, mirroring the relationship already documented for
+ * ScreenHeader in screen-header.css:
+ *   - `.page-shell > .detail-header` (higher-specificity shell override:
+ *     padding-bottom:18px, border-color glass) — wins over this file's
+ *     padding-bottom:16px on every real screen. The value below is only what
+ *     Storybook shows when DetailHeader isn't wrapped in `.page-shell`.
+ *   - `.day-detail-screen .detail-header` — Day Detail-only `gap:18px`
+ *     (wins over this file's gap:12px via higher specificity) and
+ *     `margin-bottom:4px`. Preserved exactly per Wave 3 decision — not
+ *     normalized to the 12px used by the other three DetailHeader screens.
+ */
+
+.detail-header {
+  display: grid;
+  gap: 12px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--color-border-glass);
+}
+
+.detail-header .screen-header {
+  padding-bottom: 0;
+  border-bottom: 0;
+}
