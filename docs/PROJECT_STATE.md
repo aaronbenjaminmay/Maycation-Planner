@@ -1,6 +1,6 @@
 # Maycation Project State
 
-> Canonical onboarding document for new Claude sessions. Reflects repository state as of Design System v1.29.0 / Product v2.4.0 (July 2026). Verify against the repository before acting on specific details — this document may lag behind recent commits.
+> Canonical onboarding document for new Claude sessions. Reflects repository state as of Design System ds/v1.30.1 / Product v2.4.0 (July 2026). Verify against the repository before acting on specific details — this document may lag behind recent commits.
 
 ---
 
@@ -23,10 +23,10 @@ When documentation sources conflict, this order determines which is authoritativ
 | Field | Value |
 |---|---|
 | Product version | v2.4.0 |
-| Design System version | v1.29.0 — CSS Co-location Wave 3 |
-| Current milestone | v2.5.0 — Design System Convergence (CSS Co-location Migration complete — Phase 1 of 3; Component Token Layer and Code Connect completion remain) |
+| Design System version | ds/v1.30.1 — Component Token Layer |
+| Current milestone | v2.5.0 — Design System Convergence (all three System Health phases complete — CSS Co-location Migration, Component Token Layer, Code Connect completion; final convergence audit not yet performed) |
 | Previous milestone | v2.4.0 — Reservation Place Intelligence (complete) |
-| Verification date | 2026-07-04 |
+| Verification date | 2026-07-07 |
 
 ---
 
@@ -178,7 +178,7 @@ Core rules:
 
 ### Version
 
-**Design System: v1.29.0 — CSS Co-location Wave 3**
+**Design System: ds/v1.30.1 — Component Token Layer**
 
 ### Token Architecture (DTCG three-layer)
 
@@ -186,7 +186,7 @@ Core rules:
 |---|---|---|
 | Primitives | Complete | `tokens/` → `tokens/generated/tokens.css` |
 | Semantic | Complete | Full color, opacity, spacing, radius, shadow, typography |
-| Component | Deferred | Not yet created |
+| Component | Started (ds/v1.30.1) | `tokens/source/component.tokens.json` — 6 namespaces (card, modal, badge, input, button, icon-button), base recipe only (background, border, radius, shadow/color where applicable). Button/IconButton base border and background remain unaliased — no Semantic token exists for them yet. |
 
 **Opacity rule**: Always use `rgba()` composites on CSS surfaces. Never apply element-level `opacity` to containers. Figma: use opaque color + paint-layer opacity float.
 
@@ -208,16 +208,16 @@ Pipeline: `tokens/*.json` → Style Dictionary (`sd.config.mjs`) → `tokens/gen
 **Navigation**: PageControls, ScreenHeader
 **Feedback**: EmptyState, ProgressPill, StatusButton
 
-Code Connect wired: **11 of 19** (Badge, Button, CardSurface, FeedbackMessage, FormRow, IconButton, ModalSheet, ProgressPill, SelectInput, TextArea, TextInput)
-Not yet wired: EmptyState, StatusButton, FormActions, FormGrid, ScreenHeader, PageControls, Icon (deferred — known Storybook rendering defect), PlaceInput (deferred — Figma component pending Place Intelligence Phase 5)
+Code Connect wired: **17 of 19** (Badge, Button, CardSurface, FeedbackMessage, FormRow, IconButton, ModalSheet, ProgressPill, SelectInput, TextArea, TextInput, EmptyState, StatusButton, FormActions, FormGrid, ScreenHeader, PageControls — last six wired ds/v1.30.0)
+Not yet wired: Icon (deferred — known Storybook rendering defect), PlaceInput (deferred — Figma component pending Place Intelligence Phase 5)
 
 ### T2 Patterns (3 total)
 
 | Pattern | CSS home | Composes | Figma | Code Connect |
 |---|---|---|---|---|
-| DashboardCard | `dashboard-card.css` (v1.29.0) | CardSurface | ✅ | Not wired |
-| DetailHeader | `detail-header.css` (v1.29.0) | PageControls (fixed) + ScreenHeader (in-flow) | ✅ | Not wired |
-| DayTile | `day-tile.css` (v1.29.0) | CardSurface + Icon + ProgressPill | ✅ | Not wired |
+| DashboardCard | `dashboard-card.css` (v1.29.0) | CardSurface | ✅ | Wired (ds/v1.30.0) |
+| DetailHeader | `detail-header.css` (v1.29.0) | PageControls (fixed) + ScreenHeader (in-flow) | ✅ | Wired (ds/v1.30.0) |
+| DayTile | `day-tile.css` (v1.29.0) | CardSurface + Icon + ProgressPill | ✅ | Wired (ds/v1.30.0) |
 
 Each pattern's product-context composition rules intentionally remain in `App.css`: `.trip-card`/`.settings-panel` (DashboardCard), `.page-shell > .detail-header`/`.day-detail-screen .detail-header` (DetailHeader), `.trip-dashboard .day-tile` and its descendants (DayTile). See `docs/DESIGN_SYSTEM_ROADMAP.md` §5 Phase 1 — Wave 3 for the full per-selector ownership rationale.
 
@@ -302,7 +302,7 @@ A component counts as converged only when it renders correctly in Storybook **wi
 | Stream | Current | Next milestone |
 |---|---|---|
 | Product | **v2.4.0** | **v2.5.0 — Design System Convergence** |
-| Design System | **v1.29.0 — CSS Co-location Wave 3** | Phase 2 — Component Token Layer (not yet started) |
+| Design System | **ds/v1.30.1 — Component Token Layer** | Final Design System Convergence audit (not yet performed) |
 
 ### v2.4.0 — Reservation Place Intelligence (complete)
 
@@ -312,13 +312,13 @@ Completed June 2026. Place Intelligence is now a shared platform across Travel a
 
 Objective: audit every screen, component composition, modal, card, empty state, form, interaction, and layout and ensure it is assembled from existing design system components, documented patterns, Storybook components, and design tokens. No new features. Favor reuse over invention.
 
-**Status:** The convergence audit is complete (2026-07). JSX ownership is converged. CSS co-location is complete (Phase 1 of 3): six independent T1 components co-located (v1.27.0), four layout T1 components co-located (v1.28.0), three T2 patterns co-located (v1.29.0). Phase 2 (Component Token Layer) and Phase 3 (Code Connect completion) have not started.
+**Status:** The convergence audit is complete (2026-07). JSX ownership is converged. All three System Health phases are complete: CSS co-location (Phase 1, v1.29.0), Component Token Layer (Phase 2, ds/v1.30.1), and Code Connect completion (Phase 3, ds/v1.30.0). A final Design System Convergence audit has not yet been performed to formally close the v2.5.0 milestone.
 
 ### System Health phases (v2.5.0 execution order)
 
 1. **Phase 1 — CSS Co-location Migration** (primary initiative). ✅ **Complete (v1.29.0).** Wave 1 (v1.27.0): Button, IconButton, CardSurface, FeedbackMessage, EmptyState, ModalSheet. Wave 2 (v1.28.0): ScreenHeader, PageControls, FormActions, FormGrid (`.form-body` dependency severed from App.css). Wave 3 (v1.29.0): DashboardCard, DetailHeader, DayTile — each pattern's uncontested presentation co-located; documented product-context composition (`.trip-card`/`.settings-panel`, `.page-shell > .detail-header`/`.day-detail-screen .detail-header`, `.trip-dashboard .day-tile`) intentionally remains in App.css. Migration rule: flatten the App.css cascade into one canonical component stylesheet, preserve behavior exactly, no renames/optimizations/new tokens — followed throughout all three waves.
-2. **Phase 2 — Component Token Layer (Layer 2)** — Phase 1 dependency now satisfied; not yet started. Component tokens will land in the consolidated co-located CSS produced by Phase 1.
-3. **Phase 3 — Code Connect completion** for 6 priority T1 components (EmptyState, StatusButton, FormActions, FormGrid, ScreenHeader, PageControls) and 3 T2 patterns (DashboardCard, DetailHeader, DayTile). May run in parallel; blocks nothing. Not yet started.
+2. **Phase 2 — Component Token Layer (Layer 2)** — ✅ **Complete (ds/v1.30.1).** `tokens/source/component.tokens.json` introduces 6 namespaces (card, modal, badge, input, button, icon-button) aliasing existing Semantic tokens; CardSurface, ModalSheet, Badge, the shared form-control input, Button, and IconButton all consume them for their base recipe (background, border, radius, and shadow/color where applicable). Button and IconButton's base border and background remain unaliased — no Semantic token exists for them, tracked in `TOKEN_DEBT.md`. Zero visual change; verified via Storybook computed-style checks.
+3. **Phase 3 — Code Connect completion** for 6 priority T1 components (EmptyState, StatusButton, FormActions, FormGrid, ScreenHeader, PageControls) and 3 T2 patterns (DashboardCard, DetailHeader, DayTile). ✅ **Complete (ds/v1.30.0).** 9 new `.figma.tsx` files published to Figma. 17 of 19 T1 Components and 3 of 3 T2 Patterns now wired; Icon and PlaceInput remain deferred.
 
 ### Phase 2 opportunity areas (from `PRODUCT_ROADMAP.md`)
 
@@ -399,7 +399,7 @@ maycation-planner/
 │   │   └── CreateTripForm.tsx        — New trip form
 │   ├── components/ui/                — All T1 Components and T2 Patterns
 │   │   ├── *.tsx                     — Component implementations
-│   │   ├── *.figma.tsx               — Code Connect mappings (11 wired)
+│   │   ├── *.figma.tsx               — Code Connect mappings (17 wired)
 │   │   ├── PlaceInput.tsx            — T1 component: place search + PlaceInputQuickPick
 │   │   ├── badge.css, forms.css, PlaceInput.css  — Co-located CSS (pre-v1.27.0)
 │   │   ├── button.css, icon-button.css, card-surface.css  — Wave 1 co-located CSS (v1.27.0)
@@ -421,7 +421,7 @@ maycation-planner/
 │       ├── search-places/            — Mapbox geocoding proxy
 │       ├── get-travel-duration/      — Mapbox directions proxy
 │       └── send-invite-email/        — Trip invitation emails
-├── tokens/                           — DTCG token source files
+├── tokens/                           — DTCG token source files (color, opacity, spacing, radius, shadow, typography, icon, component)
 │   └── generated/tokens.css          — Style Dictionary output (do not edit)
 ├── PROJECT_CONSTITUTION.md           — UI and implementation guardrails
 ├── PROJECT_PLAN.md                   — Product/architecture decisions
@@ -438,11 +438,12 @@ maycation-planner/
 | Item | Priority |
 |---|---|
 | **Phase 1:** CSS co-location migration — Waves 1–3 ✅ **complete** (v1.27.0, v1.28.0, v1.29.0). (See `DESIGN_SYSTEM_ROADMAP.md` §5) | Done |
-| **Phase 2:** Component Token Layer (Layer 2) — component-scoped tokens for card, button, input, badge, icon-button, modal; Phase 1 dependency now satisfied | **High — active (not yet started)** |
-| **Phase 3:** Code Connect for 6 priority T1 components (EmptyState, StatusButton, FormActions, FormGrid, ScreenHeader, PageControls) | Medium (parallel-safe; blocks nothing) |
-| **Phase 3:** Code Connect for 3 T2 patterns (DashboardCard, DetailHeader, DayTile) | Medium (parallel-safe; blocks nothing) |
+| **Phase 2:** Component Token Layer (Layer 2) — component-scoped tokens for card, button, input, badge, icon-button, modal ✅ **complete** (ds/v1.30.1) | Done |
+| **Phase 3:** Code Connect for 6 priority T1 components (EmptyState, StatusButton, FormActions, FormGrid, ScreenHeader, PageControls) ✅ **complete** (ds/v1.30.0) | Done |
+| **Phase 3:** Code Connect for 3 T2 patterns (DashboardCard, DetailHeader, DayTile) ✅ **complete** (ds/v1.30.0) | Done |
 | Code Connect for Icon — blocked on resolving known Storybook rendering defect | Low (blocked) |
 | Code Connect for PlaceInput — deferred until Place Intelligence Phase 5 Figma component | Low (deferred) |
+| Final Design System Convergence audit to formally close v2.5.0 | Medium (not yet performed) |
 
 ### Token debt (tracked in `TOKEN_DEBT.md`)
 
@@ -478,10 +479,10 @@ maycation-planner/
 |---|---|
 | Product | **v2.4.0** |
 | Next product milestone | **v2.5.0 — Design System Convergence** |
-| Design System | **v1.29.0 — CSS Co-location Wave 3** |
+| Design System | **ds/v1.30.1 — Component Token Layer** |
 | npm package | 0.0.0 (not published) |
 | Supabase migrations | 27 (latest: `027_trip_stays.sql`) |
 | Edge Function: search-places | v8 (Search Box v1 /forward + Geocoding v5 dispatch) |
-| T1 Components | 19 (all code-complete, 11/19 Code Connect wired) |
-| T2 Patterns | 3 (all code-complete, 0/3 Code Connect wired) |
+| T1 Components | 19 (all code-complete, 17/19 Code Connect wired) |
+| T2 Patterns | 3 (all code-complete, 3/3 Code Connect wired) |
 | Storybook stories | 99+ across 25+ groups |

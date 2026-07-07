@@ -20,6 +20,19 @@ Open debt items that lived in `App.css §10–11` moved verbatim to co-located c
 
 ---
 
+## ds/v1.30.1 — Component Token Layer
+
+Introduced `tokens/source/component.tokens.json` (6 namespaces: card, modal, badge, input, button, icon-button), each aliasing an existing Semantic token for a component's base recipe. This is the first Component Token Layer work — not a location update like the CSS Co-location waves above, but it deliberately did **not** resolve any open debt item, and it did not create new Semantic tokens as a side effect (per the migration rule: a Component token must alias an existing Semantic token, never a bare literal).
+
+| Debt item | Why it stayed open |
+|---|---|
+| `rgba(255,255,255,0.12)` base border (`button.css`, `icon-button.css`) | No Semantic token exists to alias. Creating one would have been an undocumented side effect of this migration, not a deliberate token decision. |
+| `rgba(28,28,30,0.84)` base background (`button.css`, `icon-button.css`) | Same reason. |
+
+Both remain tracked below, unchanged in value or location. Resolving either requires a deliberate future decision to add the missing Semantic token — not a side effect of any other work.
+
+---
+
 ## v1.29.0 — CSS Co-location Wave 3: Location Updates
 
 No open debt items relocated. The three T2 Patterns (DashboardCard, DetailHeader, DayTile) contain zero hardcoded color/opacity values in their new co-located stylesheets (`dashboard-card.css`, `detail-header.css`, `day-tile.css`) — confirmed by inspection. The two debt items associated with DayTile's rendered context stayed in `App.css`, unmoved, because they belong to the `.trip-dashboard .day-tile` product-context override, which Wave 3 intentionally did not migrate:

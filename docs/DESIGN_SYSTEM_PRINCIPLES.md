@@ -1,6 +1,6 @@
 # Maycation Design System — Principles
 
-Last updated: v1.29.0 (v2.5.0 CSS Co-location Wave 3 complete, 2026-07-04)
+Last updated: ds/v1.30.1 (Component Token Layer complete, 2026-07-07)
 
 This document is the single source of truth for how the Maycation design system is built, extended, and maintained. It consolidates principles from [DESIGN_SYSTEM.md](./DESIGN_SYSTEM.md), [FIGMA_FOUNDATIONS.md](./FIGMA_FOUNDATIONS.md), and the Storybook `Docs/Design Principles` story.
 
@@ -66,7 +66,7 @@ Do not add a T1 Component or T2 Pattern unless existing components cannot solve 
 |-------|------|------|
 | 0 | Primitive | Raw values. Opaque colors only. Referenced by Semantic, never by components. |
 | 1 | Semantic | Context-aware aliases. Used by components in CSS and Figma. |
-| 2 | Component | Per-component overrides. Deferred — not yet implemented. |
+| 2 | Component | Per-component overrides, aliasing Semantic tokens. Implemented (ds/v1.30.1) for card, modal, badge, input, button, icon-button base recipes. |
 
 **Primitive colors are always opaque.**
 Alpha/transparency is never baked into a primitive color token. Composited RGBA colors (glass surfaces, overlays, border alpha) exist only at the semantic layer, expressed as inline `rgba()` values documented with their primitive components.

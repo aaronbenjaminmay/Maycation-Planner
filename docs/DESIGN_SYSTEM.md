@@ -1,6 +1,6 @@
 # Maycation Design System
 
-Last updated: v1.29.0 — CSS Co-location Wave 3 (2026-07-04)
+Last updated: ds/v1.30.1 — Component Token Layer (2026-07-07)
 
 ## Component Classification
 
@@ -68,9 +68,9 @@ Opinionated compositions of Components. Domain-agnostic but encode Maycation lay
 
 | Component | File | CSS home | Storybook path | Composes | Figma |
 |-----------|------|----------|----------------|----------|-------|
-| `DashboardCard` | `DashboardCard.tsx` | `dashboard-card.css` (v1.29.0) | `Patterns/DashboardCard` | `CardSurface` | ✅ `04 Patterns` · Code Connect not wired |
-| `DetailHeader` | `DetailHeader.tsx` | `detail-header.css` (v1.29.0) | `Patterns/DetailHeader` | `PageControls` (fixed overlay) + `ScreenHeader` (in-flow) | ✅ `04 Patterns` · Code Connect not wired |
-| `DayTile` | `DayTile.tsx` | `day-tile.css` (v1.29.0) | `Patterns/DayTile` | `CardSurface` + `Icon` + `ProgressPill` | ✅ `04 Patterns` · Code Connect not wired |
+| `DashboardCard` | `DashboardCard.tsx` | `dashboard-card.css` (v1.29.0) | `Patterns/DashboardCard` | `CardSurface` | ✅ `04 Patterns` · Code Connect wired (ds/v1.30.0) |
+| `DetailHeader` | `DetailHeader.tsx` | `detail-header.css` (v1.29.0) | `Patterns/DetailHeader` | `PageControls` (fixed overlay) + `ScreenHeader` (in-flow) | ✅ `04 Patterns` · Code Connect wired (ds/v1.30.0) |
+| `DayTile` | `DayTile.tsx` | `day-tile.css` (v1.29.0) | `Patterns/DayTile` | `CardSurface` + `Icon` + `ProgressPill` | ✅ `04 Patterns` · Code Connect wired (ds/v1.30.0) |
 
 > All three patterns' product-context composition rules (`.trip-card`/`.settings-panel`, `.page-shell > .detail-header`/`.day-detail-screen .detail-header`, `.trip-dashboard .day-tile`) intentionally remain in `App.css` — see the DetailHeader composition note below and [DESIGN_SYSTEM_ROADMAP.md §5 Phase 1 — Wave 3](./DESIGN_SYSTEM_ROADMAP.md) for the full ownership rationale per pattern.
 
@@ -116,6 +116,8 @@ Design System Convergence has two axes. Both are required before a component —
 |---|---|---|
 | **JSX ownership** | Product screens are assembled from design system components; no raw one-off UI. | ✅ Complete (2026-07 audit) |
 | **CSS ownership** | Each component's presentation lives in a stylesheet the component owns and imports. | ✅ Complete (v1.29.0) — Wave 1 (v1.27.0): Button, IconButton, CardSurface, FeedbackMessage, EmptyState, ModalSheet. Wave 2 (v1.28.0): ScreenHeader, PageControls, FormActions, FormGrid. Wave 3 (v1.29.0): DashboardCard, DetailHeader, DayTile. All 13 migrated components validated self-contained in Storybook without `App.css`. |
+
+Beyond these two axes, the remaining v2.5.0 System Health work is also complete: Component Token Layer (Phase 2, ds/v1.30.1) and Code Connect completion (Phase 3, ds/v1.30.0). A final Design System Convergence audit has not yet been performed to formally close v2.5.0.
 
 The 2026-07 convergence audit confirmed the JSX axis is complete but found that nine T1/T2 components (later revised to include the three T2 patterns) derived their presentation from `App.css` (§1–§13 layered passes), with Storybook rendering them correctly only because `.storybook/preview.ts` imported the entire `App.css` globally. As of v1.29.0, every migrated component owns its presentation in a co-located stylesheet. `.storybook/preview.ts` still imports `App.css` globally — it now serves only shared typography utilities (`.eyebrow`, `.muted`, `.label`) and documented product-context/composition overrides (e.g. `.trip-dashboard .day-tile`, `.page-shell > .detail-header`), not any migrated component's own presentation.
 
@@ -170,6 +172,21 @@ Key semantic tokens:
 | `--shadow-sm` | `0 10px 28px 0 rgba(0,0,0,0.34)` | Card elevation |
 | `--spacing-xs / sm / md / lg / xl` | — | Consistent spacing |
 | `--typography-label-*` | — | Label font size/weight/tracking |
+
+### Component Tokens (Layer 2, ds/v1.30.1)
+
+`tokens/source/component.tokens.json` — 6 namespaces, each aliasing existing Semantic tokens for a component's base recipe. See [FIGMA_FOUNDATIONS.md §1](./FIGMA_FOUNDATIONS.md) for the full alias table.
+
+| Namespace | Consumed by | Properties |
+|-----------|-------------|------------|
+| `component.card.*` | CardSurface | background, border, radius, shadow |
+| `component.modal.*` | ModalSheet | background, border, radius, shadow, overlay |
+| `component.badge.*` | Badge | background, border, radius, color |
+| `component.input.*` | TextInput, SelectInput, TextArea (shared `.form-control`) | background, border, radius, color |
+| `component.button.*` | Button | radius, color |
+| `component.icon-button.*` | IconButton | radius, color |
+
+Button and IconButton's base border and background remain direct literals (no Semantic token exists for them yet) — tracked in [TOKEN_DEBT.md](./TOKEN_DEBT.md), unchanged by this migration.
 
 ---
 
@@ -306,6 +323,6 @@ Ordered per the v2.5.0 System Health phases (see [DESIGN_SYSTEM_ROADMAP.md §5](
 
 **Phase 1 — CSS Co-location Migration (primary initiative of v2.5.0). ✅ Complete (v1.29.0).** Migrated component styles from `App.css` to co-located CSS files, in three dependency-ordered waves. Every migrated component now renders correctly in Storybook without `App.css` imported globally — verified individually per component. `.storybook/preview.ts` retains the `App.css` import for shared typography utilities and documented product-context overrides only. See [Design System Convergence](#design-system-convergence-v250) above for the migration rule.
 
-**Phase 2 — Component Token Layer:** Component-scoped tokens land in the consolidated co-located CSS produced by Phase 1.
+**Phase 2 — Component Token Layer. ✅ Complete (ds/v1.30.1).** Component-scoped tokens (`tokens/source/component.tokens.json`, 6 namespaces) landed in the consolidated co-located CSS produced by Phase 1. See [Component Tokens](#component-tokens-layer-2-dsv1301) above.
 
-**Phase 3 — Code Connect for remaining T1 Components and T2 Patterns:** Wire Code Connect for EmptyState, StatusButton, FormActions, FormGrid, ScreenHeader, PageControls, and the three patterns (DashboardCard, DetailHeader, DayTile). Icon is separately deferred (known Storybook rendering defect). PlaceInput is deferred until its Figma component is created (Place Intelligence Phase 5). May proceed in parallel with Phases 1–2 where convenient; it blocks nothing.
+**Phase 3 — Code Connect for remaining T1 Components and T2 Patterns. ✅ Complete (ds/v1.30.0).** Wired Code Connect for EmptyState, StatusButton, FormActions, FormGrid, ScreenHeader, PageControls, and the three patterns (DashboardCard, DetailHeader, DayTile) — 9 new `.figma.tsx` files, published to Figma. Icon remains separately deferred (known Storybook rendering defect). PlaceInput remains deferred until its Figma component is created (Place Intelligence Phase 5).

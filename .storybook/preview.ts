@@ -1,9 +1,11 @@
 import '../tokens/generated/tokens.css'
 import '../src/index.css'
-// App.css is still required by Wave 2/3 components (ScreenHeader, PageControls,
-// DashboardCard, DetailHeader, DayTile) and shared utilities (.eyebrow, .muted).
-// Wave 1 components (Button, IconButton, CardSurface, FeedbackMessage,
-// EmptyState, ModalSheet) are validated self-contained without it.
+// All CSS Co-location components (Waves 1-3: Button, IconButton, CardSurface,
+// FeedbackMessage, EmptyState, ModalSheet, ScreenHeader, PageControls,
+// FormActions, FormGrid, DashboardCard, DetailHeader, DayTile) render
+// correctly without App.css — verified individually per component. This
+// import remains only for shared typography utilities (.eyebrow, .muted,
+// .label) and documented product-context/composition overrides.
 import '../src/App.css'
 
 const preview = {

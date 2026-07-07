@@ -1,6 +1,6 @@
 # Maycation Figma Foundations
 
-Last updated: v1.26.0
+Last updated: ds/v1.30.1
 
 This document defines the token architecture, variable collection structure, naming conventions, and implementation path for Maycation's Figma design system. It is the source of truth for how code tokens map to Figma Variables, Tokens Studio, and future Code Connect work.
 
@@ -71,22 +71,24 @@ These are the variables that Figma component properties should reference. Every 
 
 ---
 
-### Layer 2: Component Tokens (recommended, not yet implemented)
+### Layer 2: Component Tokens (implemented in code — ds/v1.30.1; Figma Component collection not yet created)
 
 Component-specific tokens that reference Semantic tokens. They allow a component's visual properties to be changed without editing raw semantic values, and they create a clear contract between design and code.
 
-Recommended component token namespaces for future implementation:
+Implemented component token namespaces (`tokens/source/component.tokens.json`, base recipe only):
 
 ```
-component.button.*     — button background, border, text, hover
-component.card.*       — card background, border, radius, shadow
-component.input.*      — input background, border, focus ring
-component.badge.*      — badge background, border, text
-component.icon-button.* — icon button background, border, selected state
-component.modal.*      — modal background, border, shadow
+component.card.*        — background, border, radius, shadow          (CardSurface)
+component.modal.*       — background, border, radius, shadow, overlay (ModalSheet)
+component.badge.*       — background, border, radius, color           (Badge)
+component.input.*       — background, border, radius, color           (TextInput, SelectInput, TextArea)
+component.button.*      — radius, color                                (Button)
+component.icon-button.* — radius, color                                (IconButton)
 ```
 
-**This is the correct next step after Figma foundations are established.** Do not add component tokens until Figma variables are in place and token aliases can be validated visually.
+Every value aliases an existing Semantic token — see [Appendix: Token Source Files](#appendix-token-source-files) and `DESIGN_SYSTEM.md`'s Component Tokens table for the full alias mapping. Button and IconButton's base border and background are **not** covered — no Semantic token exists for either value, and a Component token must alias a Semantic token, never a bare literal. These remain tracked in `TOKEN_DEBT.md`. Variant/tone-specific tokens (button/icon-button variant colors, badge tone borders) are also not yet covered — this phase scoped to each component's base recipe only.
+
+**The Figma `Component` collection (§5, Collection 4) has not been created.** This migration was code-only; Figma parity for the Component layer remains future work.
 
 ---
 
@@ -520,7 +522,7 @@ These can alias Primitive colors. Defer this collection until product UI work be
 
 #### Collection 4: `Component` (future)
 
-Do not create until semantic tokens are validated in Figma and at least two components have been built against them.
+Not yet created. Code-side component tokens now exist (`tokens/source/component.tokens.json`, ds/v1.30.1) and can serve as the basis for this collection; the Figma-side work itself remains future.
 
 ```
 Component/
@@ -617,7 +619,7 @@ A story showing the countdown label color would validate the token end-to-end in
 | Hardcoded `rgba(255, 69, 58, ...)` in App.css §10–11 | Should be `var(--color-danger-*)` | Low |
 | `--accent: #0a84ff` in `index.css` light-mode block | Dead code; safe to remove only after light-mode strategy is decided | Low |
 | Spacing/Radius primitives not yet aliasing from a unified Size/* scale | Future migration — no breaking change needed now | Deferred |
-| No component tokens yet | Future — after Figma variable setup | Planned |
+| Component tokens implemented in code, no Figma `Component` collection yet | Figma-side work remains | Planned |
 
 ### What is not a token but probably should be
 
@@ -626,7 +628,7 @@ A story showing the countdown label color would validate the token end-to-end in
 | Hover overlay fills (`rgba(255,255,255,0.08–0.14)`) | Interactive hover on buttons, cards | Component token layer |
 | Trip image overlay `rgba(0,0,0,0.52)` | Background dim for trip header image | `opacity.header-image.overlay` available; migrate via pseudo-element |
 
-These are candidates for the Component token layer once that is established.
+These remain candidates for future Component token coverage — ds/v1.30.1 scoped the Component layer to each component's base recipe only (background, border, radius, shadow/color), not hover or variant states.
 
 ---
 
@@ -649,17 +651,17 @@ For Code Connect to work well, the Figma and React systems need to share:
 | `IconButton` | ✅ | ✅ | ✅ |
 | `CardSurface` | ✅ | ✅ | ✅ — `as` prop not mapped; `Variant=Interactive` maps to `interactive` boolean only |
 | `ModalSheet` | ✅ | ✅ | ✅ |
-| `DashboardCard` | ✅ `04 Patterns` — component set `208:16` | ✅ | ❌ not yet wired |
-| `DetailHeader` | ✅ `04 Patterns` — component set `236:81`; PageControls (`position: fixed`) + ScreenHeader (in-flow); 3 variants (Default / WithAction / Full) | ✅ | ❌ not yet wired |
-| `DayTile` | ✅ `04 Patterns` *(v1.23.0)* | ✅ | ❌ not yet wired |
+| `DashboardCard` | ✅ `04 Patterns` — component set `208:16` | ✅ | ✅ wired (ds/v1.30.0) |
+| `DetailHeader` | ✅ `04 Patterns` — component set `236:81`; PageControls (`position: fixed`) + ScreenHeader (in-flow); 3 variants (Default / WithAction / Full) | ✅ | ✅ wired (ds/v1.30.0) |
+| `DayTile` | ✅ `04 Patterns` *(v1.23.0)* | ✅ | ✅ wired (ds/v1.30.0) |
 | `Badge` | ✅ *(v1.8.0)* | ✅ | ✅ *(v1.8.0)* |
 | `FeedbackMessage` | ✅ *(v1.8.0)* | ✅ | ✅ *(v1.8.0)* |
-| `EmptyState` | ✅ *(v1.8.0)* | ✅ | ❌ not yet wired (Figma node 69:79; fill opacity Figma API constraint documented) |
+| `EmptyState` | ✅ *(v1.8.0)* | ✅ | ✅ wired (ds/v1.30.0; Figma node 69:79) |
 | `ProgressPill` | ✅ *(v1.8.0)* | ✅ | ✅ *(v1.8.0)* |
-| `StatusButton` | ✅ *(v1.8.0)* | ✅ | ❌ not yet wired (Figma node 76:93) |
+| `StatusButton` | ✅ *(v1.8.0)* | ✅ | ✅ wired (ds/v1.30.0; Figma node 76:93) |
 | Form controls (`TextInput`, `TextArea`, `SelectInput`, `FormRow`) | ✅ *(v1.8.0)* | ✅ | ✅ |
-| Form layout (`FormGrid`, `FormActions`) | ✅ *(v1.8.0)* | ✅ | ❌ not yet wired (Figma nodes 86:54, 92:65) |
-| Navigation (`ScreenHeader`, `PageControls`) | ✅ *(v1.8.0)* | ✅ | ❌ not yet wired (Figma nodes 111:115, 111:158) |
+| Form layout (`FormGrid`, `FormActions`) | ✅ *(v1.8.0)* | ✅ | ✅ wired (ds/v1.30.0; Figma nodes 86:54, 92:65) |
+| Navigation (`ScreenHeader`, `PageControls`) | ✅ *(v1.8.0)* | ✅ | ✅ wired (ds/v1.30.0; Figma nodes 111:115, 111:158) |
 | `Icon` | ✅ | ✅ | ❌ not yet wired — deferred (known Storybook rendering defect) |
 | `PlaceInput` | ❌ pending Phase 5 Figma | ✅ | ❌ not yet wired — deferred until Figma component exists |
 
@@ -785,6 +787,7 @@ When component tokens are added (Layer 2), they will be filtered **in** to the o
 | `tokens/source/shadow.tokens.json` | Shadow values — ordinal (sm/md/lg) + semantic (surface/card, surface/panel, surface/overlay) |
 | `tokens/source/typography.tokens.json` | Type scale |
 | `tokens/source/icon.tokens.json` | Icon sizes |
+| `tokens/source/component.tokens.json` | Component tokens (Layer 2, ds/v1.30.1) — 6 namespaces aliasing Semantic tokens |
 | `tokens/generated/tokens.css` | Generated CSS custom properties (do not edit) |
 | `tokens/generated/tokens.ts` | Generated TypeScript constants (do not edit) |
 

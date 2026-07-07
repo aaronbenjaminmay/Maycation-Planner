@@ -1,8 +1,14 @@
 # Maycation Design System — Roadmap
 
-Current release: **v1.29.0 — CSS Co-location Wave 3**
+Current release: **ds/v1.30.1 — Component Token Layer**
+
+ds/v1.30.1 introduced the Component token layer (DTCG Layer 2): `tokens/source/component.tokens.json` defines 6 namespaces (card, modal, badge, input, button, icon-button), each aliasing existing Semantic tokens for a component's base recipe (background, border, radius, and shadow/color where applicable). CardSurface, ModalSheet, Badge, the shared form-control input, Button, and IconButton now reference these component tokens instead of Semantic tokens directly. Button and IconButton's base border and background remain unaliased — no Semantic token exists for them yet, tracked in `TOKEN_DEBT.md`. Zero visual change; verified via Storybook computed-style checks across all 8 consuming components. This completes Phase 2 of v2.5.0 System Health.
+
+ds/v1.30.0 completed Phase 3 — Code Connect for the remaining 6 priority T1 components (EmptyState, StatusButton, FormActions, FormGrid, ScreenHeader, PageControls) and all 3 T2 Patterns (DashboardCard, DetailHeader, DayTile): 9 new `.figma.tsx` files, published to Figma. 17 of 19 T1 Components and 3 of 3 T2 Patterns are now wired; Icon and PlaceInput remain deferred.
 
 v1.29.0 co-located CSS for all three T2 Patterns (DashboardCard, DetailHeader, DayTile), completing the CSS Co-location Migration (Phase 1 of v2.5.0 Design System Convergence). Each pattern now owns its uncontested presentation in a co-located stylesheet and renders correctly in Storybook without `App.css` imported globally. `.trip-dashboard .day-tile` and `.page-shell > .detail-header` remain in `App.css` as intentional, documented product-context overrides — Wave 3 changed CSS ownership, not behavior. v1.28.0 completed Wave 2 (ScreenHeader, PageControls, FormActions, FormGrid); v1.27.0 completed Wave 1 (Button, IconButton, CardSurface, FeedbackMessage, EmptyState, ModalSheet); v1.26.0 eliminated 11 hardcoded CSS values in App.css.
+
+All three v2.5.0 System Health phases (CSS Co-location, Component Token Layer, Code Connect completion) are now complete. A final Design System Convergence audit has not yet been performed to formally close v2.5.0.
 
 ---
 
@@ -30,7 +36,7 @@ The foundational layer is established and stable. See [FIGMA_FOUNDATIONS.md](./F
 
 | Area | Status | Notes |
 |------|--------|-------|
-| Design Tokens (DTCG) | ✅ | Three-layer: Primitive → Semantic → Component (Layer 2 deferred) |
+| Design Tokens (DTCG) | ✅ | Three-layer: Primitive → Semantic → Component (Layer 2 base recipe implemented, ds/v1.30.1) |
 | Style Dictionary pipeline | ✅ | `tokens/` → `tokens/generated/tokens.css` |
 | Semantic variables | ✅ | Full color, opacity, spacing, radius, shadow, typography scale |
 | Token bridge (`tokens-bridge.css`) | ✅ Removed | Retired v2.3.0 — all call sites migrated to full semantic token names |
@@ -42,9 +48,9 @@ The foundational layer is established and stable. See [FIGMA_FOUNDATIONS.md](./F
 
 ## 3. Components
 
-**Status: Complete (Code Connect partially wired)**
+**Status: Complete (Code Connect wired 17 of 19)**
 
-All 19 T1 Components are code-complete and Storybook-documented. 11 of 19 have Code Connect wired. 8 are not yet wired: EmptyState, StatusButton, FormActions, FormGrid, ScreenHeader, PageControls, Icon (deferred — known Storybook rendering defect), PlaceInput (deferred — Figma component pending Place Intelligence Phase 5). See [DESIGN_SYSTEM.md — Component Inventory](./DESIGN_SYSTEM.md#component-inventory-t1) for the full list and Code Connect status.
+All 19 T1 Components are code-complete and Storybook-documented. 17 of 19 have Code Connect wired (ds/v1.30.0 wired the last 6: EmptyState, StatusButton, FormActions, FormGrid, ScreenHeader, PageControls). 2 remain deferred: Icon (known Storybook rendering defect), PlaceInput (Figma component pending Place Intelligence Phase 5). See [DESIGN_SYSTEM.md — Component Inventory](./DESIGN_SYSTEM.md#component-inventory-t1) for the full list and Code Connect status.
 
 **Summary (19 components across 4 groups):**
 
@@ -69,7 +75,7 @@ Titled card pattern built on `CardSurface`. Adds eyebrow, title, subtitle, and a
 - [x] Storybook
 - [x] Documentation
 - [x] Figma
-- [ ] Code Connect
+- [x] Code Connect
 
 ### DetailHeader
 
@@ -79,7 +85,7 @@ Canonical detail-screen header. Composes `PageControls` (fixed pill) + `ScreenHe
 - [x] Storybook
 - [x] Documentation
 - [x] Figma
-- [ ] Code Connect
+- [x] Code Connect
 
 ### DayTile
 
@@ -89,7 +95,7 @@ Interactive card tile for trip days. Composes `CardSurface` + `Icon` + `Progress
 - [x] Storybook
 - [x] Documentation
 - [x] Figma
-- [ ] Code Connect
+- [x] Code Connect
 
 ---
 
@@ -102,8 +108,8 @@ Active maintenance work. Complete this before introducing new patterns or compon
 | Phase | Initiative | Rationale |
 |---|---|---|
 | **1** | CSS Co-location Migration | ✅ **Complete (v1.29.0).** Convergence blocker. Components must own their presentation in fact, not only in JSX, before anything layers on top. |
-| **2** | Component Token Layer (Layer 2) | Component tokens land in consolidated, co-located component CSS. Requires Phase 1 — now unblocked. |
-| **3** | Code Connect completion (T1 + Patterns) | Tooling parity. Valuable, but changes nothing about how the app is assembled. May proceed in parallel where convenient; it blocks nothing. |
+| **2** | Component Token Layer (Layer 2) | ✅ **Complete (ds/v1.30.1).** Component tokens landed in consolidated, co-located component CSS. |
+| **3** | Code Connect completion (T1 + Patterns) | ✅ **Complete (ds/v1.30.0).** Tooling parity — improves the Figma ↔ code bridge; changes nothing about how the app is assembled. |
 
 ---
 
@@ -163,25 +169,29 @@ Before this phase, "Storybook is canonical" and "components own presentation" he
 
 ---
 
-### Phase 2 — Component Token Layer (Layer 2)
+### Phase 2 — Component Token Layer (Layer 2) ✅ Complete (ds/v1.30.1)
 
 **Goal:** Implement component-scoped tokens for core components (`card`, `button`, `input`, `badge`, `icon-button`, `modal`).
 
-**Why it matters:** Currently, components reference semantic tokens directly (e.g., `CardSurface` uses `--color-surface-glass` inline). Layer 2 component tokens create an explicit contract between design and code, make per-component overrides safe, and complete the three-layer DTCG architecture described in [`FIGMA_FOUNDATIONS.md §1`](./FIGMA_FOUNDATIONS.md). This work was blocked on CSS co-location (Phase 1), now complete as of v1.29.0: component tokens land in consolidated, co-located component CSS, which now exists for all 13 migrated components. Phase 2 has not yet started.
+**Why it mattered:** Previously, components referenced semantic tokens directly (e.g., `CardSurface` used `--color-surface-glass` inline). Layer 2 component tokens create an explicit contract between design and code, make per-component overrides safe, and complete the three-layer DTCG architecture described in [`FIGMA_FOUNDATIONS.md §1`](./FIGMA_FOUNDATIONS.md). This work was blocked on CSS co-location (Phase 1), completed as of v1.29.0.
 
-**Expected outcome:** `component.*` token namespace in `tokens/`, corresponding Figma variable collection, and updated co-located component CSS to reference component tokens instead of semantic tokens directly.
+**Outcome:** `tokens/source/component.tokens.json` introduces a `component.*` namespace with 6 groups — `card`, `modal`, `badge`, `input`, `button`, `icon-button` — each aliasing an existing Semantic token for that component's base recipe (background, border, radius, and shadow/color where applicable). Every alias resolves to a value byte-identical to what the component used before migration — zero visual change, verified via Storybook computed-style checks across all 8 consuming components (CardSurface, ModalSheet, Badge, TextInput, SelectInput, TextArea, Button, IconButton). `sd.config.mjs` required no changes — its glob-based source and primitive-exclusion filter already picked up the new file correctly.
+
+**Scope boundary — intentionally not covered:** Button and IconButton's base border and background remain direct literal values (`rgba(255,255,255,0.12)` and `rgba(28,28,30,0.84)`) because no Semantic token exists for them. A Component token must alias a Semantic token, not a bare literal — creating one here would have meant inventing a Semantic token as an undocumented side effect, which the migration rule explicitly forbids. These two properties remain tracked in [`TOKEN_DEBT.md`](./TOKEN_DEBT.md), unchanged. Variant/tone-specific tokens (Button/IconButton primary/secondary/destructive colors, Badge tone borders, IconButton's `--complete` state) were also out of scope — the namespace covers each component's base recipe only.
+
+**Figma:** The corresponding Figma `Component` variable collection (`FIGMA_FOUNDATIONS.md §5`, Collection 4) was not created — this phase was code-only. Figma parity for the Component layer remains future work.
 
 ---
 
-### Phase 3 — Code Connect Completion
+### Phase 3 — Code Connect Completion ✅ Complete (ds/v1.30.0)
 
 **Goal:** Wire Code Connect for the remaining T1 Components (EmptyState, StatusButton, FormActions, FormGrid, ScreenHeader, PageControls) and all three T2 Patterns (`DashboardCard`, `DetailHeader`, `DayTile`).
 
-**Why it matters:** Without Code Connect, the Figma ↔ code link for these components is visual-only — AI tools, design handoff, and design-to-code workflows cannot resolve Figma components to their code counterparts. This work mirrors what is already done for the 11 wired components. It is sequenced last because it is design-tooling parity: it improves the Figma → code bridge but changes nothing about how the application is assembled, and it depends on nothing in Phases 1–2 (it may proceed in parallel where convenient).
+**Why it mattered:** Without Code Connect, the Figma ↔ code link for these components was visual-only — AI tools, design handoff, and design-to-code workflows could not resolve Figma components to their code counterparts. This work mirrors what was already done for the 11 previously-wired components. It was design-tooling parity: it improves the Figma → code bridge but changes nothing about how the application is assembled, and it depended on nothing in Phases 1–2.
 
-**Scope:** Icon is excluded — its Storybook rendering defect must be resolved first (tracked in project memory). PlaceInput Code Connect is deferred until its Figma component is created (Place Intelligence Phase 5).
+**Scope:** Icon remains excluded — its Storybook rendering defect must be resolved first (tracked in project memory). PlaceInput Code Connect remains deferred until its Figma component is created (Place Intelligence Phase 5).
 
-**Expected outcome:** 9 new `.figma.tsx` files. 17 of 19 T1 Components and 3 of 3 T2 Patterns fully wired (Icon and PlaceInput remain deferred).
+**Outcome:** 9 new `.figma.tsx` files, published to Figma. 17 of 19 T1 Components and 3 of 3 T2 Patterns fully wired (Icon and PlaceInput remain deferred).
 
 ---
 
@@ -189,7 +199,9 @@ Before this phase, "Storybook is canonical" and "components own presentation" he
 
 **Goal:** Eliminate the last hardcoded values in `App.css` that predate the semantic token layer.
 
-**Interaction with Phase 1 (complete as of v1.29.0):** per the migration rule, CSS co-location moved values **verbatim** into co-located component stylesheets — it did not resolve them. Debt entries that traveled with a component (e.g., Button/IconButton base border and background) remain tracked in [`TOKEN_DEBT.md`](./TOKEN_DEBT.md) with updated locations. The two Wave 3 debt items (`#fff` day-tile/trip-intel text, `rgba(0,0,0,0.4)` day-tile shadow) did not relocate — both belong to `.trip-dashboard .day-tile`, which stayed in `App.css` as documented product-context ownership. Resolving any of these is Phase 2 (Component Token Layer) or separate token work, never a side effect of migration.
+**Interaction with Phase 1 (complete as of v1.29.0):** per the migration rule, CSS co-location moved values **verbatim** into co-located component stylesheets — it did not resolve them. Debt entries that traveled with a component (e.g., Button/IconButton base border and background) remain tracked in [`TOKEN_DEBT.md`](./TOKEN_DEBT.md) with updated locations. The two Wave 3 debt items (`#fff` day-tile/trip-intel text, `rgba(0,0,0,0.4)` day-tile shadow) did not relocate — both belong to `.trip-dashboard .day-tile`, which stayed in `App.css` as documented product-context ownership.
+
+**Interaction with Phase 2 (complete as of ds/v1.30.1):** the Component Token Layer intentionally did not resolve the Button/IconButton base border and background debt — a Component token must alias an existing Semantic token, and none exists for either value. Resolving these two items now requires either a deliberate new Semantic token or dedicated token work; it is not a side effect of any planned phase.
 
 **Why it matters:** These values bypass the token pipeline, cannot be updated via Style Dictionary, and are invisible to Figma. They are tracked in [`TOKEN_DEBT.md`](./TOKEN_DEBT.md) and in `DESIGN_SYSTEM.md` under Known Token Migration Debt.
 

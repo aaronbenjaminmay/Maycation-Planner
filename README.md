@@ -41,15 +41,16 @@ Complete — Phase 1 Foundation
 * DTCG three-layer token architecture (Primitive → Semantic → Component)
 * Style Dictionary pipeline → `tokens/generated/tokens.css` and `tokens.ts`
 * Full semantic token system: color, opacity, spacing, radius, shadow, typography, icon
+* Component token layer (Layer 2) established for card, modal, badge, input, button, icon-button base recipes
 * Figma variable collections: Primitives and Semantic collections established
-* 19 T1 components — code-complete and Storybook-documented; 11 of 19 Code Connect–wired
-* 3 T2 patterns — DashboardCard, DetailHeader, DayTile; Figma complete; Code Connect pending
+* 19 T1 components — code-complete and Storybook-documented; 17 of 19 Code Connect–wired
+* 3 T2 patterns — DashboardCard, DetailHeader, DayTile; Figma complete; Code Connect wired
 * Storybook — 99 stories across Foundation, Components, Patterns, and Docs groups
 * Dark-mode-first interface
 
 ### Current Focus
 
-v2.5.0 — Design System Convergence: Code Connect for patterns, remaining T1 Code Connect, component token layer, CSS co-location migration.
+v2.5.0 — Design System Convergence: CSS co-location migration, component token layer, and Code Connect for patterns and remaining T1 components are all complete. A final convergence audit remains before the milestone can be closed.
 
 ## Design Philosophy
 
@@ -126,12 +127,12 @@ Complete (June 2026)
 
 ### v2.5.0 — Design System Convergence
 
-Active
+System Health phases complete; final convergence audit pending
 
-* Code Connect for T2 Patterns (DashboardCard, DetailHeader, DayTile)
-* Code Connect for remaining T1 Components (EmptyState, StatusButton, FormActions, FormGrid, ScreenHeader, PageControls)
-* Component Token Layer (DTCG Layer 2)
-* CSS Co-location Migration (component CSS out of App.css)
+* Code Connect for T2 Patterns (DashboardCard, DetailHeader, DayTile) — complete (ds/v1.30.0)
+* Code Connect for remaining T1 Components (EmptyState, StatusButton, FormActions, FormGrid, ScreenHeader, PageControls) — complete (ds/v1.30.0)
+* Component Token Layer (DTCG Layer 2) — complete (ds/v1.30.1)
+* CSS Co-location Migration (component CSS out of App.css) — complete (ds/v1.29.0)
 
 ### Future
 
@@ -213,8 +214,4 @@ npm run deploy
 
 Primary development occurs on feature branches and is merged into main.
 
-Current development focus (v2.5.0 — Design System Convergence):
-
-* Code Connect for T2 Patterns and remaining T1 Components
-* Component Token Layer (DTCG Layer 2)
-* CSS Co-location Migration
+Current development focus (v2.5.0 — Design System Convergence): all System Health phases (CSS Co-location Migration, Component Token Layer, Code Connect for T2 Patterns and remaining T1 Components) are complete. A final convergence audit remains before the milestone closes.
