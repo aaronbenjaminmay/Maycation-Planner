@@ -12,10 +12,10 @@
  */
 
 :where(.card-surface) {
-  border: 1px solid var(--color-border-glass);
-  border-radius: var(--radius-lg);
-  background: var(--color-surface-glass);
-  box-shadow: var(--shadow-md);
+  border: 1px solid var(--component-card-border);
+  border-radius: var(--component-card-radius);
+  background: var(--component-card-background);
+  box-shadow: var(--component-card-shadow);
 }
 
 .card-surface--interactive {

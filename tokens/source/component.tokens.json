@@ -1,0 +1,126 @@
+{
+  "component": {
+    "card": {
+      "background": {
+        "$type": "color",
+        "$value": "{color.surface.glass}",
+        "$description": "CardSurface background. Aliases color.surface.glass — value unchanged (rgba(28, 28, 30, 0.72))."
+      },
+      "border": {
+        "$type": "color",
+        "$value": "{color.border.glass}",
+        "$description": "CardSurface border. Aliases color.border.glass — value unchanged (rgba(255, 255, 255, 0.08))."
+      },
+      "radius": {
+        "$type": "dimension",
+        "$value": "{radius.card}",
+        "$description": "CardSurface corner radius. Aliases radius.card — value unchanged (20px)."
+      },
+      "shadow": {
+        "$type": "shadow",
+        "$value": "{shadow.surface.panel}",
+        "$description": "CardSurface elevation. Aliases shadow.surface.panel — value unchanged (0 18px 50px 0 rgba(0, 0, 0, 0.26)). shadow.surface.panel is used (not the ordinal shadow.md) because its own description explicitly names card-surface as a use case."
+      }
+    },
+
+    "modal": {
+      "background": {
+        "$type": "color",
+        "$value": "{color.surface.glass}",
+        "$description": "ModalSheet background. Aliases color.surface.glass — value unchanged (rgba(28, 28, 30, 0.72))."
+      },
+      "border": {
+        "$type": "color",
+        "$value": "{color.border.glass}",
+        "$description": "ModalSheet border. Aliases color.border.glass — value unchanged (rgba(255, 255, 255, 0.08))."
+      },
+      "radius": {
+        "$type": "dimension",
+        "$value": "{radius.card}",
+        "$description": "ModalSheet corner radius. Aliases radius.card — value unchanged (20px)."
+      },
+      "shadow": {
+        "$type": "shadow",
+        "$value": "{shadow.surface.panel}",
+        "$description": "ModalSheet elevation. Aliases shadow.surface.panel — value unchanged (0 18px 50px 0 rgba(0, 0, 0, 0.26))."
+      },
+      "overlay": {
+        "$type": "color",
+        "$value": "{color.overlay.default}",
+        "$description": "Modal backdrop overlay. Aliases color.overlay.default — value unchanged (rgba(0, 0, 0, 0.78))."
+      }
+    },
+
+    "badge": {
+      "background": {
+        "$type": "color",
+        "$value": "{color.surface.badge}",
+        "$description": "Badge background. Aliases color.surface.badge — value unchanged (rgba(0, 0, 0, 0.22))."
+      },
+      "border": {
+        "$type": "color",
+        "$value": "{color.border.control}",
+        "$description": "Badge base border. Aliases color.border.control — value unchanged (rgba(255, 255, 255, 0.10)). Tone-specific border overrides (accent/info/secondary/warning/danger) are out of scope for this migration."
+      },
+      "radius": {
+        "$type": "dimension",
+        "$value": "{radius.pill}",
+        "$description": "Badge corner radius. Aliases radius.pill — value unchanged (999px)."
+      },
+      "color": {
+        "$type": "color",
+        "$value": "{color.text.primary}",
+        "$description": "Badge text color. Aliases color.text.primary — value unchanged (#f5f7fb)."
+      }
+    },
+
+    "input": {
+      "background": {
+        "$type": "color",
+        "$value": "{color.surface.input}",
+        "$description": "Shared form control (TextInput, SelectInput, TextArea) background. Aliases color.surface.input — value unchanged (rgba(0, 0, 0, 0.28))."
+      },
+      "border": {
+        "$type": "color",
+        "$value": "{color.border.control}",
+        "$description": "Shared form control border. Aliases color.border.control — value unchanged (rgba(255, 255, 255, 0.10))."
+      },
+      "radius": {
+        "$type": "dimension",
+        "$value": "{radius.input}",
+        "$description": "Shared form control corner radius. Aliases radius.input — value unchanged (14px)."
+      },
+      "color": {
+        "$type": "color",
+        "$value": "{color.text.primary}",
+        "$description": "Shared form control text color. Aliases color.text.primary — value unchanged (#f5f7fb)."
+      }
+    },
+
+    "button": {
+      "radius": {
+        "$type": "dimension",
+        "$value": "{radius.pill}",
+        "$description": "Button corner radius. Aliases radius.pill — value unchanged (999px)."
+      },
+      "color": {
+        "$type": "color",
+        "$value": "{color.text.primary}",
+        "$description": "Button base text color. Aliases color.text.primary — value unchanged (#f5f7fb). Base border and background have no Semantic token yet (tracked in TOKEN_DEBT.md) and are intentionally not aliased here — left unchanged in button.css."
+      }
+    },
+
+    "icon-button": {
+      "radius": {
+        "$type": "dimension",
+        "$value": "{radius.pill}",
+        "$description": "IconButton corner radius. Aliases radius.pill — value unchanged (999px)."
+      },
+      "color": {
+        "$type": "color",
+        "$value": "{color.text.primary}",
+        "$description": "IconButton base text/icon color. Aliases color.text.primary — value unchanged (#f5f7fb). Base border and background have no Semantic token yet (tracked in TOKEN_DEBT.md) and are intentionally not aliased here — left unchanged in icon-button.css."
+      }
+    }
+  }
+}

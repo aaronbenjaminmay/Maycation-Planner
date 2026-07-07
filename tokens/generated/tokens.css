@@ -41,6 +41,27 @@
   --color-overlay-default: rgba(0, 0, 0, 0.78); /** Modal backdrop overlay. CSS composite: color.primitive.black × opacity.primitive.78. Applied to .modal-backdrop which is a separate full-screen element with no text children, so rgba() and element opacity are both acceptable here. */
   --color-countdown-default: #0a84ff; /** Countdown and milestone label color; used on trip intel card header spans. Signals temporal anticipation and high-emphasis trip moments */
   --color-countdown-border: rgba(10, 132, 255, 0.28); /** Completed planner item card border. CSS composite: color.primitive.blue-vivid × opacity.primitive.28. Signals a completed milestone without overwhelming the card. */
+  --component-card-background: rgba(28, 28, 30, 0.72); /** CardSurface background. Aliases color.surface.glass — value unchanged (rgba(28, 28, 30, 0.72)). */
+  --component-card-border: rgba(255, 255, 255, 0.08); /** CardSurface border. Aliases color.border.glass — value unchanged (rgba(255, 255, 255, 0.08)). */
+  --component-card-radius: 20px; /** CardSurface corner radius. Aliases radius.card — value unchanged (20px). */
+  --component-card-shadow: 0 18px 50px 0 rgba(0, 0, 0, 0.26); /** CardSurface elevation. Aliases shadow.surface.panel — value unchanged (0 18px 50px 0 rgba(0, 0, 0, 0.26)). shadow.surface.panel is used (not the ordinal shadow.md) because its own description explicitly names card-surface as a use case. */
+  --component-modal-background: rgba(28, 28, 30, 0.72); /** ModalSheet background. Aliases color.surface.glass — value unchanged (rgba(28, 28, 30, 0.72)). */
+  --component-modal-border: rgba(255, 255, 255, 0.08); /** ModalSheet border. Aliases color.border.glass — value unchanged (rgba(255, 255, 255, 0.08)). */
+  --component-modal-radius: 20px; /** ModalSheet corner radius. Aliases radius.card — value unchanged (20px). */
+  --component-modal-shadow: 0 18px 50px 0 rgba(0, 0, 0, 0.26); /** ModalSheet elevation. Aliases shadow.surface.panel — value unchanged (0 18px 50px 0 rgba(0, 0, 0, 0.26)). */
+  --component-modal-overlay: rgba(0, 0, 0, 0.78); /** Modal backdrop overlay. Aliases color.overlay.default — value unchanged (rgba(0, 0, 0, 0.78)). */
+  --component-badge-background: rgba(0, 0, 0, 0.22); /** Badge background. Aliases color.surface.badge — value unchanged (rgba(0, 0, 0, 0.22)). */
+  --component-badge-border: rgba(255, 255, 255, 0.1); /** Badge base border. Aliases color.border.control — value unchanged (rgba(255, 255, 255, 0.10)). Tone-specific border overrides (accent/info/secondary/warning/danger) are out of scope for this migration. */
+  --component-badge-radius: 999px; /** Badge corner radius. Aliases radius.pill — value unchanged (999px). */
+  --component-badge-color: #f5f7fb; /** Badge text color. Aliases color.text.primary — value unchanged (#f5f7fb). */
+  --component-input-background: rgba(0, 0, 0, 0.28); /** Shared form control (TextInput, SelectInput, TextArea) background. Aliases color.surface.input — value unchanged (rgba(0, 0, 0, 0.28)). */
+  --component-input-border: rgba(255, 255, 255, 0.1); /** Shared form control border. Aliases color.border.control — value unchanged (rgba(255, 255, 255, 0.10)). */
+  --component-input-radius: 14px; /** Shared form control corner radius. Aliases radius.input — value unchanged (14px). */
+  --component-input-color: #f5f7fb; /** Shared form control text color. Aliases color.text.primary — value unchanged (#f5f7fb). */
+  --component-button-radius: 999px; /** Button corner radius. Aliases radius.pill — value unchanged (999px). */
+  --component-button-color: #f5f7fb; /** Button base text color. Aliases color.text.primary — value unchanged (#f5f7fb). Base border and background have no Semantic token yet (tracked in TOKEN_DEBT.md) and are intentionally not aliased here — left unchanged in button.css. */
+  --component-icon-button-radius: 999px; /** IconButton corner radius. Aliases radius.pill — value unchanged (999px). */
+  --component-icon-button-color: #f5f7fb; /** IconButton base text/icon color. Aliases color.text.primary — value unchanged (#f5f7fb). Base border and background have no Semantic token yet (tracked in TOKEN_DEBT.md) and are intentionally not aliased here — left unchanged in icon-button.css. */
   --icon-sm: 16px; /** Small icon; maps to Icon size='small' in the Icon component */
   --icon-md: 18px; /** Default icon size; maps to Icon size='default'. Used in most UI contexts */
   --icon-lg: 20px; /** Large icon; maps to Icon size='large'. Used in primary action buttons and selected states */

@@ -30,10 +30,10 @@
   min-inline-size: 0;
   min-height: 46px;
   padding: 10px var(--spacing-sm);
-  border: 1px solid var(--color-border-control);
-  border-radius: var(--radius-input);
-  color: var(--color-text-primary);
-  background: var(--color-surface-input);
+  border: 1px solid var(--component-input-border);
+  border-radius: var(--component-input-radius);
+  color: var(--component-input-color);
+  background: var(--component-input-background);
   font: inherit;
 }
 

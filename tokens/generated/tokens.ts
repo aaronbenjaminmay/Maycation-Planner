@@ -40,6 +40,27 @@ export const colorRoleViewer = "#9b8cff"; // Viewer role pill border
 export const colorOverlayDefault = "rgba(0, 0, 0, 0.78)"; // Modal backdrop overlay. CSS composite: color.primitive.black × opacity.primitive.78. Applied to .modal-backdrop which is a separate full-screen element with no text children, so rgba() and element opacity are both acceptable here.
 export const colorCountdownDefault = "#0a84ff"; // Countdown and milestone label color; used on trip intel card header spans. Signals temporal anticipation and high-emphasis trip moments
 export const colorCountdownBorder = "rgba(10, 132, 255, 0.28)"; // Completed planner item card border. CSS composite: color.primitive.blue-vivid × opacity.primitive.28. Signals a completed milestone without overwhelming the card.
+export const componentCardBackground = "rgba(28, 28, 30, 0.72)"; // CardSurface background. Aliases color.surface.glass — value unchanged (rgba(28, 28, 30, 0.72)).
+export const componentCardBorder = "rgba(255, 255, 255, 0.08)"; // CardSurface border. Aliases color.border.glass — value unchanged (rgba(255, 255, 255, 0.08)).
+export const componentCardRadius = "20px"; // CardSurface corner radius. Aliases radius.card — value unchanged (20px).
+export const componentCardShadow = "0 18px 50px 0 rgba(0, 0, 0, 0.26)"; // CardSurface elevation. Aliases shadow.surface.panel — value unchanged (0 18px 50px 0 rgba(0, 0, 0, 0.26)). shadow.surface.panel is used (not the ordinal shadow.md) because its own description explicitly names card-surface as a use case.
+export const componentModalBackground = "rgba(28, 28, 30, 0.72)"; // ModalSheet background. Aliases color.surface.glass — value unchanged (rgba(28, 28, 30, 0.72)).
+export const componentModalBorder = "rgba(255, 255, 255, 0.08)"; // ModalSheet border. Aliases color.border.glass — value unchanged (rgba(255, 255, 255, 0.08)).
+export const componentModalRadius = "20px"; // ModalSheet corner radius. Aliases radius.card — value unchanged (20px).
+export const componentModalShadow = "0 18px 50px 0 rgba(0, 0, 0, 0.26)"; // ModalSheet elevation. Aliases shadow.surface.panel — value unchanged (0 18px 50px 0 rgba(0, 0, 0, 0.26)).
+export const componentModalOverlay = "rgba(0, 0, 0, 0.78)"; // Modal backdrop overlay. Aliases color.overlay.default — value unchanged (rgba(0, 0, 0, 0.78)).
+export const componentBadgeBackground = "rgba(0, 0, 0, 0.22)"; // Badge background. Aliases color.surface.badge — value unchanged (rgba(0, 0, 0, 0.22)).
+export const componentBadgeBorder = "rgba(255, 255, 255, 0.1)"; // Badge base border. Aliases color.border.control — value unchanged (rgba(255, 255, 255, 0.10)). Tone-specific border overrides (accent/info/secondary/warning/danger) are out of scope for this migration.
+export const componentBadgeRadius = "999px"; // Badge corner radius. Aliases radius.pill — value unchanged (999px).
+export const componentBadgeColor = "#f5f7fb"; // Badge text color. Aliases color.text.primary — value unchanged (#f5f7fb).
+export const componentInputBackground = "rgba(0, 0, 0, 0.28)"; // Shared form control (TextInput, SelectInput, TextArea) background. Aliases color.surface.input — value unchanged (rgba(0, 0, 0, 0.28)).
+export const componentInputBorder = "rgba(255, 255, 255, 0.1)"; // Shared form control border. Aliases color.border.control — value unchanged (rgba(255, 255, 255, 0.10)).
+export const componentInputRadius = "14px"; // Shared form control corner radius. Aliases radius.input — value unchanged (14px).
+export const componentInputColor = "#f5f7fb"; // Shared form control text color. Aliases color.text.primary — value unchanged (#f5f7fb).
+export const componentButtonRadius = "999px"; // Button corner radius. Aliases radius.pill — value unchanged (999px).
+export const componentButtonColor = "#f5f7fb"; // Button base text color. Aliases color.text.primary — value unchanged (#f5f7fb). Base border and background have no Semantic token yet (tracked in TOKEN_DEBT.md) and are intentionally not aliased here — left unchanged in button.css.
+export const componentIconButtonRadius = "999px"; // IconButton corner radius. Aliases radius.pill — value unchanged (999px).
+export const componentIconButtonColor = "#f5f7fb"; // IconButton base text/icon color. Aliases color.text.primary — value unchanged (#f5f7fb). Base border and background have no Semantic token yet (tracked in TOKEN_DEBT.md) and are intentionally not aliased here — left unchanged in icon-button.css.
 export const iconSm = "16px"; // Small icon; maps to Icon size='small' in the Icon component
 export const iconMd = "18px"; // Default icon size; maps to Icon size='default'. Used in most UI contexts
 export const iconLg = "20px"; // Large icon; maps to Icon size='large'. Used in primary action buttons and selected states

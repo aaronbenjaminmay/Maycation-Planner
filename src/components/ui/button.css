@@ -16,8 +16,8 @@
   min-height: 44px;
   padding: 0 var(--spacing-md);
   border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: var(--radius-full);
-  color: var(--color-text-primary);
+  border-radius: var(--component-button-radius);
+  color: var(--component-button-color);
   background: rgba(28, 28, 30, 0.84);
   font: inherit;
   font-size: 14px;
