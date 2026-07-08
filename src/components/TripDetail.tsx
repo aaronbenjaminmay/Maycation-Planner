@@ -14,6 +14,7 @@ import {
   type TripMemberRole,
 } from '../lib/trips'
 import { loadTripStays, type TripStay } from '../lib/stays'
+import { loadTripReservations, type TripReservation } from '../lib/reservations'
 import { type IconName } from './ui/Icon'
 import { loadTripAccess } from '../lib/tripMembers'
 import {
@@ -149,6 +150,7 @@ export function TripDetail({ trip, onBack, onTripDeleted, onTripUpdated }: TripD
   const [tripDays, setTripDays] = useState<TripDay[]>([])
   const [plannerItems, setPlannerItems] = useState<PlannerItem[]>([])
   const [tripStays, setTripStays] = useState<TripStay[]>([])
+  const [tripReservations, setTripReservations] = useState<TripReservation[]>([])
   const [isLoadingDays, setIsLoadingDays] = useState(true)
   const [activeDayId, setActiveDayId] = useState<string | null>(null)
   const [isSettingsOpen, setIsSettingsOpen] = useState(false)
@@ -165,15 +167,17 @@ export function TripDetail({ trip, onBack, onTripDeleted, onTripUpdated }: TripD
     setError('')
 
     try {
-      const [days, items, stays] = await Promise.all([
+      const [days, items, stays, reservations] = await Promise.all([
         loadTripDays(trip.id),
         loadPlannerItems(trip.id),
         loadTripStays(trip.id),
+        loadTripReservations(trip.id),
       ])
       const role = await loadTripAccess(trip.id)
       setTripDays(days)
       setPlannerItems(items)
       setTripStays(stays)
+      setTripReservations(reservations)
       setCurrentRole(role)
     } catch (loadError) {
       setError(
@@ -253,17 +257,13 @@ export function TripDetail({ trip, onBack, onTripDeleted, onTripUpdated }: TripD
   const nextTodayItem =
     sortItemsByPlanOrder(todayItems).find((item) => !isPlannerItemCompleted(item)) ??
     null
-  const reservationItems = sortItemsByPlanOrder(
-    plannerItems.filter((item) => item.kind === 'reservation'),
-  )
-  const nextReservation =
-    reservationItems.find((item) => {
-      if (!item.starts_at) {
-        return false
-      }
-
-      return new Date(item.starts_at) >= getTodayStart()
-    }) ?? reservationItems[0] ?? null
+  // Sourced from trip_reservations facts, not planner_items — Stay-derived
+  // check-in/check-out planner items (kind='reservation') are not reservation
+  // facts and must not be counted or previewed here.
+  const nextTripReservation =
+    tripReservations.find((reservation) => reservation.reservation_date >= todayKey) ??
+    tripReservations[0] ??
+    null
   const tripDayCount =
     tripDays.length > 0 ? tripDays.length : getTripDayCount(trip.starts_on, trip.ends_on)
   const remaining = useLiveCountdown(trip.starts_on)
@@ -290,8 +290,11 @@ export function TripDetail({ trip, onBack, onTripDeleted, onTripUpdated }: TripD
     return (
       <TripReservations
         backgroundUrl={backgroundUrl}
+        canEditReservations={canEditPlannerItems}
         onBack={() => setShowReservations(false)}
+        onReservationsChanged={loadDays}
         plannerItems={plannerItems}
+        reservations={tripReservations}
         trip={trip}
         tripDays={tripDays}
       />
@@ -459,7 +462,7 @@ export function TripDetail({ trip, onBack, onTripDeleted, onTripUpdated }: TripD
                   </div>
                   <div>
                     <dt>Reservations</dt>
-                    <dd>{reservationItems.length || '-'}</dd>
+                    <dd>{tripReservations.length || '-'}</dd>
                   </div>
                 </dl>
               </>
@@ -494,11 +497,12 @@ export function TripDetail({ trip, onBack, onTripDeleted, onTripUpdated }: TripD
             })}
 
             <DayTile
-              completedCount={reservationItems.filter(isPlannerItemCompleted).length}
+              completedCount={0}
               dayNumber={tripDays.length + 1}
-              itemCount={reservationItems.length}
+              iconName="ticket"
+              itemCount={tripReservations.length}
               onOpen={() => setShowReservations(true)}
-              subtitle={nextReservation?.title ?? undefined}
+              subtitle={nextTripReservation?.name ?? undefined}
               title="Reservations"
             />
 
