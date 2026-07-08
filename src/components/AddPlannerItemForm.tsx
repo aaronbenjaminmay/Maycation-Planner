@@ -53,6 +53,7 @@ export type PlannerItemFormValues = {
   origin: PlaceValue | null
   destination: PlaceValue | null
   reservationPlace: PlaceValue | null
+  travelDurationMinutes: number | null
 }
 
 const kindLabels: Record<PlannerItemKind, string> = {
@@ -135,6 +136,15 @@ export function AddPlannerItemForm({
   const [isDeriving, setIsDeriving] = useState(false)
   const [derivationError, setDerivationError] = useState<string | null>(null)
 
+  // The duration this item was saved with, if any. Held separately from
+  // `durationMinutes` (which the live-recalculation effect below owns and
+  // resets to null while recalculating) so that submitting before a fresh
+  // recalculation resolves falls back to the previously saved duration
+  // instead of clearing the arrival time.
+  const [savedDurationMinutes] = useState<number | null>(
+    initialValues?.travelDurationMinutes ?? null,
+  )
+
   const [validationMessage, setValidationMessage] = useState('')
 
   // Extract coordinate primitives so the effect deps use value equality, not reference equality.
@@ -205,9 +215,14 @@ export function AddPlannerItemForm({
     }
 
     if (kind === 'travel') {
+      // Fall back to the previously saved duration when a live recalculation
+      // hasn't produced a fresh value yet (still in flight, failed, or the
+      // current places lack coordinates) — never send a duration of null
+      // when a good one was already saved.
+      const effectiveDurationMinutes = durationMinutes ?? savedDurationMinutes
       const endTimeMinutes =
-        durationMinutes !== null && startTime
-          ? computeArrivalMinutes(startTime, durationMinutes)
+        effectiveDurationMinutes !== null && startTime
+          ? computeArrivalMinutes(startTime, effectiveDurationMinutes)
           : null
 
       await onSubmit({

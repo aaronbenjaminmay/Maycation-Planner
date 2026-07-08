@@ -347,8 +347,18 @@ export function DayDetail({
                       </p>
                     ) : null}
                     <strong>{item.title}</strong>
-                    {item.location_name ? (
+                    {item.kind === 'travel' && getTravelOriginName(item) ? (
+                      <p className="muted">From {getTravelOriginName(item)}</p>
+                    ) : null}
+                    {item.kind === 'travel' ? (
+                      item.location_name ? (
+                        <p className="muted">To {item.location_name}</p>
+                      ) : null
+                    ) : item.location_name ? (
                       <p className="muted">{item.location_name}</p>
+                    ) : null}
+                    {item.kind === 'travel' && formatTravelDuration(item) ? (
+                      <p className="muted">{formatTravelDuration(item)}</p>
                     ) : null}
                     {item.kind === 'reservation' && item.location_address ? (
                       <p className="muted">{item.location_address}</p>
@@ -414,6 +424,30 @@ function isPlannerItemCompleted(item: PlannerItem) {
   return item.metadata.completed === true
 }
 
+function getTravelOriginName(item: PlannerItem): string | null {
+  return typeof item.metadata.start_place_name === 'string'
+    ? item.metadata.start_place_name
+    : null
+}
+
+function getTravelDurationMinutes(item: PlannerItem): number | null {
+  if (!item.starts_at || !item.ends_at) return null
+  const minutes = Math.round(
+    (new Date(item.ends_at).getTime() - new Date(item.starts_at).getTime()) / 60000,
+  )
+  return minutes > 0 ? minutes : null
+}
+
+function formatTravelDuration(item: PlannerItem): string | null {
+  const minutes = getTravelDurationMinutes(item)
+  if (minutes === null) return null
+  const hrs = Math.floor(minutes / 60)
+  const mins = minutes % 60
+  const duration =
+    hrs === 0 ? `${mins} min` : mins === 0 ? `${hrs} hr` : `${hrs} hr ${mins} min`
+  return `≈ ${duration} drive`
+}
+
 function getPlannerItemFormValues(item: PlannerItem): PlannerItemFormValues {
   let origin: PlaceValue | null = null
   let destination: PlaceValue | null = null
@@ -469,5 +503,7 @@ function getPlannerItemFormValues(item: PlannerItem): PlannerItemFormValues {
     origin,
     destination,
     reservationPlace,
+    travelDurationMinutes:
+      item.kind === 'travel' ? getTravelDurationMinutes(item) : null,
   }
 }
