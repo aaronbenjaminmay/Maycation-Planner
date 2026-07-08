@@ -1,6 +1,6 @@
 # Maycation — Product Roadmap
 
-**Product: v2.6.0 — Travel Intelligence (complete) | Design System: ds/v1.30.1 — Component Token Layer**
+**Product: v2.7.0 — Reservation Intelligence (complete) | Design System: ds/v1.30.1 — Component Token Layer**
 
 This roadmap is organized by product maturity, not by version or release schedule.
 
@@ -31,10 +31,13 @@ Title auto-fill from place selection, conditional address field (hidden when coo
 **Search Platform Upgrade** — Complete (v2.4.0)
 `search-places` Edge Function dispatches between Mapbox Geocoding v5 and Mapbox Search Box v1 via `PLACE_SEARCH_PROVIDER` secret. Search Box v1 `/forward` is the active production provider. Geocoding v5 is the fallback. No schema changes, no client API changes.
 
+**Reservation Intelligence** — Complete (v2.7.0)
+Reservations are now first-class trip facts (`trip_reservations`), not inferred from planner items. A family enters a Dining or Activity reservation once; Maycation automatically derives exactly one itinerary item, with no confirmation step. The Reservations screen and its dashboard tile now read reservation facts directly — Stay-derived check-in/check-out items, which previously leaked onto the Reservations screen with no way to distinguish them from real reservations, no longer appear there at all, structurally rather than by filtering. Editing a reservation whose itinerary item is still Maycation-managed keeps that item in sync automatically; editing the item directly (a manual customization) protects it from being overwritten on the next fact edit. Deleting a reservation prompts whether to also remove its itinerary item, or keep it as a standalone historical item. This is the first complete implementation of the Derivation Engine's full lifecycle — see `docs/architecture/DERIVATION_ENGINE.md`. Manual entry only; email import remains a distinct future phase (below).
+
 ### Active Opportunity Areas
 
-**Reservation Intelligence — Phase B+**
-Families receive booking confirmations by email. The information in those emails — confirmation numbers, check-in times, addresses, cancellation policies — is exactly what Maycation needs. Bringing that information in should be as low-friction as possible. This requires a `trip_reservations` table (trip-scoped fact), email import, and Derivation Engine integration to offer planner items. Phase A (Place Intelligence for reservation planner items) is complete. Phase B+ is the full reservation platform.
+**Reservation Intelligence — Email Import**
+Families receive booking confirmations by email. The information in those emails — confirmation numbers, check-in times, addresses, cancellation policies — is exactly what the now-shipped `trip_reservations` fact model needs. Bringing that information in automatically, rather than requiring manual entry, is the remaining piece of the original Reservation Intelligence opportunity. Not started.
 
 **Place Intelligence — Proximity Bias**
 Without a trip location context, generic venue name queries (e.g. "Be Our Guest") may rank distant businesses above the intended location. Passing trip coordinates to the `search-places` function as proximity bias would weight results toward the trip area. No schema changes required — this is a parameter addition to the Edge Function.

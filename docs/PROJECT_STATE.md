@@ -1,6 +1,6 @@
 # Maycation Project State
 
-> Canonical onboarding document for new Claude sessions. Reflects repository state as of Design System ds/v1.30.1 / Product v2.6.0 (July 2026). Verify against the repository before acting on specific details — this document may lag behind recent commits.
+> Canonical onboarding document for new Claude sessions. Reflects repository state as of Design System ds/v1.30.1 / Product v2.7.0 (July 2026). Verify against the repository before acting on specific details — this document may lag behind recent commits.
 
 ---
 
@@ -22,10 +22,10 @@ When documentation sources conflict, this order determines which is authoritativ
 
 | Field | Value |
 |---|---|
-| Product version | v2.6.0 |
+| Product version | v2.7.0 |
 | Design System version | ds/v1.30.1 — Component Token Layer |
-| Current milestone | v2.6.0 — Travel Intelligence (complete) |
-| Previous milestone | v2.5.0 — Design System Convergence (complete); v2.4.0 — Reservation Place Intelligence (complete) |
+| Current milestone | v2.7.0 — Reservation Intelligence (complete) |
+| Previous milestone | v2.6.0 — Travel Intelligence (complete); v2.5.0 — Design System Convergence (complete) |
 | Verification date | 2026-07-08 |
 
 ---
@@ -91,6 +91,7 @@ Each "screen" is a full component swap — no `<Route>` or URL change.
 |---|---|
 | `trips.ts` | Trip, TripDay, PlannerItem, types |
 | `stays.ts` | TripStay, CRUD, `formatStayDateRange`, `getActiveStayForDay` |
+| `reservations.ts` | TripReservation, TripReservationType, CRUD, `syncReservationDerivedItem` |
 | `places.ts` | PlaceSuggestion, PlaceValue, PlaceInputQuickPick, `searchPlaces`, `getTravelDurationMinutes` |
 | `tripMembers.ts` | Role loading, invite flow |
 | `auth.ts` | Sign-in, sign-up, sign-out |
@@ -98,7 +99,7 @@ Each "screen" is a full component swap — no `<Route>` or URL change.
 
 ### Supabase
 
-27 migrations (`001_initial_schema.sql` → `027_trip_stays.sql`). Three Edge Functions:
+29 migrations (`001_initial_schema.sql` → `029_reservation_intelligence_hardening.sql`). Three Edge Functions:
 - `search-places` — Mapbox place search proxy; supports Geocoding v5 and Search Box v1 via `PLACE_SEARCH_PROVIDER` dispatch
 - `get-travel-duration` — Mapbox directions proxy
 - `send-invite-email` — trip invitation emails
@@ -112,8 +113,11 @@ Trip            // id, name, starts_on, ends_on, destination, background_path, h
 TripDay         // id, trip_id, date (YYYY-MM-DD), day_type, label, sort_order
 PlannerItem     // id, trip_day_id, kind, title, starts_at, ends_at, metadata (JSONB)
 TripStay        // id, trip_id, place_name, check_in_date, check_out_date, place_lat, place_lng, ...
+TripReservation // id, trip_id, reservation_type, name, place_name, place_address, place_lat, place_lng, reservation_date, reservation_time, confirmation_code, external_url, notes
 PlaceValue      // name, address, coordinates?: { lat, lng }
 ```
+
+`TripReservationType`: `'dining' | 'activity'` — a dedicated enum, distinct from the `ReservationType` used by manually-created reservation-*kind* planner items (`'activity' | 'food' | 'lodging' | 'transportation'`). The two are unrelated vocabularies; see the Reservation Intelligence section below for the mapping between them.
 
 `TripDayType`: `'activity' | 'travel' | 'relax' | 'explore' | 'special'`
 `PlannerItemKind`: `'activity' | 'reservation' | 'travel' | 'note'` (inferred from file)
@@ -163,16 +167,34 @@ Overlap validation is enforced in the `create_trip_stay` and `update_trip_stay` 
 
 `getActiveStayForDay(stays, dayDate)` computes the active stay for a calendar date using string comparison (ISO date strings sort correctly).
 
+### Reservation Intelligence (v2.7.0)
+
+`trip_reservations` stores Dining and Activity reservation facts — a trip-scoped fact table, independent of `trip_stays` and `planner_items`, deliberately not generalized into a shared `trip_facts` abstraction. Lodging and transportation remain out of scope (Stay Intelligence's and a future Transportation Intelligence's domains respectively).
+
+Saving a reservation automatically derives exactly one planner item (`kind = 'reservation'`) via a nested call to `create_planner_item` inside `create_trip_reservation` — no confirmation dialog, unlike Stay Intelligence's derivation offer. `trip_reservation_type` maps to the existing `planner_items.reservation_type` enum as `dining → food`, `activity → activity`.
+
+The Reservations screen and its dashboard tile query `trip_reservations` directly — not `planner_items` filtered by kind. This was the highest-priority behavioral change in this milestone: the old `planner_items`-filtered approach had no exclusion for Stay-derived lodging items, so check-in/check-out reminders leaked onto the Reservations screen. Sourcing from the fact table makes this impossible by construction.
+
+Editing a reservation whose derived item is still `managed_by_maycation: true` automatically re-syncs that item (`sync_reservation_derived_item`) — again with no confirmation. Editing the derived item directly flips `managed_by_maycation` to `false` (in `update_planner_item`, scoped specifically to items carrying `metadata.derived_from_reservation`), after which fact edits no longer touch it. Deleting a reservation prompts whether to also remove its derived item; the fact-only delete does not cascade at the RPC level.
+
+This is the **first complete implementation** of the Derivation Engine's full 8-step lifecycle — see the correction below and `docs/architecture/DERIVATION_ENGINE.md`.
+
 ### Derivation Engine
 
-A general pattern for durable trip facts that generate optional planner items. Stay Intelligence is the first implementation.
+A general pattern for durable trip facts that generate optional planner items.
 
-Core rules:
+**Stay Intelligence implements only the foundational portion**: fact CRUD, a post-save derivation offer, and the initial soft reference (`metadata.derived_from_stay`, `managed_by_maycation: true`). It does not implement managed-state tracking on edit, synchronization, or delete branching — `STAY_INTELLIGENCE_ARCHITECTURE.md` previously documented a `sync_derived_stay_items` RPC and a client-side delete prompt as though they existed; neither was ever built, and that document has been corrected.
+
+**Reservation Intelligence (v2.7.0) is the first complete implementation** of the full pattern — automatic derivation, managed synchronization, customization detection, synchronization opt-out (achieved simply by editing the derived item directly), and delete branching, all verified against live data.
+
+Core rules, as actually implemented today:
 - Derived items carry `metadata.derived_from_{fact}` (soft reference, no FK) and `managed_by_maycation: true`
-- `managed_by_maycation` becomes `false` when the user edits the item — it is then user-owned and not auto-synced
-- No auto-sync on fact update; instead, a one-time sync offer is surfaced
-- No cascade delete; deletion prompt handled in client before calling the delete RPC
+- `managed_by_maycation` becomes `false` when the user edits the item directly — but only for reservation-derived items; Stay-derived items never flip
+- Reservation facts sync their still-managed derived item automatically on edit, with no offer; Stay facts have no sync mechanism at all
+- Reservation deletion prompts whether to also remove the derived item; Stay deletion does not prompt and never has
 - Source fact and derived items have independent lifecycles
+
+See `docs/architecture/DERIVATION_ENGINE.md` for the full architecture-vs-implementation breakdown.
 
 ---
 
@@ -294,6 +316,12 @@ A component counts as converged only when it renders correctly in Storybook **wi
 | Stay Intelligence | Phase 3 (Day Detail ambient context display) | Not started |
 | Stay Intelligence | Phase 4 (PlaceInput quick-picks integration) | Complete |
 | Stay Intelligence | Phase 5 (Trip Dashboard accommodation timeline) | Not started |
+| Stay Intelligence | Derivation lifecycle completion (managed-flag flip, sync RPC, delete-branching) | Not started |
+| Reservation Intelligence | Slice 1 — Foundation (`trip_reservations` table, RPCs, types) | Complete (v2.7.0) |
+| Reservation Intelligence | Slice 2 — Creation (form, save flow, automatic derivation) | Complete (v2.7.0) |
+| Reservation Intelligence | Slice 3 — Reservations screen and dashboard tile read facts directly | Complete (v2.7.0) |
+| Reservation Intelligence | Slice 4 — Edit sync, customization protection, delete branching | Complete (v2.7.0) |
+| Reservation Intelligence | Email import | Not started |
 
 ---
 
@@ -305,7 +333,7 @@ A component counts as converged only when it renders correctly in Storybook **wi
 
 | Stream | Current | Next milestone |
 |---|---|---|
-| Product | **v2.6.0** | Not yet determined |
+| Product | **v2.7.0** | Not yet determined |
 | Design System | **ds/v1.30.1 — Component Token Layer** | Not yet determined |
 
 ### v2.4.0 — Reservation Place Intelligence (complete)
@@ -318,11 +346,23 @@ Objective: audit every screen, component composition, modal, card, empty state, 
 
 **Status:** Complete and released (July 2026). JSX ownership is converged. All three System Health phases are complete: CSS co-location (Phase 1, v1.29.0), Component Token Layer (Phase 2, ds/v1.30.1), and Code Connect completion (Phase 3, ds/v1.30.0). The final Design System Convergence audit confirmed readiness and the milestone was tagged and released.
 
-### Current milestone: v2.6.0 — Travel Intelligence (complete)
+### v2.6.0 — Travel Intelligence (complete)
 
 Objective: complete the Travel Intelligence work already scoped in `PLACE_INTELLIGENCE_ARCHITECTURE.md` (Phase 4) and `TEMPORAL_INTELLIGENCE_ARCHITECTURE.md` (Phase C) — the smallest change that makes the drive duration Maycation already calculates at creation time actually visible on the itinerary, without introducing new data capture, new components, or Design System work.
 
 **Status:** Complete and released (July 2026). The Day Detail travel item card now shows origin, destination, and drive duration. Editing a travel item preserves a previously saved arrival time instead of clearing it when a live duration recalculation hasn't resolved yet. No Design System, schema, or RPC changes.
+
+### Current milestone: v2.7.0 — Reservation Intelligence (complete)
+
+Objective: make reservations first-class trip facts (`trip_reservations`), independent of `planner_items`, with automatic single-item derivation, a Reservations screen and dashboard tile sourced from facts rather than planner items, edit synchronization for managed items, customization protection, and a delete flow that asks before removing a derived item. Manual entry only — no email import, no generic `trip_facts` abstraction, no changes to Stay Intelligence or Travel Intelligence.
+
+**Status:** Complete and released (July 2026), implemented across four sequential, independently-verified slices:
+- **Slice 1 — Foundation:** `trip_reservations` table, `trip_reservation_type` enum (`dining`/`activity`, distinct from the existing `planner_items.reservation_type` enum), and CRUD RPCs (migration `028_trip_reservations.sql`).
+- **Slice 2 — Creation:** reservation form and save flow; `create_trip_reservation` derives exactly one planner item automatically, no confirmation dialog.
+- **Slice 3 — Reservation Intelligence:** Reservations screen and dashboard tile rewritten to query `trip_reservations` directly, eliminating the Stay-derived check-in/check-out items that previously leaked onto the Reservations screen.
+- **Slice 4 — Hardening:** edit flow (`update_trip_reservation` + automatic `sync_reservation_derived_item` for managed items), delete flow (client-orchestrated Keep/Remove branching), and the `managed_by_maycation` flag-flip in `update_planner_item` scoped to reservation-derived items (migration `029_reservation_intelligence_hardening.sql`).
+
+Verified via a combination of direct database-level testing (impersonated RPC calls against a disposable, fully-cleaned-up test reservation) and a full Playwright browser smoke test exercising every step of the lifecycle through actual UI clicks. See `docs/architecture/DERIVATION_ENGINE.md` for the architectural detail, including the discovery that Stay Intelligence — previously assumed to be a full Derivation Engine reference implementation — only implements the pattern's foundational steps.
 
 ### System Health phases (v2.5.0 execution order)
 
@@ -334,8 +374,8 @@ Objective: complete the Travel Intelligence work already scoped in `PLACE_INTELL
 
 - Travel Duration — Complete (v2.6.0: includes Day Detail card display of origin, destination, and duration)
 - Address / Place Intelligence — Complete (Search + quick picks + reservation context + Search Box platform)
-- Stay Intelligence — Complete (phases 1, 2, 4; phases 3 and 5 not started)
-- Reservation Intelligence — Phase A complete (Place Intelligence for reservations); Phase B+ (trip_reservations table, email import, full reservation platform) not started
+- Stay Intelligence — Complete (phases 1, 2, 4; phases 3 and 5 not started; derivation lifecycle completion not started)
+- Reservation Intelligence — Complete (v2.7.0: `trip_reservations` facts, automatic derivation, fact-sourced screen/dashboard, edit sync, customization protection, delete branching); email import not started
 - Weather — Not started
 - Navigation — Not started
 - Trip Timeline — Not started
@@ -400,8 +440,8 @@ maycation-planner/
 │   │   ├── DesignSystem.tsx          — Re-export barrel for all design system components
 │   │   ├── AddPlannerItemForm.tsx    — Add/edit planner items; Place + Temporal intelligence; preserves saved travel duration on edit (v2.6.0)
 │   │   ├── DayDetail.tsx             — Day itinerary view; planner-item-card host; travel cards show origin/destination/duration (v2.6.0)
-│   │   ├── TripDetail.tsx            — Trip dashboard; day grid, countdown, intel card
-│   │   ├── TripReservations.tsx      — Reservations list view
+│   │   ├── TripDetail.tsx            — Trip dashboard; day grid, countdown, intel card; loads trip_reservations (v2.7.0)
+│   │   ├── TripReservations.tsx      — Reservation facts: list, create, edit, delete; reads trip_reservations directly, not planner_items (v2.7.0)
 │   │   ├── TripStays.tsx             — Stay management; StayCard, Stay form, reminder offer
 │   │   ├── TripSettings.tsx          — Trip settings (name, dates, image, delete, invite)
 │   │   ├── TripsDashboard.tsx        — My Trips list
@@ -420,13 +460,14 @@ maycation-planner/
 │   ├── lib/
 │   │   ├── trips.ts                  — Trip/TripDay/PlannerItem types and data functions
 │   │   ├── stays.ts                  — TripStay types, CRUD, formatStayDateRange, getActiveStayForDay
+│   │   ├── reservations.ts           — TripReservation/TripReservationType types, CRUD, syncReservationDerivedItem (v2.7.0)
 │   │   ├── places.ts                 — PlaceValue, PlaceSuggestion, searchPlaces, getTravelDurationMinutes
 │   │   ├── tripMembers.ts            — Role loading, invite flow
 │   │   ├── auth.ts                   — Auth functions
 │   │   └── supabaseClient.ts         — Singleton client
 │   └── stories/                      — Storybook stories across Foundation, Components, Patterns, Docs groups
 ├── supabase/
-│   ├── migrations/                   — 27 migrations (001_initial_schema → 027_trip_stays)
+│   ├── migrations/                   — 29 migrations (001_initial_schema → 029_reservation_intelligence_hardening)
 │   └── functions/
 │       ├── search-places/            — Mapbox geocoding proxy
 │       ├── get-travel-duration/      — Mapbox directions proxy
@@ -473,8 +514,13 @@ maycation-planner/
 - **Stay Phase 5**: Trip Dashboard accommodation timeline
 - **Place Intelligence — Proximity bias**: Pass origin coordinates to `search-places` to weight results toward trip location. Would fix "Be Our Guest" returning an Ohio business instead of the Magic Kingdom restaurant for context-free queries.
 - **Place Intelligence — Travel Quick Picks**: Surface previously-used destinations and upcoming reservation locations as quick picks in the Travel form destination field.
-- **Reservation Intelligence Phase B+**: `trip_reservations` table, email confirmation import, full reservation platform (Derivation Engine source fact for reservations)
+- **Reservation Intelligence — email import**: `trip_reservations` (built, v2.7.0) currently supports manual entry only. Importing confirmation details from email remains unimplemented.
+- **Stay Intelligence — derivation lifecycle completion**: managed-state flip on edit, a sync RPC, and a delete-branching prompt all remain unimplemented for stays, despite `STAY_INTELLIGENCE_ARCHITECTURE.md` previously documenting some of this as though it existed (corrected in v2.7.1). Reservation Intelligence's implementation is the reference pattern to follow if this is picked up.
 - **Saved Places**: Home, Airport, Hotel, recent selections surfaced as PlaceInput quick picks
+
+### Migration history bookkeeping drift (discovered during v2.7.0, unresolved)
+
+The Supabase CLI's migration bookkeeping table does not accurately reflect which migrations were applied and when: migrations `023`, `024`, and `028` have no bookkeeping row at all, and `025`–`027` are recorded under mismatched, timestamp-style version identifiers rather than their local numeric filenames. This was investigated in full during v2.7.0 Slice 1–3 and confirmed to be **bookkeeping-only** — the live schema is complete and correct through migration `029`; no schema objects are missing. Per explicit instruction during that work, migration history was not repaired. `supabase migration list` will continue to report false drift for these versions until it is.
 
 ### Known defects
 
@@ -486,11 +532,11 @@ maycation-planner/
 
 | Artifact | Version |
 |---|---|
-| Product | **v2.6.0 — Travel Intelligence** |
+| Product | **v2.7.0 — Reservation Intelligence** |
 | Next product milestone | Not yet determined |
 | Design System | **ds/v1.30.1 — Component Token Layer** |
 | npm package | 0.0.0 (not published) |
-| Supabase migrations | 27 (latest: `027_trip_stays.sql`) |
+| Supabase migrations | 29 (latest: `029_reservation_intelligence_hardening.sql`) |
 | Edge Function: search-places | v8 (Search Box v1 /forward + Geocoding v5 dispatch) |
 | T1 Components | 19 (all code-complete, 17/19 Code Connect wired) |
 | T2 Patterns | 3 (all code-complete, 3/3 Code Connect wired) |

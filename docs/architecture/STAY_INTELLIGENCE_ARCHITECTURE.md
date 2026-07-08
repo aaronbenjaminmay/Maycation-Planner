@@ -111,9 +111,9 @@ When the user edits the item, `managed_by_maycation` becomes `false`. See `DERIV
 
 ### When the offer is surfaced
 
-Immediately after the stay is saved (create or update), while the user is still in context. A single dismissible prompt: "Create check-in and check-out reminders?" with Accept and Skip.
+Immediately after the stay is created, while the user is still in context. A single dismissible prompt: "Create check-in and check-out reminders?" with Accept and Skip.
 
-The offer is not re-surfaced on subsequent updates if derived items already exist. The sync offer handles updates instead.
+The offer is not re-surfaced on subsequent updates. **No sync mechanism exists to handle updates instead** — see the correction note under `sync_derived_stay_items` below. Editing a stay after its reminders have been created does not update those reminders in any way.
 
 ---
 
@@ -155,11 +155,13 @@ Updates an existing stay row. Re-validates overlap excluding the current row. Re
 
 Soft-deletes the stay (`deleted_at = now()`). Does not cascade to planner items. Returns the stay UUID.
 
-The deletion prompt ("also remove reminders?") is handled in the client before calling this RPC. If the user confirms removal, `delete_planner_item` is called for each derived item before `delete_trip_stay` is called.
+**Correction (documented 2026-07, v2.7.1):** this section previously stated that a client-side deletion prompt ("also remove reminders?") existed, calling `delete_planner_item` for each derived item before `delete_trip_stay`. That was never implemented. `TripStays.tsx`'s delete handler calls `deleteTripStay` directly with no query for derived items and no prompt — deleting a stay silently leaves its check-in/check-out reminders in place as orphaned standalone items, with no user-facing acknowledgment that this happened. Reservation Intelligence (`DERIVATION_ENGINE.md`) implements the delete-branching pattern this section originally described; the same approach could be ported to Stay Intelligence but has not been.
 
-### `sync_derived_stay_items(trip_id, stay_id)`
+### `sync_derived_stay_items(trip_id, stay_id)` — not implemented
 
-Updates derived check-in and check-out items where `managed_by_maycation = true`. Updates only fields sourced from the stay: title components, times, location, confirmation code. Does not alter `managed_by_maycation`. Does not touch user-authored fields (`description`, `sort_order`, `metadata.completed`).
+**Correction (documented 2026-07, v2.7.1):** this RPC was documented here as though it existed. It does not exist in any migration and has never been implemented. Editing a stay after its check-in/check-out reminders have been created does not update those reminders — there is no sync mechanism of any kind for Stay Intelligence. The description below is retained as a record of the original design intent, not as documentation of current behavior.
+
+*Original design intent (not implemented):* update derived check-in and check-out items where `managed_by_maycation = true`, touching only fields sourced from the stay (title components, times, location, confirmation code), without altering `managed_by_maycation` or user-authored fields (`description`, `sort_order`, `metadata.completed`). Reservation Intelligence's `sync_reservation_derived_item` (see `DERIVATION_ENGINE.md`) implements exactly this shape for reservations; the same RPC could be built for stays following that precedent.
 
 ---
 
@@ -211,7 +213,7 @@ See [`PLACE_INTELLIGENCE_ARCHITECTURE.md`](./PLACE_INTELLIGENCE_ARCHITECTURE.md)
 
 **Not a reservation system.** `trip_stays` stores what the family tells Maycation, not a booking made through Maycation. There is no payment, availability, or booking confirmation integration.
 
-**Not Reservation Intelligence.** A future `trip_reservations` table will handle flight bookings, dining reservations, and activity tickets. Stay Intelligence is specifically about lodging — where the family sleeps.
+**Not Reservation Intelligence.** `trip_reservations` (v2.7.0) handles dining and activity bookings — see `DERIVATION_ENGINE.md`. Stay Intelligence is specifically about lodging — where the family sleeps — and the two systems remain deliberately separate, not merged into a shared fact table.
 
 **Not a place entity.** `trip_stays.place_name` is a string, not a foreign key to a place database. The `place_lat` and `place_lng` coordinates are for internal use (travel time estimation, quick-picks) — not a full geocoded place record.
 
@@ -228,3 +230,4 @@ See [`PLACE_INTELLIGENCE_ARCHITECTURE.md`](./PLACE_INTELLIGENCE_ARCHITECTURE.md)
 | Phase 3 | Day Detail ambient context display | Not started |
 | Phase 4 | Place Intelligence integration (PlaceInput quick-picks) | Complete |
 | Phase 5 | Trip Dashboard accommodation timeline | Not started |
+| Derivation lifecycle completion (managed-state flip on edit, sync RPC, delete-branching prompt) | Not started — see corrections above and `DERIVATION_ENGINE.md` | Not started |

@@ -142,7 +142,9 @@ Same-day items are unchanged:
 9:00 AM - 10:30 AM
 ```
 
-This helper is used by Day Detail cards and the Trip Reservations view.
+This helper is used by Day Detail cards.
+
+**Correction (v2.7.1):** this section previously stated the helper was also used by the Trip Reservations view. As of v2.7.0, the Reservations screen renders `trip_reservations` facts directly rather than `planner_items`, and formats its own date/time display (`formatTripDayDate` + a local time formatter) rather than calling `formatPlannerItemTimeRange`. The "Next day" label described below does not apply to the Reservations screen — a reservation fact has a single date and optional time, not a `starts_at`/`ends_at` pair that can cross midnight.
 
 **Limitation:** The comparison uses the browser's local timezone, not the trip's stored `timezone` field. A trip in a timezone that differs significantly from the browser's could produce an incorrect "Next day" label in edge cases. Full timezone-aware comparison is deferred.
 

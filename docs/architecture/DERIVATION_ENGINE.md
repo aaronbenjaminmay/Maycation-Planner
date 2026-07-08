@@ -142,7 +142,7 @@ Each derived item stores a source reference in `metadata` using the key `derived
 
 Examples:
 - `metadata.derived_from_stay` — references a `trip_stays` row
-- `metadata.derived_from_reservation` — references a future `trip_reservations` row
+- `metadata.derived_from_reservation` — references a `trip_reservations` row (v2.7.0)
 - `metadata.derived_from_transportation` — references a future `trip_transportation` row
 
 All source references are strings (UUIDs). They are not enforced by foreign key constraints.
@@ -265,31 +265,73 @@ A cascade would delete items that may represent real history — a completed "Ch
 
 ---
 
-## Stay Intelligence: The First Implementation
+## Architecture vs. Current Implementation
 
-Stay Intelligence is the first feature to implement the Derivation Engine pattern.
+The sections above describe the Derivation Engine as an architectural pattern — the intended shape of the relationship between trip-scoped facts and the planner items they can produce. That pattern was fully specified before any system implemented all eight steps end to end.
 
-**Source fact:** A row in `trip_stays`.
+This section documents which systems implement which parts of the pattern, as actually shipped. Where the two disagree, the implementation notes below are authoritative for "what exists today" — the numbered steps above remain the reference design.
 
-**Fact fields that drive derivation:**
-- `place_name`, `place_address` — location for derived items
-- `check_in_date`, `check_in_time` — day and time for the check-in item
-- `check_out_date`, `check_out_time` — day and time for the check-out item
-- `confirmation_code` — carried into both items
+| Capability (pattern step) | Stay Intelligence | Reservation Intelligence |
+|---|---|---|
+| 1–2. Fact entry, identify derivable items | ✅ Implemented | ✅ Implemented |
+| 3. Offer to create (skippable prompt) | ✅ Implemented — post-save "Add reminders?" prompt | N/A by design — creation derives automatically, no offer (see note below) |
+| 4–5. Stored as real planner items with soft reference + `managed_by_maycation: true` | ✅ Implemented | ✅ Implemented |
+| 6. User edit releases the item (`managed_by_maycation` → `false`) | ❌ Not implemented — `update_planner_item` did not alter this flag for any derived item until migration `029`, and that change is scoped to reservation-derived items only (see below) | ✅ Implemented |
+| 7. Sync offer / system sync on fact update | ❌ Not implemented — no sync RPC exists for stays; editing a stay never touches its derived items | ✅ Implemented — automatic system sync via `sync_reservation_derived_item`, not an offer (see note below) |
+| 8. Deletion prompt ("also remove items?") | ❌ Not implemented — `delete_trip_stay` is called directly with no query for derived items and no prompt | ✅ Implemented — client queries for a derived item and prompts Keep/Remove before deleting the fact |
 
-**Items Maycation may offer to create:**
-- Check-in planner item (`kind = 'reservation'`, `reservation_type = 'lodging'`) on `check_in_date`
-- Check-out planner item (`kind = 'reservation'`, `reservation_type = 'lodging'`) on `check_out_date`
+**Stay Intelligence implements only the foundational portion of the pattern** — fact CRUD, the derivation offer, and the initial soft reference. It does not implement managed-state tracking on edit, synchronization, or delete branching. `STAY_INTELLIGENCE_ARCHITECTURE.md` previously described a `sync_derived_stay_items` RPC and a client-side deletion prompt as though they existed; neither was ever built. That document has been corrected to reflect this.
 
-**Metadata on each derived item:**
+**Reservation Intelligence (v2.7.0) is the first complete implementation** of steps 4 through 8 — automatic derivation, managed synchronization, customization detection, synchronization opt-out, and delete branching, all working end to end and verified against live data. See the dedicated section below.
+
+**Travel Intelligence does not derive planner items from a trip-scoped fact** — there is no `trip_transportation` table and travel items are created directly, not derived. What Travel Intelligence does is *consume* another system's derived context: `AddPlannerItemForm` surfaces the active Stay (from Stay Intelligence's `getActiveStayForDay`) as a `PlaceInputQuickPick` for a travel item's origin. This is downstream integration with a derived fact, not a derivation source in its own right. Travel Intelligence is not a candidate for the "first complete implementation" distinction above.
+
+### Why Reservation Intelligence's create and sync steps are automatic, not offered
+
+Steps 3 and 7 as originally specified call for a skippable *offer* — a prompt the user can accept or decline. Reservation Intelligence deliberately implements both as automatic instead:
+
+- **Creation (step 3):** saving a reservation fact derives its planner item immediately, with no confirmation dialog — a lightweight success message ("Reservation added to your itinerary.") replaces the offer.
+- **Synchronization (step 7):** editing a reservation fact whose derived item is still managed updates that item immediately, with no confirmation dialog — a message states that the itinerary item was kept in sync.
+
+This was an explicit product decision, not an oversight: automatic derivation removes a step from a flow the family will repeat for every reservation, and the "offer" pattern's original purpose — giving the user a chance to decline before losing control of an item — is already served by step 6 (any subsequent edit releases the item from management, permanently). The customization-detection and opt-out mechanism (below) is what preserves user control; the offer step is not needed to also preserve it at creation and sync time.
+
+### Customization detection and synchronization opt-out
+
+Reservation Intelligence is the first system where step 6 actually functions. `update_planner_item` (migration `029_reservation_intelligence_hardening.sql`) sets `metadata.managed_by_maycation` to `false` whenever it edits an item that currently has `metadata.derived_from_reservation` set and is currently managed. This is the opt-out mechanism: a user does not choose to "stop syncing" through a setting — they opt out simply by editing the derived item directly, the same action they'd take to edit any other planner item.
+
+This flag-flip is scoped specifically to reservation-derived items (`metadata ? 'derived_from_reservation'`), not applied universally to every derived item. Applying it to Stay-derived items as well would be a defensible reading of the original pattern, but it was deliberately not done here — it would be a behavior change to a system this milestone was not scoped to modify.
+
+A separate RPC, `sync_reservation_derived_item`, performs the system-initiated sync described in step 7. It updates only fact-derived fields (title, day/time, location, confirmation code, external URL, mapped type, destination coordinates) and never touches `description`, `sort_order`, `status`, or `managed_by_maycation` itself. It is a no-op — returns `null`, writes nothing — when no derived item exists or the derived item is no longer managed. This mirrors the general Synchronization section above precisely; Reservation Intelligence did not deviate from that part of the pattern.
+
+### Deletion
+
+`delete_trip_reservation` itself does not cascade — deleting the fact never touches the derived item at the RPC level, exactly as step 8 specifies. The branching described in step 8 (query, prompt, conditionally delete the item first) is implemented entirely client-side in `TripReservations.tsx`, sequencing calls to the existing `delete_planner_item` RPC and `delete_trip_reservation`. This has been verified live: deleting a reservation and choosing "Keep item" leaves the derived item as a standalone itinerary item; choosing "Remove item" deletes both.
+
+---
+
+## Reservation Intelligence: First Complete Implementation
+
+**Source fact:** A row in `trip_reservations` (migration `028_trip_reservations.sql`).
+
+**Scope:** `dining` and `activity` reservation types only. Lodging remains exclusively Stay Intelligence's domain; transportation remains a distinct, unimplemented future source fact. `trip_reservations` uses its own dedicated enum (`trip_reservation_type`), separate from the `reservation_type` enum used by `planner_items` and manually-created reservation-kind items.
+
+**Fact fields that drive derivation:** `name`, `reservation_type`, `reservation_date`, `reservation_time`, `place_name`, `place_address`, `place_lat`/`place_lng`, `confirmation_code`, `external_url`. `notes` is captured on the fact but is treated as user territory on the derived item after creation — see Synchronization above.
+
+**Item derived:** Exactly one planner item per reservation (`kind = 'reservation'`), unlike Stay's check-in/check-out pair. `trip_reservation_type` maps to the existing `planner_items.reservation_type` enum as `dining → food`, `activity → activity`.
+
+**Metadata on the derived item:**
 ```json
 {
-  "derived_from_stay": "<stay-uuid>",
-  "managed_by_maycation": true
+  "derived_from_reservation": "<trip_reservations.id>",
+  "managed_by_maycation": true,
+  "destination_place_lat": <number or null>,
+  "destination_place_lng": <number or null>
 }
 ```
 
-See `STAY_INTELLIGENCE_ARCHITECTURE.md` for full implementation detail.
+**Reservations screen and dashboard tile source `trip_reservations` directly, not `planner_items`.** This was the highest-priority behavioral change in the v2.7.0 milestone: previously, the Reservations screen queried `planner_items` filtered by `kind = 'reservation'`, which included Stay-derived check-in/check-out items (no `lodging` exclusion existed) — a real, user-reported source of confusion. Sourcing from the fact table directly makes that category of bug structurally impossible, not merely filtered out.
+
+See `create_trip_reservation`, `update_trip_reservation`, `delete_trip_reservation`, `get_trip_reservations`, and `sync_reservation_derived_item` in `supabase/migrations/028_trip_reservations.sql` and `029_reservation_intelligence_hardening.sql` for the full RPC contracts.
 
 ---
 
@@ -298,17 +340,11 @@ See `STAY_INTELLIGENCE_ARCHITECTURE.md` for full implementation detail.
 The pattern is designed for reuse. Each new source fact type adds its own:
 
 - `trip_*` table with its own RPCs
-- Derivation offer UI triggered after save
+- Derivation offer UI triggered after save (or automatic derivation, per product decision — see Reservation Intelligence above)
 - `derived_from_{fact}` metadata key name
 - Sync logic specific to its field mapping
 
 ### Anticipated future implementations
-
-**Reservation Intelligence**
-
-Source: `trip_reservations` (future table — flight, hotel, dining, activity bookings imported from email or entered manually)
-
-May offer: check-in reminder, activity reminder, dining reminder
 
 **Transportation Intelligence**
 
@@ -321,6 +357,14 @@ May offer: departure reminder, pickup reminder, airport arrival buffer item
 Source: computed from the current date relative to `trip_days`
 
 May offer: packing reminder before departure day, "you're traveling today" summary item
+
+**Reservation Intelligence — email import**
+
+Reservation Intelligence (above) covers manual entry only. Importing reservation details from confirmation emails remains a distinct, unimplemented future phase — see `docs/product/PRODUCT_ROADMAP.md`.
+
+**Stay Intelligence — completing the pattern**
+
+Stay Intelligence could adopt the same managed-state flip, sync RPC, and delete-branching that Reservation Intelligence now implements, following the same shape. Not scheduled; noted here so the gap is visible rather than rediscovered.
 
 None of these require changes to the core pattern or to `planner_items` schema. The pattern accommodates them as-is.
 

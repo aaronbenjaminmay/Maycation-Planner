@@ -50,7 +50,7 @@ Complete — Phase 1 Foundation
 
 ### Current Focus
 
-v2.6.0 — Travel Intelligence: complete. Travel planner items display origin, destination, and drive duration on Day Detail, and editing a travel item no longer loses a previously saved arrival time. v2.5.0 — Design System Convergence is also complete and released.
+v2.7.0 — Reservation Intelligence: complete. Reservations are now first-class trip facts (`trip_reservations`) that automatically derive a single itinerary item, with edit synchronization for managed items, customization protection once a derived item is edited directly, and a delete flow that asks whether to also remove the derived item. The Reservations screen and dashboard tile now read reservation facts directly instead of `planner_items`. v2.6.0 — Travel Intelligence and v2.5.0 — Design System Convergence are also complete and released.
 
 ## Design Philosophy
 
@@ -142,11 +142,22 @@ Complete (July 2026)
 * Editing a travel item no longer clears a previously saved arrival time while duration recalculates
 * No Design System, schema, or RPC changes — reuses existing Place Intelligence and Temporal Intelligence infrastructure
 
+### v2.7.0 — Reservation Intelligence
+
+Complete (July 2026)
+
+* `trip_reservations` — a new trip-scoped fact table for Dining and Activity reservations, independent of Stay Intelligence and `planner_items`
+* Saving a reservation automatically derives exactly one itinerary item, with no confirmation step
+* Reservations screen and dashboard tile now read reservation facts directly, not `planner_items` — Stay-derived check-in/check-out items no longer appear on the Reservations screen
+* Editing a reservation keeps its itinerary item in sync automatically while that item remains Maycation-managed; editing the item directly protects it from being overwritten by a later fact edit
+* Deleting a reservation prompts whether to also remove its itinerary item
+* First complete implementation of the Derivation Engine's full lifecycle (see `docs/architecture/DERIVATION_ENGINE.md`); manual entry only, email import remains a future phase
+
 ### Future
 
 * Light mode (token architecture already supports it)
 * Place Intelligence: proximity bias, Travel Quick Picks, Saved Places
-* Reservation Intelligence Phase B+ (trip_reservations table, email import)
+* Reservation Intelligence — email import
 * Additional collaboration features
 
 ## Storybook
@@ -222,4 +233,4 @@ npm run deploy
 
 Primary development occurs on feature branches and is merged into main.
 
-v2.5.0 — Design System Convergence and v2.6.0 — Travel Intelligence are both complete and released.
+v2.5.0 — Design System Convergence, v2.6.0 — Travel Intelligence, and v2.7.0 — Reservation Intelligence are all complete and released.

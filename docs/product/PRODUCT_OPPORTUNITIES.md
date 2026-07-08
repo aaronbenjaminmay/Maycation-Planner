@@ -129,7 +129,7 @@ Reservations that exist in email are organized in Maycation without significant 
 Reduce App Switching · Remove Steps · Plan Once
 
 **Status**
-Observed
+Observed. **Note (v2.7.0):** the foundational piece this opportunity depends on has shipped — reservations are now durable trip facts (`trip_reservations`) that automatically derive an itinerary item, instead of being entered directly as planner items with no persistent fact behind them. This did not address the friction described above; a family still transcribes confirmation details from email by hand. It removes what would otherwise be a second migration later — email import can now target an existing fact model instead of requiring one to be designed at the same time. See "Reservation Intelligence — Email Import" in `PRODUCT_ROADMAP.md`.
 
 ---
 

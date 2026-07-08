@@ -179,6 +179,12 @@ getTravelDurationMinutes(
 
 ---
 
+## Naming Note: Not the Same System as Reservation Intelligence
+
+"Reservation Place Intelligence" (this document, Phase A) and "Reservation Intelligence" (`DERIVATION_ENGINE.md`, v2.7.0) are two different systems that share the word "Reservation." This document describes `PlaceInput` usage inside the manually-created, `planner_items`-backed reservation-*kind* item form (`AddPlannerItemForm`) — unchanged by v2.7.0. Reservation Intelligence describes the separate `trip_reservations` fact table and its derivation lifecycle. Both exist simultaneously and are unrelated at the data layer: a `trip_reservations` fact's derived planner item happens to also be `kind = 'reservation'`, but it is created by `create_trip_reservation`, not by the form this document describes.
+
+---
+
 ## Travel Data Mapping
 
 When a travel planner item is saved, the Place Intelligence data maps to existing columns as follows:
