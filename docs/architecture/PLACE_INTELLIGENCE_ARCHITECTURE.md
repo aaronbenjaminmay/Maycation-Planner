@@ -196,6 +196,8 @@ When a travel planner item is saved, the Place Intelligence data maps to existin
 
 No new database columns are added for the MVP. All data fits in the existing schema.
 
+**Display (v2.6.0):** The Day Detail planner-item-card reads this same data back — origin from `metadata.start_place_name`, destination from `location_name` (unchanged from the generic card rendering, prefixed `To` for travel items), and duration computed client-side as `ends_at − starts_at` rather than stored separately. No new columns, no new RPC.
+
 ### Coordinate storage for edit/recalculation support
 
 Resolved place coordinates are persisted in `metadata` so that editing a saved Travel item can restore both origin and destination as resolved `PlaceValue`s with coordinates. Without this, both places would restore as manual entries (no coordinates), preventing recalculation until the user reselected both places from scratch.
@@ -361,7 +363,7 @@ The Edge Function reads the env var on each request. The change takes effect imm
 | Phase A | Reservation Place Intelligence — PlaceInput in reservation form, coordinate storage | Complete |
 | Phase A.1 | Reservation form UX — title auto-fill, conditional address field, manual fallback | Complete |
 | Search Box upgrade | Provider dispatch, PLACE_SEARCH_PROVIDER feature flag, Search Box v1 /forward | Complete |
-| Phase 4 | Travel item card display | Not started |
+| Phase 4 | Travel item card display (origin, destination, duration on Day Detail) | Complete (v2.6.0) |
 | Phase 5 | Figma component (PlaceInput Code Connect deferred pending this) | Not started |
 | Proximity bias | Pass trip coordinates to provider for context-aware ranking | Not started |
 | Travel Quick Picks | Destination quick picks in Travel form (recent + reservation places) | Not started |

@@ -79,7 +79,7 @@ Families see realistic day timelines without opening Maps for each leg.
 Reduce App Switching · Remove Steps · Context Over Complexity
 
 **Status**
-Observed
+Built (v2.6.0 — Travel Intelligence). Duration is calculated at creation and now also displayed on the Day Detail card alongside origin and destination.
 
 ---
 

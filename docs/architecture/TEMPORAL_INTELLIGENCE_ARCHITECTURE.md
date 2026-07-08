@@ -105,6 +105,8 @@ For travel items, the form computes `endTimeMinutes = startHours * 60 + startMin
 
 For non-travel items, `endTime` is a same-day `"HH:MM"` string from a `<input type="time">` element. Values 0–1439 minutes.
 
+**Edit-time duration preservation (v2.6.0):** `durationMinutes` is owned by a live-recalculation effect that resets it to `null` whenever it's in flight, has failed, or either place currently lacks coordinates. On edit, origin and destination restore with coordinates from `metadata`/`location_name`, so recalculation starts automatically — but if the user submits before it resolves, `durationMinutes` would be `null` and `endTimeMinutes` would be sent as `null`, clearing the previously saved arrival time. `AddPlannerItemForm` now also derives the item's originally saved duration (`ends_at − starts_at`, computed the same way as the Day Detail card display) into a separate, stable `savedDurationMinutes` value once at mount. At submit, `durationMinutes ?? savedDurationMinutes` is used — the fresh value if recalculation succeeded, otherwise the previously saved one. This is a fallback-preservation guard, not a literal "restore `endTimeMinutes` from saved `ends_at`" reimplementation of the form's initial state; the live-recalculation behavior itself is unchanged.
+
 ---
 
 ## "Next Day" Is Display Only
@@ -175,5 +177,5 @@ Items are filtered by `trip_day_id`, not by timestamp range. An overnight item s
 |---|---|---|
 | Phase A | RPC + client + travel form overnight support | Complete |
 | Phase B | Display "next day" label in Day Detail cards and Reservations view | Complete |
-| Phase C | Edit round-trip: restore `endTimeMinutes` from saved `ends_at` | Not started |
+| Phase C | Prevent edit-time duration loss (fallback preservation, not a literal `endTimeMinutes`-from-`ends_at` restore) | Complete (v2.6.0) |
 | Phase D | Non-travel items: "Ends next day" toggle | Not started |

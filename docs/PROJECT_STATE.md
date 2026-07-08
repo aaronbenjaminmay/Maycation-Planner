@@ -1,6 +1,6 @@
 # Maycation Project State
 
-> Canonical onboarding document for new Claude sessions. Reflects repository state as of Design System ds/v1.30.1 / Product v2.4.0 (July 2026). Verify against the repository before acting on specific details — this document may lag behind recent commits.
+> Canonical onboarding document for new Claude sessions. Reflects repository state as of Design System ds/v1.30.1 / Product v2.6.0 (July 2026). Verify against the repository before acting on specific details — this document may lag behind recent commits.
 
 ---
 
@@ -22,11 +22,11 @@ When documentation sources conflict, this order determines which is authoritativ
 
 | Field | Value |
 |---|---|
-| Product version | v2.4.0 |
+| Product version | v2.6.0 |
 | Design System version | ds/v1.30.1 — Component Token Layer |
-| Current milestone | v2.5.0 — Design System Convergence (all three System Health phases complete — CSS Co-location Migration, Component Token Layer, Code Connect completion; final convergence audit not yet performed) |
-| Previous milestone | v2.4.0 — Reservation Place Intelligence (complete) |
-| Verification date | 2026-07-07 |
+| Current milestone | v2.6.0 — Travel Intelligence (complete) |
+| Previous milestone | v2.5.0 — Design System Convergence (complete); v2.4.0 — Reservation Place Intelligence (complete) |
+| Verification date | 2026-07-08 |
 
 ---
 
@@ -126,6 +126,8 @@ Place Intelligence is a shared platform consumed by both Travel and Reservation 
 `PlaceInputQuickPick` provides pre-resolved `PlaceValue` objects (no search required). Used in `AddPlannerItemForm` to surface "Current Stay" as an origin for Travel items.
 
 **Reservation Place Intelligence** (v2.4.0): The Reservation form uses `PlaceInput` for the Location field. Selecting a place auto-populates the Title (if empty), sets Location and Address, stores destination coordinates in `metadata.destination_place_lat/lng`, and hides the manual Address field when coordinates are resolved. Manual entry remains fully supported.
+
+**Travel Intelligence** (v2.6.0): The Day Detail planner-item-card now displays origin (`From {place}`), destination (`To {place}`), and drive duration (`≈ X drive`) for travel items — closing the loop on the duration Maycation already calculates at creation time but previously never showed again after save. Editing an existing travel item now falls back to the originally saved duration when a live recalculation hasn't resolved yet, so submitting quickly no longer clears a previously saved arrival time. No schema, RPC, or Design System changes — pure client-side read of existing `metadata`/`starts_at`/`ends_at` data.
 
 **Provider dispatch**: `search-places` Edge Function dispatches to one of two Mapbox backends based on the `PLACE_SEARCH_PROVIDER` secret:
 - `searchbox` → Mapbox Search Box v1 `/forward` (current production active)
@@ -279,11 +281,13 @@ A component counts as converged only when it renders correctly in Storybook **wi
 | Place Intelligence | Reservation: PlaceInput in reservation form, coordinate storage | Complete |
 | Place Intelligence | Reservation UX: title auto-fill, conditional address field, manual fallback | Complete |
 | Place Intelligence | Search platform: Search Box v1 provider dispatch, feature flag | Complete |
+| Place Intelligence | Phase 4 (Travel item card display — origin, destination, duration) | Complete (v2.6.0) |
 | Place Intelligence | Proximity bias / contextual ranking | Not started |
+| Place Intelligence | Travel Quick Picks (destination-side) | Not started |
 | Place Intelligence | Saved Places | Not started |
 | Temporal Intelligence | Phase A (RPC + client + travel overnight) | Complete |
 | Temporal Intelligence | Phase B (display "next day" label) | Complete |
-| Temporal Intelligence | Phase C (edit round-trip endTimeMinutes restore) | Not started |
+| Temporal Intelligence | Phase C (prevent edit-time duration loss) | Complete (v2.6.0) — fallback preservation, not a literal endTimeMinutes-from-ends_at restore; see `TEMPORAL_INTELLIGENCE_ARCHITECTURE.md` |
 | Temporal Intelligence | Phase D (non-travel overnight toggle) | Not started |
 | Stay Intelligence | Phase 1 (table, RPCs, types) | Complete |
 | Stay Intelligence | Phase 2 (entry/management UI + reminder offer) | Complete |
@@ -301,18 +305,24 @@ A component counts as converged only when it renders correctly in Storybook **wi
 
 | Stream | Current | Next milestone |
 |---|---|---|
-| Product | **v2.4.0** | **v2.5.0 — Design System Convergence** |
-| Design System | **ds/v1.30.1 — Component Token Layer** | Final Design System Convergence audit (not yet performed) |
+| Product | **v2.6.0** | Not yet determined |
+| Design System | **ds/v1.30.1 — Component Token Layer** | Not yet determined |
 
 ### v2.4.0 — Reservation Place Intelligence (complete)
 
 Completed June 2026. Place Intelligence is now a shared platform across Travel and Reservation planner items. Search Box v1 is production-ready and active via provider dispatch.
 
-### Current milestone: v2.5.0 — Design System Convergence
+### v2.5.0 — Design System Convergence (complete)
 
 Objective: audit every screen, component composition, modal, card, empty state, form, interaction, and layout and ensure it is assembled from existing design system components, documented patterns, Storybook components, and design tokens. No new features. Favor reuse over invention.
 
-**Status:** The convergence audit is complete (2026-07). JSX ownership is converged. All three System Health phases are complete: CSS co-location (Phase 1, v1.29.0), Component Token Layer (Phase 2, ds/v1.30.1), and Code Connect completion (Phase 3, ds/v1.30.0). A final Design System Convergence audit has not yet been performed to formally close the v2.5.0 milestone.
+**Status:** Complete and released (July 2026). JSX ownership is converged. All three System Health phases are complete: CSS co-location (Phase 1, v1.29.0), Component Token Layer (Phase 2, ds/v1.30.1), and Code Connect completion (Phase 3, ds/v1.30.0). The final Design System Convergence audit confirmed readiness and the milestone was tagged and released.
+
+### Current milestone: v2.6.0 — Travel Intelligence (complete)
+
+Objective: complete the Travel Intelligence work already scoped in `PLACE_INTELLIGENCE_ARCHITECTURE.md` (Phase 4) and `TEMPORAL_INTELLIGENCE_ARCHITECTURE.md` (Phase C) — the smallest change that makes the drive duration Maycation already calculates at creation time actually visible on the itinerary, without introducing new data capture, new components, or Design System work.
+
+**Status:** Complete and released (July 2026). The Day Detail travel item card now shows origin, destination, and drive duration. Editing a travel item preserves a previously saved arrival time instead of clearing it when a live duration recalculation hasn't resolved yet. No Design System, schema, or RPC changes.
 
 ### System Health phases (v2.5.0 execution order)
 
@@ -322,7 +332,7 @@ Objective: audit every screen, component composition, modal, card, empty state, 
 
 ### Phase 2 opportunity areas (from `PRODUCT_ROADMAP.md`)
 
-- Travel Duration — Complete
+- Travel Duration — Complete (v2.6.0: includes Day Detail card display of origin, destination, and duration)
 - Address / Place Intelligence — Complete (Search + quick picks + reservation context + Search Box platform)
 - Stay Intelligence — Complete (phases 1, 2, 4; phases 3 and 5 not started)
 - Reservation Intelligence — Phase A complete (Place Intelligence for reservations); Phase B+ (trip_reservations table, email import, full reservation platform) not started
@@ -388,8 +398,8 @@ maycation-planner/
 │   ├── App.css                       — Product/shell CSS (§1–§13); §10–11 removed (v1.27.0); CSS Co-location Migration complete (v1.29.0) — retains only product-screen layout, shell structure, and documented product-context overrides
 │   ├── components/
 │   │   ├── DesignSystem.tsx          — Re-export barrel for all design system components
-│   │   ├── AddPlannerItemForm.tsx    — Add/edit planner items; Place + Temporal intelligence
-│   │   ├── DayDetail.tsx             — Day itinerary view; planner-item-card host
+│   │   ├── AddPlannerItemForm.tsx    — Add/edit planner items; Place + Temporal intelligence; preserves saved travel duration on edit (v2.6.0)
+│   │   ├── DayDetail.tsx             — Day itinerary view; planner-item-card host; travel cards show origin/destination/duration (v2.6.0)
 │   │   ├── TripDetail.tsx            — Trip dashboard; day grid, countdown, intel card
 │   │   ├── TripReservations.tsx      — Reservations list view
 │   │   ├── TripStays.tsx             — Stay management; StayCard, Stay form, reminder offer
@@ -443,7 +453,7 @@ maycation-planner/
 | **Phase 3:** Code Connect for 3 T2 patterns (DashboardCard, DetailHeader, DayTile) ✅ **complete** (ds/v1.30.0) | Done |
 | Code Connect for Icon — blocked on resolving known Storybook rendering defect | Low (blocked) |
 | Code Connect for PlaceInput — deferred until Place Intelligence Phase 5 Figma component | Low (deferred) |
-| Final Design System Convergence audit to formally close v2.5.0 | Medium (not yet performed) |
+| Final Design System Convergence audit to formally close v2.5.0 ✅ **complete** — v2.5.0 released | Done |
 
 ### Token debt (tracked in `TOKEN_DEBT.md`)
 
@@ -458,7 +468,6 @@ maycation-planner/
 
 ### Intelligence deferred work
 
-- **Temporal Phase C**: Restore `endTimeMinutes` from saved `ends_at` on edit (edit round-trip)
 - **Temporal Phase D**: Non-travel overnight "Ends next day" toggle
 - **Stay Phase 3**: Day Detail ambient "Staying at [place]" context display
 - **Stay Phase 5**: Trip Dashboard accommodation timeline
@@ -477,8 +486,8 @@ maycation-planner/
 
 | Artifact | Version |
 |---|---|
-| Product | **v2.4.0** |
-| Next product milestone | **v2.5.0 — Design System Convergence** |
+| Product | **v2.6.0 — Travel Intelligence** |
+| Next product milestone | Not yet determined |
 | Design System | **ds/v1.30.1 — Component Token Layer** |
 | npm package | 0.0.0 (not published) |
 | Supabase migrations | 27 (latest: `027_trip_stays.sql`) |

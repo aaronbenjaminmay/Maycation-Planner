@@ -50,7 +50,7 @@ Complete — Phase 1 Foundation
 
 ### Current Focus
 
-v2.5.0 — Design System Convergence: CSS co-location migration, component token layer, and Code Connect for patterns and remaining T1 components are all complete. A final convergence audit remains before the milestone can be closed.
+v2.6.0 — Travel Intelligence: complete. Travel planner items display origin, destination, and drive duration on Day Detail, and editing a travel item no longer loses a previously saved arrival time. v2.5.0 — Design System Convergence is also complete and released.
 
 ## Design Philosophy
 
@@ -127,12 +127,20 @@ Complete (June 2026)
 
 ### v2.5.0 — Design System Convergence
 
-System Health phases complete; final convergence audit pending
+Complete (July 2026)
 
 * Code Connect for T2 Patterns (DashboardCard, DetailHeader, DayTile) — complete (ds/v1.30.0)
 * Code Connect for remaining T1 Components (EmptyState, StatusButton, FormActions, FormGrid, ScreenHeader, PageControls) — complete (ds/v1.30.0)
 * Component Token Layer (DTCG Layer 2) — complete (ds/v1.30.1)
 * CSS Co-location Migration (component CSS out of App.css) — complete (ds/v1.29.0)
+
+### v2.6.0 — Travel Intelligence
+
+Complete (July 2026)
+
+* Travel planner items display origin, destination, and drive duration on the Day Detail card
+* Editing a travel item no longer clears a previously saved arrival time while duration recalculates
+* No Design System, schema, or RPC changes — reuses existing Place Intelligence and Temporal Intelligence infrastructure
 
 ### Future
 
@@ -214,4 +222,4 @@ npm run deploy
 
 Primary development occurs on feature branches and is merged into main.
 
-Current development focus (v2.5.0 — Design System Convergence): all System Health phases (CSS Co-location Migration, Component Token Layer, Code Connect for T2 Patterns and remaining T1 Components) are complete. A final convergence audit remains before the milestone closes.
+v2.5.0 — Design System Convergence and v2.6.0 — Travel Intelligence are both complete and released.

@@ -1,6 +1,6 @@
 # Maycation — Product Roadmap
 
-**Product: v2.4.0 | Next milestone: v2.5.0 — Design System Convergence (all System Health phases complete; final convergence audit pending) | Design System: ds/v1.30.1 — Component Token Layer**
+**Product: v2.6.0 — Travel Intelligence (complete) | Design System: ds/v1.30.1 — Component Token Layer**
 
 This roadmap is organized by product maturity, not by version or release schedule.
 
@@ -16,8 +16,8 @@ The design system is stable. The product infrastructure is in place. Phase 2 is 
 
 ### Completed
 
-**Travel Duration Intelligence** — Complete
-When a family adds a travel leg, Maycation estimates the drive time and derives the arrival time from the leave time and duration. Users do not need to open Maps.
+**Travel Duration Intelligence** — Complete (v2.6.0)
+When a family adds a travel leg, Maycation estimates the drive time and derives the arrival time from the leave time and duration. Users do not need to open Maps. The Day Detail card also shows origin, destination, and drive duration after save, and editing a travel item no longer loses a previously saved arrival time while duration recalculates.
 
 **Stay Intelligence** — Complete (Phases 1, 2, 4)
 Where a family is staying is recorded once and used across the product: check-in and check-out reminders are offered via the Derivation Engine, and the active stay pre-populates the origin field for Travel items via PlaceInput quick picks. Day Detail ambient display (Phase 3) and Trip Dashboard accommodation timeline (Phase 5) are not yet started.
