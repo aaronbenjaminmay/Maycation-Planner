@@ -28,14 +28,17 @@ type TravelDurationResponse = {
   durationMinutes: number
 }
 
-export async function searchPlaces(query: string): Promise<PlaceSuggestion[]> {
+export async function searchPlaces(
+  query: string,
+  near?: { lat: number; lng: number },
+): Promise<PlaceSuggestion[]> {
   if (query.trim().length < 2) {
     return []
   }
 
   const client = getSupabaseClient()
   const { data, error } = await client.functions.invoke('search-places', {
-    body: { query: query.trim() },
+    body: { query: query.trim(), near },
   })
 
   if (error) {

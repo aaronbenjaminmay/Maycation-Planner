@@ -75,7 +75,7 @@ Both functions follow the same pattern established by `send-invite-email`:
 
 **File:** `supabase/functions/search-places/index.ts`
 
-**Request:** `POST { query: string }`
+**Request:** `POST { query: string, near?: { lat: number; lng: number } }` — `near` is optional; see Contextual Place Resolution below
 
 **Response:** `{ suggestions: PlaceSuggestion[] }`
 
@@ -159,7 +159,7 @@ Three distinct types serve three distinct concerns:
 **Exported functions:**
 
 ```typescript
-searchPlaces(query: string): Promise<PlaceSuggestion[]>
+searchPlaces(query: string, near?: { lat: number; lng: number }): Promise<PlaceSuggestion[]>
 getTravelDurationMinutes(
   origin: { lat: number; lng: number },
   destination: { lat: number; lng: number }
@@ -332,7 +332,7 @@ The Edge Function reads the env var on each request. The change takes effect imm
 
 **Venue-first results:** Search Box v1 ranks by venue name relevance rather than address proximity, which was the core motivation for the upgrade.
 
-**Known limitation — context-free queries:** Without a proximity parameter, queries for venue names that exist in multiple locations (e.g. "Be Our Guest") may rank non-Disney results above the intended location. A proximity bias (`proximity={lng},{lat}` near the trip destination) would resolve this. See deferred work in `PROJECT_STATE.md`.
+**Known limitation — context-free queries:** Resolved for the four call sites with a known contextual source — see Contextual Place Resolution below. Where no such source exists for a given search (no active Stay covering the date, no sibling field selected yet, or the Stay form's own place search, which intentionally does not participate), a venue name that exists in multiple locations may still rank a non-intended result above the correct one.
 
 ### Geocoding v5 fallback
 
@@ -358,6 +358,60 @@ The Edge Function reads the env var on each request. The change takes effect imm
 
 ---
 
+## Contextual Place Resolution
+
+### Purpose
+
+Search Box v1 ranks by venue name relevance, but without any location context, a generic venue name that exists in more than one place (e.g. "Be Our Guest") can rank a distant, same-named result above the one the user actually intends. Contextual Place Resolution addresses this by letting Maycation bias search results toward a coordinate the application already knows, whenever one is available for the place being resolved.
+
+This is not a search feature, not place discovery, and not recommendations. It changes the ranking of results for a query the user is already typing; it never suggests, surfaces, or recommends a place the user did not ask for.
+
+### Supported contextual sources
+
+Two kinds of context are used, both already resident in the calling screen at the moment of search:
+
+- **The trip's active Stay for a given date** — computed by the existing `getActiveStayForDay(stays, date)` and reduced to a coordinate pair by `stayCoordinates(stay)`, both in `src/lib/stays.ts`. This is a known fact: the family is staying there on that date.
+- **A sibling field already resolved in the same form** — for example, a Travel item's destination search is biased by the origin the user has already selected. This is also a known fact, not an inference: the place was chosen by the user moments earlier in the same form.
+
+No other source of context is used. Context is never inferred from a trip's destination, from another item's location, or from a chronological relationship between separate trip facts — see Known Boundaries.
+
+### Current implementation
+
+`search-places` and `searchPlaces()` accept an optional coordinate, named `near`, passed through unchanged from the calling screen to the Edge Function. Below the provider boundary, `near` is translated into whichever proximity parameter the active Mapbox provider expects — the only place a provider-specific term appears. Every other layer speaks only in terms of a coordinate to search near.
+
+When `near` is absent, behavior is identical to search before this capability existed: no additional parameter reaches Mapbox, no ranking changes.
+
+Four call sites currently supply a `near` coordinate, each computed from context already available on that screen:
+
+| Call site | Context source |
+|---|---|
+| Travel "From" | The active Stay for the day being planned |
+| Travel "To" | The origin already selected in "From" |
+| Reservation planner item — Location | The active Stay for the day being planned |
+| Trip Reservations — Place | The active Stay for the reservation's date |
+
+The Trip Reservations call site required one piece of plumbing beyond the search parameter itself: the trip's Stay list, already loaded for the Stays screen, is threaded into the Reservations screen so it can compute the same active-Stay fact locally.
+
+### Known Boundaries
+
+Contextual Place Resolution intentionally stops at known facts. It does not extend to:
+
+- **A new Stay's own place search.** Biasing a new Stay's search toward a different, chronologically adjacent Stay was evaluated and rejected. Every context source above is true by construction — the family really is staying at the active Stay on that date, the sibling field really was just selected. Adjacency between two separate Stays is not a fact of this kind; it is an inference about the shape of the itinerary, and that inference can be wrong (a multi-city trip that returns to an earlier city, for instance). The Stay form's search is unchanged by this capability.
+- **The trip's own destination.** No coordinate exists anywhere in the schema for a trip's destination field, and resolving one is out of scope here.
+- **Any provider concept above the provider boundary.** Every layer above the two provider-specific functions works only with a `near` coordinate — never a Mapbox-specific parameter name, and never a discovery, ranking-algorithm, or recommendation concept.
+
+### Architectural decisions that did not ship
+
+The following were considered during planning and deliberately not built, to keep the capability no larger than the four call sites above required:
+
+- **No Context service.** There is no module, singleton, or shared runtime object representing "the current context." Each call site computes its own coordinate locally, from data the screen already holds.
+- **No Context Hierarchy runtime.** Some call sites have more than one potential context source (an active Stay, a sibling field). Which one applies is expressed directly in that call site's own local logic, not evaluated by a shared function that branches over a set of rules. With only four call sites and at most two context tiers at any one of them, a shared evaluator would be an abstraction built before it was needed.
+- **No `EditingIntent` type.** The reason a given call site prefers one context source over another — resolving a Travel origin versus resolving a reservation's place, for instance — is a documentation concept, useful for explaining why call sites differ. It was never built as a runtime type, enum, or parameter, and no shipped code passes an intent value anywhere.
+
+Context, in this architecture, is not shared infrastructure. It is a coordinate computed locally, at each call site, from a fact that screen already has.
+
+---
+
 ## Implementation Status
 
 | Phase | Description | Status |
@@ -371,6 +425,7 @@ The Edge Function reads the env var on each request. The change takes effect imm
 | Search Box upgrade | Provider dispatch, PLACE_SEARCH_PROVIDER feature flag, Search Box v1 /forward | Complete |
 | Phase 4 | Travel item card display (origin, destination, duration on Day Detail) | Complete (v2.6.0) |
 | Phase 5 | Figma component (PlaceInput Code Connect deferred pending this) | Not started |
-| Proximity bias | Pass trip coordinates to provider for context-aware ranking | Not started |
+| Contextual Place Resolution | Bias search using known-fact context at four call sites (Travel From/To, Reservation planner item, Trip Reservations) | Complete (v2.8.0) |
+| Multi-Stay Context | Bias a new Stay's search using a chronologically adjacent Stay | Deferred — intentionally excluded, not merely unstarted (see Known Boundaries above) |
 | Travel Quick Picks | Destination quick picks in Travel form (recent + reservation places) | Not started |
 | Saved Places | Persistent user-defined places surfaced as quick picks | Not started |

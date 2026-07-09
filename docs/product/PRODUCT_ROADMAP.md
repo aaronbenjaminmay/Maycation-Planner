@@ -1,6 +1,6 @@
 # Maycation — Product Roadmap
 
-**Product: v2.7.0 — Reservation Intelligence (complete) | Design System: ds/v1.30.1 — Component Token Layer**
+**Product: v2.8.0 — Contextual Place Resolution (complete) | Design System: ds/v1.30.2**
 
 This roadmap is organized by product maturity, not by version or release schedule.
 
@@ -34,13 +34,13 @@ Title auto-fill from place selection, conditional address field (hidden when coo
 **Reservation Intelligence** — Complete (v2.7.0)
 Reservations are now first-class trip facts (`trip_reservations`), not inferred from planner items. A family enters a Dining or Activity reservation once; Maycation automatically derives exactly one itinerary item, with no confirmation step. The Reservations screen and its dashboard tile now read reservation facts directly — Stay-derived check-in/check-out items, which previously leaked onto the Reservations screen with no way to distinguish them from real reservations, no longer appear there at all, structurally rather than by filtering. Editing a reservation whose itinerary item is still Maycation-managed keeps that item in sync automatically; editing the item directly (a manual customization) protects it from being overwritten on the next fact edit. Deleting a reservation prompts whether to also remove its itinerary item, or keep it as a standalone historical item. This is the first complete implementation of the Derivation Engine's full lifecycle — see `docs/architecture/DERIVATION_ENGINE.md`. Manual entry only; email import remains a distinct future phase (below).
 
+**Contextual Place Resolution** — Complete (v2.8.0)
+Without any location context, a generic venue-name query (e.g. "Be Our Guest") could rank a distant, same-named business above the intended location. Place search now biases toward geographically relevant results using context already available at the point of search — the trip's active Stay for the relevant day, or a place already selected in a sibling field — with no new UI and no new step for the user. Four call sites are wired: Travel "From" and "To" in the planner item form, the reservation-kind planner item's Location field, and the Trip Reservations form's Place field. Unbiased search remains the exact fallback whenever no such context is available. Biasing a new Stay's own search toward another, chronologically adjacent Stay (Multi-Stay Context) was evaluated and intentionally deferred — see Future below.
+
 ### Active Opportunity Areas
 
 **Reservation Intelligence — Email Import**
 Families receive booking confirmations by email. The information in those emails — confirmation numbers, check-in times, addresses, cancellation policies — is exactly what the now-shipped `trip_reservations` fact model needs. Bringing that information in automatically, rather than requiring manual entry, is the remaining piece of the original Reservation Intelligence opportunity. Not started.
-
-**Place Intelligence — Proximity Bias**
-Without a trip location context, generic venue name queries (e.g. "Be Our Guest") may rank distant businesses above the intended location. Passing trip coordinates to the `search-places` function as proximity bias would weight results toward the trip area. No schema changes required — this is a parameter addition to the Edge Function.
 
 **Place Intelligence — Travel Quick Picks**
 Surface previously-used destinations and upcoming reservation locations as quick picks in the Travel form destination field. Reduces re-entry for common trip destinations.
@@ -62,6 +62,9 @@ These are ideas worth holding. They are not the current focus, and no timelines 
 
 **Saved Places**
 Home, Airport, Hotel, and recently selected places stored in user profile and surfaced as PlaceInput quick picks. Reduces re-entry for repeat places. The `PlaceInputQuickPick` API is already designed to accept these without changing the component interface.
+
+**Place Intelligence — Multi-Stay Context**
+Evaluated alongside Contextual Place Resolution (v2.8.0) and intentionally deferred, not left unfinished. Biasing a new Stay's place search toward a chronologically adjacent Stay would help multi-city or road-trip itineraries, but adjacency in time is not a reliable enough signal for adjacency in place — a return trip through the same city, for example, would bias the search toward the wrong direction. Every other Contextual Place Resolution call site biases on a fact true by construction; this one would bias on an inference about itinerary shape instead, which risks a confidently wrong result being worse than no bias at all. Worth revisiting only if a narrower, more reliable signal than pure date-adjacency emerges.
 
 **Expense Tracking**
 Shared trip expenses, split bills, and budget visibility are recurring pain points for families traveling together. This is a meaningful problem but a large one — expense features carry significant complexity and require integration with financial services. Defer until the core planning experience is complete.

@@ -16,6 +16,7 @@ import {
   type TripReservationType,
 } from '../lib/reservations'
 import { searchPlaces, type PlaceValue } from '../lib/places'
+import { getActiveStayForDay, stayCoordinates, type TripStay } from '../lib/stays'
 import {
   Button,
   CardSurface,
@@ -52,6 +53,7 @@ type TripReservationsProps = {
   reservations: TripReservation[]
   trip: Trip
   tripDays: TripDay[]
+  tripStays: TripStay[]
 }
 
 type ReservationFormValues = {
@@ -130,6 +132,7 @@ export function TripReservations({
   reservations,
   trip,
   tripDays,
+  tripStays,
 }: TripReservationsProps) {
   const [editingReservation, setEditingReservation] = useState<TripReservation | null>(null)
   const [isFormOpen, setIsFormOpen] = useState(false)
@@ -310,6 +313,9 @@ export function TripReservations({
     : undefined
   const bgClass = backgroundUrl ? ' has-trip-bg' : ''
 
+  const activeStay = getActiveStayForDay(tripStays, form.reservationDate)
+  const activeStayCoordinates = stayCoordinates(activeStay)
+
   return (
     <main
       className={`app-shell dashboard-shell${bgClass}`}
@@ -363,7 +369,7 @@ export function TripReservations({
                 label="Place"
                 value={form.place}
                 onChange={(v) => updateField('place', v)}
-                onSearchPlaces={searchPlaces}
+                onSearchPlaces={(q) => searchPlaces(q, activeStayCoordinates)}
                 hint="Optional — for navigation and address details"
               />
 

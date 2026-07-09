@@ -8,7 +8,7 @@ import {
   type TripDay,
 } from '../lib/trips'
 import { searchPlaces, getTravelDurationMinutes, type PlaceInputQuickPick, type PlaceValue } from '../lib/places'
-import { getActiveStayForDay, type TripStay } from '../lib/stays'
+import { getActiveStayForDay, stayCoordinates, type TripStay } from '../lib/stays'
 import {
   Button,
   FeedbackMessage,
@@ -279,6 +279,7 @@ export function AddPlannerItemForm({
   }
 
   const activeStay = getActiveStayForDay(tripStays, day.date)
+  const activeStayCoordinates = stayCoordinates(activeStay)
   const fromQuickPicks: PlaceInputQuickPick[] = activeStay
     ? [
         {
@@ -288,10 +289,7 @@ export function AddPlannerItemForm({
           value: {
             name: activeStay.place_name,
             address: activeStay.place_address ?? '',
-            coordinates:
-              activeStay.place_lat !== null && activeStay.place_lng !== null
-                ? { lat: Number(activeStay.place_lat), lng: Number(activeStay.place_lng) }
-                : undefined,
+            coordinates: activeStayCoordinates,
           },
         },
       ]
@@ -342,7 +340,7 @@ export function AddPlannerItemForm({
               label="From"
               value={origin}
               onChange={setOrigin}
-              onSearchPlaces={searchPlaces}
+              onSearchPlaces={(q) => searchPlaces(q, activeStayCoordinates)}
               hint="Where are you leaving from?"
               quickPicks={fromQuickPicks}
             />
@@ -351,7 +349,7 @@ export function AddPlannerItemForm({
               label="To"
               value={destination}
               onChange={setDestination}
-              onSearchPlaces={searchPlaces}
+              onSearchPlaces={(q) => searchPlaces(q, origin?.coordinates)}
               hint="Where are you going?"
             />
 
@@ -408,7 +406,7 @@ export function AddPlannerItemForm({
                 label="Location"
                 value={reservationPlace}
                 onChange={handleReservationPlaceChange}
-                onSearchPlaces={searchPlaces}
+                onSearchPlaces={(q) => searchPlaces(q, activeStayCoordinates)}
               />
             ) : (
               <TextInput label="Location" value={location} onChange={setLocation} />

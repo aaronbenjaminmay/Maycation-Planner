@@ -297,6 +297,7 @@ export function TripDetail({ trip, onBack, onTripDeleted, onTripUpdated }: TripD
         reservations={tripReservations}
         trip={trip}
         tripDays={tripDays}
+        tripStays={tripStays}
       />
     )
   }

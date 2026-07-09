@@ -50,7 +50,7 @@ Complete — Phase 1 Foundation
 
 ### Current Focus
 
-v2.7.0 — Reservation Intelligence: complete. Reservations are now first-class trip facts (`trip_reservations`) that automatically derive a single itinerary item, with edit synchronization for managed items, customization protection once a derived item is edited directly, and a delete flow that asks whether to also remove the derived item. The Reservations screen and dashboard tile now read reservation facts directly instead of `planner_items`. v2.6.0 — Travel Intelligence and v2.5.0 — Design System Convergence are also complete and released.
+v2.8.0 — Contextual Place Resolution: complete. Place search across Travel and Reservation forms now biases toward geographically relevant results using context already available at the point of search — the trip's active Stay for the day, or a place just selected in a sibling field — so ambiguous venue names (a chain restaurant with locations in multiple cities, for example) resolve to the correct one without any new step for the user. Unbiased search remains the exact fallback when no such context exists. Stay-to-stay bias (Multi-Stay Context) was intentionally deferred — see Roadmap below. v2.7.0 — Reservation Intelligence, v2.6.0 — Travel Intelligence, and v2.5.0 — Design System Convergence are also complete and released.
 
 ## Design Philosophy
 
@@ -153,10 +153,22 @@ Complete (July 2026)
 * Deleting a reservation prompts whether to also remove its itinerary item
 * First complete implementation of the Derivation Engine's full lifecycle (see `docs/architecture/DERIVATION_ENGINE.md`); manual entry only, email import remains a future phase
 
+### v2.8.0 — Contextual Place Resolution
+
+Complete (July 2026)
+
+* Place search biases toward geographically relevant results using context already available at the point of search — no new UI, no new user-facing step
+* Travel "From" and "To" — biased using the day's active Stay and the already-selected origin, respectively
+* Reservation planner item Location and Trip Reservations Place — both biased using the active Stay for the relevant date
+* Unbiased search remains the exact fallback whenever no context is available
+* No Design System, schema, or RPC changes — one optional parameter added to `search-places` and `searchPlaces()`
+* Multi-Stay Context (biasing a new Stay's search using a chronologically adjacent Stay) was evaluated and intentionally deferred: adjacency in time is not a reliable signal for adjacency in place, and shipping it risked a confident-looking wrong answer being worse than no bias at all
+
 ### Future
 
 * Light mode (token architecture already supports it)
-* Place Intelligence: proximity bias, Travel Quick Picks, Saved Places
+* Place Intelligence: Travel Quick Picks, Saved Places
+* Place Intelligence: Multi-Stay Context (deferred — see v2.8.0 above)
 * Reservation Intelligence — email import
 * Additional collaboration features
 
@@ -233,4 +245,4 @@ npm run deploy
 
 Primary development occurs on feature branches and is merged into main.
 
-v2.5.0 — Design System Convergence, v2.6.0 — Travel Intelligence, and v2.7.0 — Reservation Intelligence are all complete and released.
+v2.5.0 — Design System Convergence, v2.6.0 — Travel Intelligence, v2.7.0 — Reservation Intelligence, and v2.8.0 — Contextual Place Resolution are all complete and released.

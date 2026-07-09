@@ -115,6 +115,12 @@ export function getActiveStayForDay(stays: TripStay[], dayDate: string): TripSta
   ) ?? null
 }
 
+export function stayCoordinates(stay: TripStay | null): { lat: number; lng: number } | undefined {
+  return stay && stay.place_lat !== null && stay.place_lng !== null
+    ? { lat: Number(stay.place_lat), lng: Number(stay.place_lng) }
+    : undefined
+}
+
 export async function loadTripStays(tripId: string): Promise<TripStay[]> {
   const client = getSupabaseClient()
   const { data, error } = await client.rpc('get_trip_stays', {

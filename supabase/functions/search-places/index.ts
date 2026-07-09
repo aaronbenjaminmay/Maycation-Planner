@@ -49,14 +49,29 @@ type PlaceSuggestion = {
   coordinates: { lat: number; lng: number }
 }
 
+// ── Contextual resolution ────────────────────────────────────────────────────
+
+type Near = { lat: number; lng: number }
+
+function parseNear(raw: unknown): Near | null {
+  if (typeof raw !== 'object' || raw === null) return null
+  const { lat, lng } = raw as { lat?: unknown; lng?: unknown }
+  if (typeof lat !== 'number' || typeof lng !== 'number') return null
+  if (!Number.isFinite(lat) || !Number.isFinite(lng)) return null
+  return { lat, lng }
+}
+
 // ── Provider implementations ─────────────────────────────────────────────────
 
-async function searchViaGeocoding(query: string, apiKey: string): Promise<PlaceSuggestion[] | null> {
+async function searchViaGeocoding(query: string, apiKey: string, near: Near | null): Promise<PlaceSuggestion[] | null> {
   const url = new URL(`https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(query)}.json`)
   url.searchParams.set('access_token', apiKey)
   url.searchParams.set('autocomplete', 'true')
   url.searchParams.set('types', 'poi,address,place')
   url.searchParams.set('limit', '5')
+  if (near) {
+    url.searchParams.set('proximity', `${near.lng},${near.lat}`)
+  }
 
   const res = await fetch(url.toString())
   if (!res.ok) {
@@ -81,13 +96,16 @@ async function searchViaGeocoding(query: string, apiKey: string): Promise<PlaceS
   })
 }
 
-async function searchViaSearchBox(query: string, apiKey: string): Promise<PlaceSuggestion[] | null> {
+async function searchViaSearchBox(query: string, apiKey: string, near: Near | null): Promise<PlaceSuggestion[] | null> {
   const url = new URL('https://api.mapbox.com/search/searchbox/v1/forward')
   url.searchParams.set('q', query)
   url.searchParams.set('access_token', apiKey)
   url.searchParams.set('types', 'poi,address')
   url.searchParams.set('limit', '5')
   url.searchParams.set('language', 'en')
+  if (near) {
+    url.searchParams.set('proximity', `${near.lng},${near.lat}`)
+  }
 
   const res = await fetch(url.toString())
   if (!res.ok) {
@@ -156,8 +174,9 @@ Deno.serve(async (req) => {
       })
     }
 
-    const body = await req.json() as { query?: unknown }
+    const body = await req.json() as { query?: unknown; near?: unknown }
     const query = typeof body.query === 'string' ? body.query.trim() : ''
+    const near = parseNear(body.near)
 
     if (query.length < 2) {
       return new Response(JSON.stringify({ suggestions: [] }), {
@@ -167,8 +186,8 @@ Deno.serve(async (req) => {
     }
 
     const suggestions = provider === 'searchbox'
-      ? await searchViaSearchBox(query, mapboxApiKey)
-      : await searchViaGeocoding(query, mapboxApiKey)
+      ? await searchViaSearchBox(query, mapboxApiKey, near)
+      : await searchViaGeocoding(query, mapboxApiKey, near)
 
     if (suggestions === null) {
       return new Response(JSON.stringify({ error: 'Place search unavailable' }), {

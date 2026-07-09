@@ -1,6 +1,6 @@
 # Maycation Project State
 
-> Canonical onboarding document for new Claude sessions. Reflects repository state as of Design System ds/v1.30.1 / Product v2.7.0 (July 2026). Verify against the repository before acting on specific details — this document may lag behind recent commits.
+> Canonical onboarding document for new Claude sessions. Reflects repository state as of Design System ds/v1.30.2 / Product v2.8.0 (July 2026). Verify against the repository before acting on specific details — this document may lag behind recent commits.
 
 ---
 
@@ -22,11 +22,11 @@ When documentation sources conflict, this order determines which is authoritativ
 
 | Field | Value |
 |---|---|
-| Product version | v2.7.0 |
-| Design System version | ds/v1.30.1 — Component Token Layer |
-| Current milestone | v2.7.0 — Reservation Intelligence (complete) |
-| Previous milestone | v2.6.0 — Travel Intelligence (complete); v2.5.0 — Design System Convergence (complete) |
-| Verification date | 2026-07-08 |
+| Product version | v2.8.0 |
+| Design System version | ds/v1.30.2 (no Design System changes in v2.8.0) |
+| Current milestone | v2.8.0 — Contextual Place Resolution (complete) |
+| Previous milestone | v2.7.0 — Reservation Intelligence (complete); v2.6.0 — Travel Intelligence (complete) |
+| Verification date | 2026-07-09 |
 
 ---
 
@@ -133,6 +133,16 @@ Place Intelligence is a shared platform consumed by both Travel and Reservation 
 
 **Travel Intelligence** (v2.6.0): The Day Detail planner-item-card now displays origin (`From {place}`), destination (`To {place}`), and drive duration (`≈ X drive`) for travel items — closing the loop on the duration Maycation already calculates at creation time but previously never showed again after save. Editing an existing travel item now falls back to the originally saved duration when a live recalculation hasn't resolved yet, so submitting quickly no longer clears a previously saved arrival time. No schema, RPC, or Design System changes — pure client-side read of existing `metadata`/`starts_at`/`ends_at` data.
 
+**Contextual Place Resolution** (v2.8.0): `search-places` and `searchPlaces()` accept an optional `near` coordinate that biases provider results toward a location, resolving the prior "Be Our Guest" defect (a generic venue-name query ranking a distant, same-named business above the intended one). Context is computed locally at each of four call sites from facts already available at that screen — never a shared runtime construct:
+- Travel "From" (`AddPlannerItemForm`) — biased using the active Stay covering the day
+- Travel "To" (`AddPlannerItemForm`) — biased using the already-selected origin
+- Reservation planner item Location (`AddPlannerItemForm`) — biased using the active Stay covering the day
+- Trip Reservations Place (`TripReservations`) — biased using the active Stay covering the reservation's date; required threading `tripStays` into `TripReservations` via `TripDetail`
+
+`stayCoordinates(stay)` in `src/lib/stays.ts`, beside `getActiveStayForDay`, extracts the `{ lat, lng }` pair a Stay contributes to bias; both call sites needing a Stay's coordinates share this one small function rather than repeating the null-check inline.
+
+Unbiased search remains the exact fallback whenever no context is available — `near` is optional at every layer, and its absence produces the identical request Mapbox received before this milestone. **Multi-Stay Context** (biasing a new Stay's search toward a chronologically adjacent Stay) was evaluated and intentionally deferred: unlike the four shipped call sites, which bias using a fact that is true by construction for that render, Stay-to-stay adjacency is an inference about itinerary shape that can be wrong (e.g., a return trip through the same city), and the Stay form's search behaves exactly as it did before v2.8.0. See `docs/architecture/PLACE_INTELLIGENCE_ARCHITECTURE.md` for the full architectural boundary.
+
 **Provider dispatch**: `search-places` Edge Function dispatches to one of two Mapbox backends based on the `PLACE_SEARCH_PROVIDER` secret:
 - `searchbox` → Mapbox Search Box v1 `/forward` (current production active)
 - absent or any other value → Mapbox Geocoding v5 (fallback)
@@ -146,6 +156,7 @@ PlaceValue.coordinates → metadata.destination_place_lat/lng (reservations)
 PlaceValue.coordinates → metadata.start_place_lat/lng (travel origins)
 getActiveStayForDay() → PlaceInputQuickPick → AddPlannerItemForm (travel origin quick pick)
 PlaceInputQuickPick.value → get-travel-duration → estimated drive time
+stayCoordinates(activeStay) / origin.coordinates → near → search-places (contextual bias, v2.8.0)
 ```
 
 ### Temporal Intelligence
@@ -202,7 +213,7 @@ See `docs/architecture/DERIVATION_ENGINE.md` for the full architecture-vs-implem
 
 ### Version
 
-**Design System: ds/v1.30.1 — Component Token Layer**
+**Design System: ds/v1.30.2** (no Design System changes since ds/v1.30.1 — Component Token Layer)
 
 ### Token Architecture (DTCG three-layer)
 
@@ -304,7 +315,8 @@ A component counts as converged only when it renders correctly in Storybook **wi
 | Place Intelligence | Reservation UX: title auto-fill, conditional address field, manual fallback | Complete |
 | Place Intelligence | Search platform: Search Box v1 provider dispatch, feature flag | Complete |
 | Place Intelligence | Phase 4 (Travel item card display — origin, destination, duration) | Complete (v2.6.0) |
-| Place Intelligence | Proximity bias / contextual ranking | Not started |
+| Place Intelligence | Contextual Place Resolution (Travel From/To, Reservation planner item, Trip Reservations Place) | Complete (v2.8.0) |
+| Place Intelligence | Multi-Stay Context (Stay-to-stay contextual bias) | Deferred — intentionally excluded (chronological adjacency is not a sufficiently reliable geographic signal) |
 | Place Intelligence | Travel Quick Picks (destination-side) | Not started |
 | Place Intelligence | Saved Places | Not started |
 | Temporal Intelligence | Phase A (RPC + client + travel overnight) | Complete |
@@ -333,8 +345,8 @@ A component counts as converged only when it renders correctly in Storybook **wi
 
 | Stream | Current | Next milestone |
 |---|---|---|
-| Product | **v2.7.0** | Not yet determined |
-| Design System | **ds/v1.30.1 — Component Token Layer** | Not yet determined |
+| Product | **v2.8.0** | Not yet determined |
+| Design System | **ds/v1.30.2** | Not yet determined |
 
 ### v2.4.0 — Reservation Place Intelligence (complete)
 
@@ -352,7 +364,7 @@ Objective: complete the Travel Intelligence work already scoped in `PLACE_INTELL
 
 **Status:** Complete and released (July 2026). The Day Detail travel item card now shows origin, destination, and drive duration. Editing a travel item preserves a previously saved arrival time instead of clearing it when a live duration recalculation hasn't resolved yet. No Design System, schema, or RPC changes.
 
-### Current milestone: v2.7.0 — Reservation Intelligence (complete)
+### v2.7.0 — Reservation Intelligence (complete)
 
 Objective: make reservations first-class trip facts (`trip_reservations`), independent of `planner_items`, with automatic single-item derivation, a Reservations screen and dashboard tile sourced from facts rather than planner items, edit synchronization for managed items, customization protection, and a delete flow that asks before removing a derived item. Manual entry only — no email import, no generic `trip_facts` abstraction, no changes to Stay Intelligence or Travel Intelligence.
 
@@ -364,6 +376,18 @@ Objective: make reservations first-class trip facts (`trip_reservations`), indep
 
 Verified via a combination of direct database-level testing (impersonated RPC calls against a disposable, fully-cleaned-up test reservation) and a full Playwright browser smoke test exercising every step of the lifecycle through actual UI clicks. See `docs/architecture/DERIVATION_ENGINE.md` for the architectural detail, including the discovery that Stay Intelligence — previously assumed to be a full Derivation Engine reference implementation — only implements the pattern's foundational steps.
 
+### Current milestone: v2.8.0 — Contextual Place Resolution (complete)
+
+Objective: reduce friction identifying places the user already intends to enter by letting Place Intelligence bias search using contextual geographic information already available to the application — not a search feature, not place discovery, not recommendations, not nearby search. Resolves the defect where a generic venue-name query (e.g. "Be Our Guest") could rank a distant, same-named business above the intended location.
+
+**Status:** Complete and released (July 2026), implemented across three sequential, independently-verified slices plus one deferral decision:
+- **Slice 0 — Plumbing:** `search-places` and `searchPlaces()` accept an optional `near: { lat, lng }`, translated to each Mapbox provider's own proximity parameter only inside the provider-specific functions. No call site passed it yet; zero behavior change.
+- **Slice 1 — Travel:** Travel "From" biased using the day's active Stay; Travel "To" biased using the already-selected origin.
+- **Slice 2 — Reservations:** Reservation planner item Location biased using the active Stay for the day; Trip Reservations Place biased using the active Stay for the reservation's date, requiring `tripStays` to be threaded into `TripReservations` via `TripDetail`.
+- **Deferred — Multi-Stay Context:** biasing a new Stay's search toward a chronologically adjacent Stay was evaluated and intentionally excluded. Unlike the four shipped call sites, adjacency-in-time is an inference about itinerary shape, not a known fact, and risked a confidently wrong bias (e.g., a return trip through the same city) being worse than no bias at all.
+
+Context is computed locally at each call site from facts already available on that screen — no `EditingIntent` type, no Context service, no shared Context Hierarchy evaluator were introduced, matching the deliberate scope of the plan. Verified via `npm run build`/`npm run lint` at every slice (zero new errors versus the pre-milestone baseline) plus code-path validation of every context/no-context branch; a live Edge Function smoke test was deferred to end-to-end validation rather than blocking the milestone. One post-implementation cleanup was applied: `stayCoordinates(stay)` was added beside `getActiveStayForDay` in `stays.ts` to remove a duplicated coordinate-extraction expression that had appeared in both `AddPlannerItemForm.tsx` and `TripReservations.tsx`. See `docs/architecture/PLACE_INTELLIGENCE_ARCHITECTURE.md` for the full architectural detail.
+
 ### System Health phases (v2.5.0 execution order)
 
 1. **Phase 1 — CSS Co-location Migration** (primary initiative). ✅ **Complete (v1.29.0).** Wave 1 (v1.27.0): Button, IconButton, CardSurface, FeedbackMessage, EmptyState, ModalSheet. Wave 2 (v1.28.0): ScreenHeader, PageControls, FormActions, FormGrid (`.form-body` dependency severed from App.css). Wave 3 (v1.29.0): DashboardCard, DetailHeader, DayTile — each pattern's uncontested presentation co-located; documented product-context composition (`.trip-card`/`.settings-panel`, `.page-shell > .detail-header`/`.day-detail-screen .detail-header`, `.trip-dashboard .day-tile`) intentionally remains in App.css. Migration rule: flatten the App.css cascade into one canonical component stylesheet, preserve behavior exactly, no renames/optimizations/new tokens — followed throughout all three waves.
@@ -373,7 +397,7 @@ Verified via a combination of direct database-level testing (impersonated RPC ca
 ### Phase 2 opportunity areas (from `PRODUCT_ROADMAP.md`)
 
 - Travel Duration — Complete (v2.6.0: includes Day Detail card display of origin, destination, and duration)
-- Address / Place Intelligence — Complete (Search + quick picks + reservation context + Search Box platform)
+- Address / Place Intelligence — Complete (Search + quick picks + reservation context + Search Box platform); Contextual Place Resolution complete (v2.8.0: Travel From/To, Reservation planner item, Trip Reservations Place); Multi-Stay Context intentionally deferred
 - Stay Intelligence — Complete (phases 1, 2, 4; phases 3 and 5 not started; derivation lifecycle completion not started)
 - Reservation Intelligence — Complete (v2.7.0: `trip_reservations` facts, automatic derivation, fact-sourced screen/dashboard, edit sync, customization protection, delete branching); email import not started
 - Weather — Not started
@@ -438,10 +462,10 @@ maycation-planner/
 │   ├── App.css                       — Product/shell CSS (§1–§13); §10–11 removed (v1.27.0); CSS Co-location Migration complete (v1.29.0) — retains only product-screen layout, shell structure, and documented product-context overrides
 │   ├── components/
 │   │   ├── DesignSystem.tsx          — Re-export barrel for all design system components
-│   │   ├── AddPlannerItemForm.tsx    — Add/edit planner items; Place + Temporal intelligence; preserves saved travel duration on edit (v2.6.0)
+│   │   ├── AddPlannerItemForm.tsx    — Add/edit planner items; Place + Temporal intelligence; preserves saved travel duration on edit (v2.6.0); Travel and Reservation place search biased by context (v2.8.0)
 │   │   ├── DayDetail.tsx             — Day itinerary view; planner-item-card host; travel cards show origin/destination/duration (v2.6.0)
 │   │   ├── TripDetail.tsx            — Trip dashboard; day grid, countdown, intel card; loads trip_reservations (v2.7.0)
-│   │   ├── TripReservations.tsx      — Reservation facts: list, create, edit, delete; reads trip_reservations directly, not planner_items (v2.7.0)
+│   │   ├── TripReservations.tsx      — Reservation facts: list, create, edit, delete; reads trip_reservations directly, not planner_items (v2.7.0); Place search biased by active Stay (v2.8.0)
 │   │   ├── TripStays.tsx             — Stay management; StayCard, Stay form, reminder offer
 │   │   ├── TripSettings.tsx          — Trip settings (name, dates, image, delete, invite)
 │   │   ├── TripsDashboard.tsx        — My Trips list
@@ -459,9 +483,9 @@ maycation-planner/
 │   │   └── index.ts                  — Export barrel
 │   ├── lib/
 │   │   ├── trips.ts                  — Trip/TripDay/PlannerItem types and data functions
-│   │   ├── stays.ts                  — TripStay types, CRUD, formatStayDateRange, getActiveStayForDay
+│   │   ├── stays.ts                  — TripStay types, CRUD, formatStayDateRange, getActiveStayForDay, stayCoordinates (v2.8.0)
 │   │   ├── reservations.ts           — TripReservation/TripReservationType types, CRUD, syncReservationDerivedItem (v2.7.0)
-│   │   ├── places.ts                 — PlaceValue, PlaceSuggestion, searchPlaces, getTravelDurationMinutes
+│   │   ├── places.ts                 — PlaceValue, PlaceSuggestion, searchPlaces (optional `near` context bias, v2.8.0), getTravelDurationMinutes
 │   │   ├── tripMembers.ts            — Role loading, invite flow
 │   │   ├── auth.ts                   — Auth functions
 │   │   └── supabaseClient.ts         — Singleton client
@@ -512,8 +536,8 @@ maycation-planner/
 - **Temporal Phase D**: Non-travel overnight "Ends next day" toggle
 - **Stay Phase 3**: Day Detail ambient "Staying at [place]" context display
 - **Stay Phase 5**: Trip Dashboard accommodation timeline
-- **Place Intelligence — Proximity bias**: Pass origin coordinates to `search-places` to weight results toward trip location. Would fix "Be Our Guest" returning an Ohio business instead of the Magic Kingdom restaurant for context-free queries.
 - **Place Intelligence — Travel Quick Picks**: Surface previously-used destinations and upcoming reservation locations as quick picks in the Travel form destination field.
+- **Place Intelligence — Multi-Stay Context** (v2.8.0 deferral): intentionally excluded, not merely unstarted. Biasing a new Stay's search toward a chronologically adjacent Stay was evaluated during Contextual Place Resolution and rejected because adjacency in time is not a sufficiently reliable signal for adjacency in place — unlike the four shipped call sites, which bias only on facts true by construction. Revisit only with a narrower trigger than pure date-adjacency, if multi-city itineraries prove common enough to justify it.
 - **Reservation Intelligence — email import**: `trip_reservations` (built, v2.7.0) currently supports manual entry only. Importing confirmation details from email remains unimplemented.
 - **Stay Intelligence — derivation lifecycle completion**: managed-state flip on edit, a sync RPC, and a delete-branching prompt all remain unimplemented for stays, despite `STAY_INTELLIGENCE_ARCHITECTURE.md` previously documenting some of this as though it existed (corrected in v2.7.1). Reservation Intelligence's implementation is the reference pattern to follow if this is picked up.
 - **Saved Places**: Home, Airport, Hotel, recent selections surfaced as PlaceInput quick picks
@@ -532,12 +556,12 @@ The Supabase CLI's migration bookkeeping table does not accurately reflect which
 
 | Artifact | Version |
 |---|---|
-| Product | **v2.7.0 — Reservation Intelligence** |
+| Product | **v2.8.0 — Contextual Place Resolution** |
 | Next product milestone | Not yet determined |
-| Design System | **ds/v1.30.1 — Component Token Layer** |
+| Design System | **ds/v1.30.2** (no Design System changes in v2.8.0) |
 | npm package | 0.0.0 (not published) |
 | Supabase migrations | 29 (latest: `029_reservation_intelligence_hardening.sql`) |
-| Edge Function: search-places | v8 (Search Box v1 /forward + Geocoding v5 dispatch) |
+| Edge Function: search-places | v8 (Search Box v1 /forward + Geocoding v5 dispatch); optional `near` context bias (v2.8.0) |
 | T1 Components | 19 (all code-complete, 17/19 Code Connect wired) |
 | T2 Patterns | 3 (all code-complete, 3/3 Code Connect wired) |
 | Storybook stories | 99+ across 25+ groups |

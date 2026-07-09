@@ -256,3 +256,8 @@ Personalized itinerary suggestions based on family preferences, past trips, and 
 
 **Public Trip Sharing**
 Allowing families to share itineraries publicly or with people outside the trip. A fundamentally different use case from private family coordination. Would require separate design consideration, content moderation thinking, and a clear answer to why this is better than existing travel content platforms.
+
+---
+
+**Multi-Stay Context**
+Biasing a new Stay's place search toward a chronologically adjacent Stay, considered alongside Contextual Place Resolution (v2.8.0) and set aside. Adjacency in time is not a reliable enough signal for adjacency in place — a multi-city itinerary that returns to an earlier city would bias search toward the wrong one. Revisit only if a more reliable signal than date-adjacency emerges.
